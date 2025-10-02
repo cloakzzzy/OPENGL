@@ -204,22 +204,27 @@ int main()
 
     
 
-
     VAO VAO2;
 
+    /*
     Torus::GenerateModel(50, VAO2);
     VAO2.Bind();
     Torus::CreateInstanceVBO();
     VAO2.Unbind();
 
     Torus torus;
+    */
 
+    /*
     torus.Create(5.f, 10.f, 15.f,
         3.0f, 2.0f,
         0.f, 0.5f, 0.f, 0.f, 0.f, 0.f);
+        */
     
     float T = 1.0f;
     float R = 2.0f;
+
+    
 
     //shader.Use();
     int axesCount;
@@ -354,7 +359,7 @@ int main()
 
         VAO2.Bind();
 
-        Torus::Render(cam);
+        //Torus::Render(cam);
 
         VAO2.Unbind();
 
