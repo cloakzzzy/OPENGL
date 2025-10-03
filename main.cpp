@@ -164,7 +164,7 @@ int main()
     VAO VAO1;
 
     VAO1.Bind();
-    
+
     Shader sphere_shader;
     sphere_shader.SetFiles("sphere.vert", "sphere.frag");
     sphere_shader.Use();
@@ -174,7 +174,7 @@ int main()
     VBO sphere_vbo;
     sphere_vbo.Create(vertices);
 
-    
+
     VAO1.LinkVBO(sphere_vbo, 6, 0, 3, 0);
 
     unsigned int sphere_instanceVBO;
@@ -198,33 +198,28 @@ int main()
     glVertexAttribDivisor(3, 1);
 
     VAO1.Unbind();
-    
-    
+
+
     vector<float> spheres(28);
 
-    
+
+
 
     VAO VAO2;
 
-    /*
     Torus::GenerateModel(50, VAO2);
     VAO2.Bind();
     Torus::CreateInstanceVBO();
     VAO2.Unbind();
 
     Torus torus;
-    */
 
-    /*
     torus.Create(5.f, 10.f, 15.f,
         3.0f, 2.0f,
         0.f, 0.5f, 0.f, 0.f, 0.f, 0.f);
-        */
-    
+
     float T = 1.0f;
     float R = 2.0f;
-
-    
 
     //shader.Use();
     int axesCount;
@@ -271,7 +266,7 @@ int main()
 
         }
 
-        
+
 
         glm::vec3 r = glm::normalize(glm::vec3(cam.direction.x, cam.direction.y, cam.direction.z));
 
@@ -279,6 +274,7 @@ int main()
         float py = cam.position.y - 10.f;
         float pz = cam.position.z - 15.f;
 
+        /*
         float q = 2.0f * px * r.x + 2.0f * pz * r.z;
         float f = px * px + pz * pz;
         float Q = pow(T, 4.0f) - 2.0f * T * T * R * R + pow(R, 4.0f);
@@ -291,6 +287,19 @@ int main()
         float C = (2.0f * a * c + b * b + -2.0f * T * T * a + 2.0f * R * R * a - 4.0f * R * R * d);
         float D = (-2.0f * T * T * b + 2.0f * R * R * b + 2.0f * b * c + -4.0f * R * R * q);
         float E = (-4.0f * R * R * f - 2.0f * T * T * c + 2.0f * R * R * c + c * c + Q);
+        */
+
+        float e = 2.0f * px * r.x + 2.0f * pz * r.z;
+        float f = px * px + pz * pz;
+        float d = r.x * r.x + r.z * r.z;
+        float c = -(px * px + py * py + pz * pz) + (T * T - R * R);
+        float b = -(2.0f * px * r.x + 2.0f * py * r.y + 2.0f * pz * r.z);
+        float a = -(r.x * r.x + r.y * r.y + r.z * r.z);
+        float A = a * a;
+        float B = 2.0f * a * b;
+        float C = 2.0f * a * c + b * b - 4.0f * R * R * d;
+        float D = 2.0f * b * c - 4.0f * R * R * e;
+        float E = c * c - 4.0f * R * R * f;
 
         //std::cout << cam.position.x << " " << cam.position.y << " " << cam.position.z << " " << '\n';
 
@@ -304,7 +313,7 @@ int main()
         }
         //std::cout << "\n===================\n";
 
-        
+
 
         std::fill(spheres.begin(), spheres.end(), 0.0f);
 
@@ -314,7 +323,7 @@ int main()
             spheres[2] = cam.position.z + r.z * roots[0];
             spheres[3] = 0.1f;
         }
-        
+
         if (nroots > 1) {
             spheres[7] = cam.position.x + r.x * roots[1];
             spheres[8] = cam.position.y + r.y * roots[1];
@@ -333,11 +342,11 @@ int main()
             spheres[23] = cam.position.z + r.z * roots[3];
             spheres[24] = 0.1f;
         }
-        
+
 
         for (int i = 0; i < 7; i++) {
             std::cout << spheres[i] << '\n';
-            
+
         }
         std::cout << "\n=========================\n";
 
@@ -352,14 +361,14 @@ int main()
         sphere_shader.SetMat4("view", glm::value_ptr(cam.GetView()));
 
 
-        glDrawArraysInstanced(GL_TRIANGLES, 0, vertices.size() / 3.0f, spheres.size()/7.0f);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, vertices.size() / 3.0f, spheres.size() / 7.0f);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         VAO1.Unbind();
 
         VAO2.Bind();
 
-        //Torus::Render(cam);
+        Torus::Render(cam);
 
         VAO2.Unbind();
 
