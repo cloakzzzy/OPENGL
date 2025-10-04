@@ -175,7 +175,7 @@ int main()
     sphere_vbo.Create(vertices);
 
 
-    VAO1.LinkVBO(sphere_vbo, 6, 0, 3, 0);
+    VAO1.LinkVBO(sphere_vbo, 3, 0, 3, 0);
 
     unsigned int sphere_instanceVBO;
 
@@ -201,8 +201,6 @@ int main()
 
 
     vector<float> spheres(28);
-
-
 
 
     VAO VAO2;
