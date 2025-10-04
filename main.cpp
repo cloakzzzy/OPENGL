@@ -63,6 +63,7 @@ int solveQuartic(float a, float b, float c, float d, float e, glm::vec4& roots) 
     }
     if (lambda < 0.0) return n;
     float t = sqrt(lambda); float alpha = 2.0 * q / t, beta = lambda + ra; float u = 0.25 * b; t *= 0.5; float z = -alpha - beta;
+
     if (z > 0.0) { z = sqrt(z) * 0.5; float h = +t - u; roots.x = h + z; roots.y = h - z; n += 2; }
     float w = +alpha - beta;
     if (w > 0.0) {
@@ -77,10 +78,9 @@ int main()
 {
 
     glfwSetVersion(3, 3);
-    win.Create(SCR_WIDTH, SCR_HEIGHT, "some aim trainer");
+    win.Create(SCR_WIDTH, SCR_HEIGHT, "hello");
 
     glfwSwapInterval(0);
-    //glfwWindowHint(GLFW_SAMPLES, 4);
     glfwSetFramebufferSizeCallback(win.Object, framebuffer_size_callback);
     glfwSetCursorPosCallback(win.Object, mouse_callback);
     glfwSetMouseButtonCallback(win.Object, mouse_button_callback);
@@ -89,77 +89,11 @@ int main()
 
     glewInit();
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_MULTISAMPLE); 
-    //shader.SetFiles("default.vert", "default.frag");
+   
 
-    float x = 0.05;
-    float y = 0.05;
-
-
-    float th = 0.005;
-
-
-    vector <float> vertices = {
-        /*
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-
-        */
-
-    };
-    //vector <float> torus_vertices;
-    //vector <float> crosshair;
-
-    //Crosshair(vertices);
-
-    //int acc = 40;
-
-    // NOTE: shapes are placed in order of when i implemented the functions. Going from left to right.
-
+    vector <float> vertices;
+   
     Gen_UVsphere(vertices, 50, 0.0f, 0.f, 0.f, 1.0f);
-
-    //Gen_Cone(vertices, acc, 10.0f, -2.0f, 0.f, 2.0f, 4.0f);
-    //Gen_Doughnut(torus_vertices, acc, 0.0f, 0.f, 0.f, 1.0f, 1.0f);
-    //Gen_Cylinder(vertices, acc, 20.0f, -2.0f, 0.f, 2.0f, 4.0f);
 
     VAO VAO1;
 
@@ -169,13 +103,10 @@ int main()
     sphere_shader.SetFiles("sphere.vert", "sphere.frag");
     sphere_shader.Use();
 
-
-
     VBO sphere_vbo;
     sphere_vbo.Create(vertices);
 
-
-    VAO1.LinkVBO(sphere_vbo, 3, 0, 3, 0);
+    VAO1.LinkVBO(sphere_vbo, 6, 0, 3, 0);
 
     unsigned int sphere_instanceVBO;
 
@@ -199,93 +130,51 @@ int main()
 
     VAO1.Unbind();
 
-
     vector<float> spheres(28);
 
+    TorusBuffer tb;
+    float* torus_buffer = tb.Create(10 * 11, 70);
 
-    VAO VAO2;
+    torus_buffer[0] = 5.0f;
+    torus_buffer[1] = 20.f;
+    torus_buffer[2] = 15.0f;
 
-    Torus::GenerateModel(50, VAO2);
-    VAO2.Bind();
-    Torus::CreateInstanceVBO();
-    VAO2.Unbind();
+    torus_buffer[3] = 2.0f;
+    torus_buffer[4] = 1.0f;
 
-    Torus torus;
+    torus_buffer[5] = 0.f;
+    torus_buffer[6] = 0.5f;
+    torus_buffer[7] = 0.0f;
 
-    torus.Create(5.f, 10.f, 15.f,
-        3.0f, 2.0f,
-        0.f, 0.5f, 0.f, 0.f, 0.f, 0.f);
+    torus_buffer[8] = 0.0f;
+    torus_buffer[9] = 0.0f;
+    torus_buffer[10] = 0.0f;
+
+    tb.SendToGPU(0, 11);
 
     float T = 1.0f;
     float R = 2.0f;
 
-    //shader.Use();
-    int axesCount;
-    const float* axes;
-    int buttonCount;
-    const float speed = 3.f;
-    //shader.SetVec2("change", 1.0f, float(SCR_WIDTH) / float(SCR_HEIGHT));
-
-    float xoff = 0.f;
+    
     processInput(win.Object);
 
     cam.position.z += 3.0f;
-    int gd = 2;
-
-    int n = 0;
-
     VAO1.Bind();
+
 
     const unsigned int h = 50;
 
     win.MainLoop([&] {
 
         processInput(win.Object);
-        glActiveTexture(GL_TEXTURE0);
-
-        //shader.Use();
-
-        if (glfwJoystickPresent(GLFW_JOYSTICK_1) == 1) {
-            axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axesCount);
-            buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttonCount);
-            cam.Controller_HandleRightStick(3.0f, 2.0f, axes[CONTROLLER_AXES_ANALOGSTICK_RIGHT_X], axes[CONTROLLER_AXES_ANALOGSTICK_RIGHT_Y], 0.07f);
-            cam.Controller_HandleLeftStick(axes[CONTROLLER_AXES_ANALOGSTICK_LEFT_X], axes[CONTROLLER_AXES_ANALOGSTICK_LEFT_Y], speed, 0.07f, win.DeltaTime);
-            if (buttons[CONTROLLER_BUTTON_CROSS] == GLFW_PRESS) {
-                cam.position.y += speed * win.DeltaTime;
-            }
-            if (buttons[CONTROLLER_BUTTON_CIRCLE] == GLFW_PRESS) {
-                cam.position.y -= speed * win.DeltaTime;
-            }
-            if (buttons[CONTROLLER_BUTTON_PLAYSTATIION] == GLFW_PRESS) {
-                glfwTerminate();
-                exit(0);
-            }
-
-
-        }
-
-
-
+        
+       
         glm::vec3 r = glm::normalize(glm::vec3(cam.direction.x, cam.direction.y, cam.direction.z));
 
         float px = cam.position.x - 5.f;
-        float py = cam.position.y - 10.f;
+        float py = cam.position.y - 20.f;
         float pz = cam.position.z - 15.f;
 
-        /*
-        float q = 2.0f * px * r.x + 2.0f * pz * r.z;
-        float f = px * px + pz * pz;
-        float Q = pow(T, 4.0f) - 2.0f * T * T * R * R + pow(R, 4.0f);
-        float d = r.x * r.x + r.z * r.z;
-        float c = px * px + py * py + pz * pz;
-        float b = 2.0f * px * r.x + 2.0f * py * r.y + 2.0f * pz * r.z;
-        float a = r.x * r.x + r.y * r.y + r.z * r.z;
-        float A = a * a;
-        float B = (2.0f * a * b);
-        float C = (2.0f * a * c + b * b + -2.0f * T * T * a + 2.0f * R * R * a - 4.0f * R * R * d);
-        float D = (-2.0f * T * T * b + 2.0f * R * R * b + 2.0f * b * c + -4.0f * R * R * q);
-        float E = (-4.0f * R * R * f - 2.0f * T * T * c + 2.0f * R * R * c + c * c + Q);
-        */
 
         float e = 2.0f * px * r.x + 2.0f * pz * r.z;
         float f = px * px + pz * pz;
@@ -299,22 +188,23 @@ int main()
         float D = 2.0f * b * c - 4.0f * R * R * e;
         float E = c * c - 4.0f * R * R * f;
 
-        //std::cout << cam.position.x << " " << cam.position.y << " " << cam.position.z << " " << '\n';
 
         glm::vec4 roots;
 
-
+        //int nroots;
         int nroots = solveQuartic(A, B, C, D, E, roots);
+        //int nroots = solveQuartic(1, -7, 17, -17, 6, roots);
 
-        for (int i = 0; i < nroots; i++) {
-            //std::cout << roots[i] << " ";
-        }
-        //std::cout << "\n===================\n";
-
-
+        
+        std::cout << nroots << ":\n";
+        std::cout << roots.x << '\n';
+        std::cout << roots.y << '\n';
+        std::cout << roots.z << '\n';
+        std::cout << roots.w << '\n';
+        
+        std::cout << "-------------------" << '\n';
 
         std::fill(spheres.begin(), spheres.end(), 0.0f);
-
         if (nroots > 0) {
             spheres[0] = cam.position.x + r.x * roots[0];
             spheres[1] = cam.position.y + r.y * roots[0];
@@ -342,10 +232,11 @@ int main()
         }
 
 
-        for (int i = 0; i < 7; i++) {
-            std::cout << spheres[i] << '\n';
+        //for (int i = 0; i < 7; i++) {
+            //std::cout << spheres[i] << '\n';
 
-        }
+        //}
+
         std::cout << "\n=========================\n";
 
         VAO1.Bind();
@@ -359,23 +250,16 @@ int main()
         sphere_shader.SetMat4("view", glm::value_ptr(cam.GetView()));
 
 
-        glDrawArraysInstanced(GL_TRIANGLES, 0, vertices.size() / 3.0f, spheres.size() / 7.0f);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, vertices.size() / 3.0f, floor(spheres.size() / 7.0f));
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         VAO1.Unbind();
+        tb.Render(cam, 1);
 
-        VAO2.Bind();
-
-        Torus::Render(cam);
-
-        VAO2.Unbind();
 
 
 
         }, 0.53, 0.81, 0.92);
-
-    // VAO1.Delete();
-    // sphere_vbo.Delete();
 
 
     glfwTerminate();
@@ -427,8 +311,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
     cam.aspect = float(width) / float(height);
-    //shader.SetVec2("change", float(SCR_WIDTH) / float(width), float(SCR_WIDTH) / float(height));
-
+    
 }
 double sxpos;
 double sypos;
