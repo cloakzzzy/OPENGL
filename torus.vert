@@ -25,7 +25,6 @@ void main()
 
     //change thickness
     pos.x = lc.x + rt.y * (pos.x - lc.x);
-	pos.y = rt.y * pos.y;
 	pos.z = lc.z + rt.y * (pos.z - lc.z);
 
     //change radius
@@ -35,8 +34,17 @@ void main()
 
     //change rotation
     //z
-    pos.x = (cos(rot.z * RAD) * pos.x) - (sin(rot.z * RAD) * pos.y);
-    pos.y = (sin(rot.z * RAD) * pos.x) + (cos(rot.z * RAD) * pos.y);
+    pos.x = (cos(40.f * RAD) * pos.x) - (sin(40.f * RAD) * pos.z);
+    pos.z = (sin(40.f * RAD) * pos.x) + (cos(40.f * RAD) * pos.z);
+
+    float s = abs(pos.x * pos.x + pos.z * pos.z - 2.0f * rt.x * sqrt(pos.x * pos.x + pos.z * pos.z) + rt.x * rt.x - rt.y * rt.y);
+
+    if (s >= 0){
+        pos.y = sqrt(s);
+    }
+
+
+
     //change position
     pos += position;
 

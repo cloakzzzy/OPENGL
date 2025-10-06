@@ -89,10 +89,10 @@ int main()
 
     glewInit();
     glEnable(GL_DEPTH_TEST);
-   
+
 
     vector <float> vertices;
-   
+
     Gen_UVsphere(vertices, 50, 0.0f, 0.f, 0.f, 1.0f);
 
     VAO VAO1;
@@ -135,9 +135,9 @@ int main()
     TorusBuffer tb;
     float* torus_buffer = tb.Create(10 * 11, 70);
 
-    torus_buffer[0] = 5.0f;
-    torus_buffer[1] = 20.f;
-    torus_buffer[2] = 15.0f;
+    torus_buffer[0] = 0.0f;
+    torus_buffer[1] = 0.f;
+    torus_buffer[2] = 0.0f;
 
     torus_buffer[3] = 2.0f;
     torus_buffer[4] = 1.0f;
@@ -155,7 +155,7 @@ int main()
     float T = 1.0f;
     float R = 2.0f;
 
-    
+
     processInput(win.Object);
 
     cam.position.z += 3.0f;
@@ -167,8 +167,8 @@ int main()
     win.MainLoop([&] {
 
         processInput(win.Object);
-        
-       
+
+
         glm::vec3 r = glm::normalize(glm::vec3(cam.direction.x, cam.direction.y, cam.direction.z));
 
         float px = cam.position.x - 5.f;
@@ -195,14 +195,14 @@ int main()
         int nroots = solveQuartic(A, B, C, D, E, roots);
         //int nroots = solveQuartic(1, -7, 17, -17, 6, roots);
 
-        
-        std::cout << nroots << ":\n";
-        std::cout << roots.x << '\n';
-        std::cout << roots.y << '\n';
-        std::cout << roots.z << '\n';
-        std::cout << roots.w << '\n';
-        
-        std::cout << "-------------------" << '\n';
+
+        //std::cout << nroots << ":\n";
+        //std::cout << roots.x << '\n';
+        //std::cout << roots.y << '\n';
+        //std::cout << roots.z << '\n';
+        //std::cout << roots.w << '\n';
+
+        //std::cout << "-------------------" << '\n';
 
         std::fill(spheres.begin(), spheres.end(), 0.0f);
         if (nroots > 0) {
@@ -311,7 +311,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
     cam.aspect = float(width) / float(height);
-    
+
 }
 double sxpos;
 double sypos;
