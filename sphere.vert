@@ -11,6 +11,8 @@ out vec3 col;
 uniform mat4 projection;
 uniform mat4 view;
 
+#define RAD 3.14159f/180.0f
+
 
 void main()
 {
@@ -18,6 +20,10 @@ void main()
     pos = aPos;
 
     pos *= radius;
+
+    //pos.x = (cos(100.f * RAD) * pos.x) - (sin(100.f * RAD) * pos.z);
+    //pos.z = (sin(100.f * RAD) * pos.x) + (cos(100.f * RAD) * pos.z);
+
     pos += position;
     
     gl_Position = projection * view * vec4(pos, 1.0f);
