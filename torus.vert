@@ -32,17 +32,22 @@ void main()
 	pos.x += rt.x * cos((theta * lc.y + 90)  * RAD); 
 	pos.z += rt.x * sin((theta * lc.y + 90) * RAD);	
 
-    vec3 p = pos;
+    
 
-    //change rotation
-    //z
+    
+
+    
+
+    
+    vec3 p = pos;
+    //pitch
     pos.x = (cos(rot.z * RAD) * p.x) - (sin(rot.z * RAD) * p.y);
     pos.y = (sin(rot.z * RAD) * p.x) + (cos(rot.z * RAD) * p.y);
-
-    //y
-    //pos.x = (cos(-rot.z * RAD) * p.x) - (sin(-rot.z * RAD) * p.z);
-    //pos.z = (sin(-rot.z * RAD) * p.x) + (cos(-rot.z * RAD) * p.z);
-
+    vec3 p1 = pos;
+    //yaw
+    pos.x = (cos(rot.y * RAD) * p1.x) - (sin(rot.y * RAD) * p1.z);
+    pos.z = (sin(rot.y * RAD) * p1.x) + (cos(rot.y * RAD) * p1.z);
+    
     
 
     //change position
