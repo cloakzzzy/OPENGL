@@ -229,7 +229,7 @@ public:
 		torus_shader.SetMat4("projection", glm::value_ptr(cam.GetProjection()));
 		torus_shader.SetMat4("view", glm::value_ptr(cam.GetView()));
 		torus_shader.SetFloat("theta", theta);
-		glDrawElementsInstanced(GL_TRIANGLES, ind.size(), GL_UNSIGNED_INT, 0, 2);
+		glDrawElementsInstanced(GL_TRIANGLES, ind.size(), GL_UNSIGNED_INT, 0, instance_count);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 	}
