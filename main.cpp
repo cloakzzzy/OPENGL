@@ -92,25 +92,25 @@ int main()
     glfwSetMouseButtonCallback(win.Object, mouse_button_callback);
     glfwSetInputMode(win.Object, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    
-    
+
+
     glewInit();
     glEnable(GL_DEPTH_TEST);
-    
+
 
     Engine::Engine::Initialize();
     auto torus1 = Primitive::CreateTorus(0.0f, 0.0f, 0.0f,
-        1.f, 1.f, 
-        1.0f, 0.0f,0.0f, 
+        1.f, 1.f,
+        1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 0.0f);
 
     auto torus2 = Primitive::CreateTorus(0.0f, 0.0f, 5.0f,
         2.f, 1.f,
         0.0f, 0.0f, 1.f,
         0.0f, 0.0f, 0.0f);
-   
+
     // 1,2,3,4,5
-    
+
     //torus5.rot_x += 240.f;
 
     //torus3.Delete();
@@ -121,13 +121,13 @@ int main()
 
     /*
     auto start = std::chrono::high_resolution_clock::now();
-    
+
     for (long long i = 0; i < 1000000; i++) {
         torus5.rot_x += torus2.pos_z * 3.0f;
        // x += y * 3.0f;
-        
+
     }
-    
+
 
     auto end = std::chrono::high_resolution_clock::now();
 
@@ -136,42 +136,60 @@ int main()
 
     std::cout << x << '\n';
     */
-    
+
     std::cout << "Array:\n\n";
 
-   
+
 
     for (int i = 0; i < Torus::InstanceBuffer.size(); i++) {
         if (i % 11 == 0) {
             std::cout << "==================\n";
         }
-        std::cout << std::setprecision(10)<< Torus::InstanceBuffer[i] << '\n';
+        std::cout << std::setprecision(10) << Torus::InstanceBuffer[i] << '\n';
     }
-    
 
 
-    
-    
+
+
+
     float ang = 0.f;
     const unsigned int h = 50;
 
 
     cam.position = glm::vec3(0.f, 0.f, 0.f);
-    win.MainLoop([&] {
-
+    while (!glfwWindowShouldClose(win.Object))
+    {
+        Sleep(1);
         processInput(win.Object);
+        s = round(glfwGetTime());
+        Frames += 1;
+        float currentFrame = static_cast<float>(glfwGetTime());
+        win.DeltaTime = currentFrame - win.LastFrame;
+        win.LastFrame = currentFrame;
+
+        glClearColor(0.53, 0.81, 0.92, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-        torus1.rot_z += 1.0f;
-        torus1.rot_y += 1.0f;
-        torus2.rot_z += 1.0f;
-        torus2.rot_y += 1.0f;
-        Engine::Engine::Render(cam);
+
+        torus2.rot_z += 0.175 * (1 + win.DeltaTime);
+        torus2.rot_y += 0.12 * (1 + win.DeltaTime);
+
+        torus1.rot_z += 0.125 * (1 + win.DeltaTime);
+        torus1.rot_y += 0.15 * (1 + win.DeltaTime);
         
+        Engine::Engine::Render(cam);
 
+        if (win.DeltaTime * 1000 > 16.6) {
+            std::cout << "[BELOW 60FPS]" << '\n';
+        }
 
-        }, 0.53, 0.81, 0.92);
+        glfwSwapBuffers(win.Object);
+        glfwPollEvents();
+
+        //std::cout << win.DeltaTime * 1000 << '\n';
     
+    }
 
     glfwTerminate();
     return 0;

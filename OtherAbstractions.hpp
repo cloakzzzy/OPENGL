@@ -15,14 +15,18 @@ void glfwSetVersion(int majorversion, int minorversion) {
 
 class Window
 {
-private:
-	float LastFrame = 0.0;
-	int Frames = 0.0;
-	float s = 0.0;
+
+	
 public:
 	GLFWwindow* Object;
 	float DeltaTime = 0.0;
 	float FPS = 0.0;
+	long double fulldeltatime = 0.0;
+	long double frames = 0.0;
+	float LastFrame = 0.0;
+	int Frames = 0.0;
+	float s = 0.0;
+	const float FrameTime = 1.0f / 60.f;
 
 	void Create(int width, int height, const char* title) {
 #ifdef __APPLE__
@@ -35,6 +39,7 @@ public:
 			glfwTerminate();
 		}
 		glfwMakeContextCurrent(Object);
+		glfwSwapInterval(1);
 
 	}
 
@@ -44,7 +49,6 @@ public:
 		{
 			s = round(glfwGetTime());
 			Frames += 1;
-			Sleep(1);
 			float currentFrame = static_cast<float>(glfwGetTime());
 			DeltaTime = currentFrame - LastFrame;
 			LastFrame = currentFrame;
@@ -58,9 +62,22 @@ public:
 				FPS = Frames;
 				Frames = 0;
 			}
+			
+
+			//fulldeltatime += DeltaTime;
+			//frames += 1;
+
+			if (frames == 1000) {
+				glfwSetWindowShouldClose(Object, GLFW_TRUE);
+
+			}
+
 
 			glfwSwapBuffers(Object);
 			glfwPollEvents();
+
+			std::cout << DeltaTime * 1000<< '\n';
+			
 		}
 	}
 };
