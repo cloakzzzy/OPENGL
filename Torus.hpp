@@ -4,6 +4,10 @@
 #include "Flatshapes.hpp"
 #include "Shader.hpp"
 #include <glew.h>
+#include "Camera.hpp"
+#include "libs/glm/glm.hpp"
+#include "libs/glm/gtc/matrix_transform.hpp"
+#include "libs/glm/gtc/type_ptr.hpp""
 
 namespace Engine {
 	namespace Entity {
@@ -30,12 +34,12 @@ private:
 	inline static float theta;
 
 	inline static std::vector<unsigned int> ind;
-	inline static Shader torus_shader;
+	inline static Shader TorusShader;
 	inline static unsigned int VBO;
 	inline static unsigned int EBO;
 	inline static std::vector<float> offs;
 	inline static float num;
-
+	
 
 	class TorusAttribute {
 		friend class Torus;
@@ -71,7 +75,7 @@ public:
 
 private:
 	static void GenerateModel(int acc);
-	static void CreateBuffer(unsigned int VAO);
+	static void CreateBuffers();
 
 	static int TorusBinarySearch(std::vector<unsigned int>& vec, int target) {
 		int left = 0;
@@ -93,9 +97,9 @@ private:
 		float red, float green, float blue,
 		float rotx, float roty, float rotz);
 
-	static void Initialize(unsigned int vao);
+	static void Initialize();
 
-	static void Render();
+	static void Render(Camera& cam);
 
 	void Delete();
 

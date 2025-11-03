@@ -21,6 +21,7 @@ void main()
 {
     vec3 pos = aPos;
 
+    //colour = vec3(rt.x,rt.y,0.f);
     colour = Colour;
 
     //change thickness

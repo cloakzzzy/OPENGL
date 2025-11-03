@@ -2,7 +2,8 @@
 #include <vector>
 #include "Flatshapes.hpp"
 #include <glew.h>
-
+#include "EngineClass.hpp"
+#include "Camera.hpp"
 
 void Torus::GenerateModel(int acc) {
 		std::vector<float> verta;
@@ -114,13 +115,13 @@ void Torus::GenerateModel(int acc) {
 			}
 		}
 	}
-void Torus::CreateBuffer(unsigned int VAO) {
-		glGenVertexArrays(1, &VAO);
-		glBindVertexArray(VAO);
+void Torus::CreateBuffers(){
+		glGenVertexArrays(1, &Engine::Engine::u_VAO);
+		glBindVertexArray(Engine::Engine::u_VAO);
 
 		glGenBuffers(1, &VBO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, vert.size() * sizeof(float), &vert.front(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vert.size() * sizeof(float), &vert.front(), GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		glGenBuffers(1, &EBO);
@@ -166,9 +167,12 @@ void Torus::CreateBuffer(unsigned int VAO) {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-void Torus::Initialize(unsigned int vao) {
+void Torus::Initialize() {
 	GenerateModel(70);
-	CreateBuffer(vao);
+	CreateBuffers();
+	TorusShader.SetFiles("torus.vert", "default.frag");
+	TorusShader.Use();
+	TorusShader.SetFloat("theta", theta);
 }
 
 Torus::Torus(float pos_x, float pos_y, float pos_z,
@@ -215,11 +219,9 @@ Torus::Torus(float pos_x, float pos_y, float pos_z,
 }
 
 void Torus::Delete() {
-	// Required for any instance buffer modifications
+	// Required in case of any, instance buffer deletions
 	if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
-		std::cout << "Binary search called" << '\n';
 		Index = TorusBinarySearch(ObjectIDs, ID);
-
 	}
 
 	//Removes object id from Objectid array;
@@ -229,8 +231,25 @@ void Torus::Delete() {
 	InstanceBuffer.erase(InstanceBuffer.begin() + Index * 11, InstanceBuffer.begin() + Index * 11 + 11);
 }
 
-void Torus::Render() {
-	Engine::Engine::u_VAO = 0;
+void Torus::Render(Camera& cam) {
+	unsigned int NumInstances = ObjectIDs.size();
+
+	glBindVertexArray(Engine::Engine::u_VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+	//puts instance data into IBO
+	glBindBuffer(GL_ARRAY_BUFFER, IBO);
+	glBufferData(GL_ARRAY_BUFFER, InstanceBuffer.size() * sizeof(float), &InstanceBuffer.front(), GL_DYNAMIC_DRAW);
+
+	TorusShader.Use();
+	TorusShader.SetMat4("view", glm::value_ptr(cam.GetView()));
+	TorusShader.SetMat4("projection", glm::value_ptr(cam.GetProjection()));
+
+	glDrawElementsInstanced(GL_TRIANGLES, ind.size(), GL_UNSIGNED_INT, 0, NumInstances);
+
+	//std::cout << ind.size << " " << NumInstances << '\n';
 }
 
 

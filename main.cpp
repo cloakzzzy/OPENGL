@@ -80,9 +80,9 @@ int solveQuartic(float a, float b, float c, float d, float e, glm::vec4& roots) 
 
 using Engine::Entity::Primitive;
 
+
 int main()
 {
-    
     glfwSetVersion(3, 3);
     win.Create(SCR_WIDTH, SCR_HEIGHT, "hello");
 
@@ -99,17 +99,16 @@ int main()
     
 
     Engine::Engine::Initialize();
-    auto torus1 = Primitive::CreateTorus(12.0f, 17.0f, 3.0f, 28.0f, 5.0f, 11.0f, 7.0f,
-        8.0f, 9.0f, 10.0f, 11.0f);
-    auto torus2 = Primitive::CreateTorus(13.0f, 10.0f, 4.0f, 5.0f, 10.0f, 6.0f, 9.0f,
-        8.0f, 9.0f, 10.0f, 11.0f);
-    auto torus3 = Primitive::CreateTorus(1.0f, 4.0f, 3.0f, 4.0f, 10.0f, 6.0f, 200.0f,
-        8.0f, 111.0f, 24.0f, 11.0f);
-    auto torus4 = Primitive::CreateTorus(256.f, 2.0f, 30.f, 4.0f, 50.f, 60.f, 7.0f,
-        12.0f, 9.0f, 92.0f, 11.0f);
-    auto torus5 = Primitive::CreateTorus(4.0f, 15.30f, 28.f, 32.0f, 10.f, 60.f, 12.3430f,
-        32.242340f, 9.0f, 2800.0f, 11.0f);
+    auto torus1 = Primitive::CreateTorus(0.0f, 0.0f, 0.0f,
+        1.f, 1.f, 
+        1.0f, 0.0f,0.0f, 
+        0.0f, 0.0f, 0.0f);
 
+    auto torus2 = Primitive::CreateTorus(0.0f, 0.0f, 5.0f,
+        2.f, 1.f,
+        0.0f, 0.0f, 1.f,
+        0.0f, 0.0f, 0.0f);
+   
     // 1,2,3,4,5
     
     //torus5.rot_x += 240.f;
@@ -157,16 +156,18 @@ int main()
     const unsigned int h = 50;
 
 
-    
+    cam.position = glm::vec3(0.f, 0.f, 0.f);
     win.MainLoop([&] {
 
         processInput(win.Object);
 
 
-
+        torus1.rot_z += 1.0f;
+        torus1.rot_y += 1.0f;
+        torus2.rot_z += 1.0f;
+        torus2.rot_y += 1.0f;
+        Engine::Engine::Render(cam);
         
-
-
 
 
         }, 0.53, 0.81, 0.92);

@@ -1,15 +1,16 @@
 #pragma once
+#include "Camera.hpp"
 
 class Torus;
 
 namespace Engine {
 	class Engine {
 		friend class Torus;
-		inline static int u_VAO;
+		inline static unsigned int u_VAO;
 	public:
 
 		static void Initialize();
-		static void Render();
+		static void Render(Camera& cam);
 	};
 
 	
