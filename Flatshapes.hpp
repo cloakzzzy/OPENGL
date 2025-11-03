@@ -1,12 +1,14 @@
 #pragma once
 
 #include <vector>
+#include "libs/glm/glm.hpp"
+#include "libs/glm/gtc/matrix_transform.hpp"
+#include "libs/glm/gtc/type_ptr.hpp"
+
 
 using namespace std;
 
-float colred = 1.0f;
-
-void Gen_Triangle(vector<float>& vert, float ax, float ay, float bx, float by, float cx, float cy) {
+inline void Gen_Triangle(vector<float>& vert, float ax, float ay, float bx, float by, float cx, float cy) {
 	vert.push_back(ax);
 	vert.push_back(ay);
 	vert.push_back(0.0f);
@@ -32,12 +34,12 @@ void Gen_Triangle(vector<float>& vert, float ax, float ay, float bx, float by, f
 	vert.push_back(0.0f);
 }
 
-void Gen_Quad(vector<float>& vert, float posx, float posy, float width, float height) {
+inline void Gen_Quad(vector<float>& vert, float posx, float posy, float width, float height) {
 	Gen_Triangle(vert, posx, posy, posx + width, posy, posx + width, posy + height);
 	Gen_Triangle(vert, posx, posy, posx, posy + height, posx + width, posy + height);
 }
 
-void Gen_3dtriangle(vector <float>& vert,
+inline void Gen_3dtriangle(vector <float>& vert,
 	float ax, float ay, float az,
 	float bx, float by, float bz,
 	float cx, float cy, float cz) {
@@ -67,7 +69,7 @@ void Gen_3dtriangle(vector <float>& vert,
 	vert.push_back(1.0f);
 }
 // a = top left, b = top right, c = bottom left, d = bottom right
-void Gen_3dquad(vector <float>& vert,
+inline void Gen_3dquad(vector <float>& vert,
 	float ax, float ay, float az,
 	float bx, float by, float bz,
 	float cx, float cy, float cz,
@@ -78,7 +80,7 @@ void Gen_3dquad(vector <float>& vert,
 }
 
 //circles
-vector<float> Ngonxz(float cx, float cy, float cz, float spx, float spy, float spz, float deg, int itr) {
+inline vector<float> Ngonxz(float cx, float cy, float cz, float spx, float spy, float spz, float deg, int itr) {
 	vector<float> vect;
 	vect.push_back(((spx - cx) * cos(glm::radians(deg * itr)) - sin(glm::radians(deg * itr)) * (spz - cz)) + cx);
 	vect.push_back(cy);
@@ -86,7 +88,7 @@ vector<float> Ngonxz(float cx, float cy, float cz, float spx, float spy, float s
 	return vect;
 }
 
-vector<float> Ngonyz(float cx, float cy, float cz, float spx, float spy, float spz, float deg, int itr) {
+inline vector<float> Ngonyz(float cx, float cy, float cz, float spx, float spy, float spz, float deg, int itr) {
 	vector<float> vect;
 	vect.push_back(cx);
 	vect.push_back(((spy - cy) * cos(glm::radians(deg * itr)) - sin(glm::radians(deg * itr)) * (spz - cz)) + cy);
@@ -94,7 +96,7 @@ vector<float> Ngonyz(float cx, float cy, float cz, float spx, float spy, float s
 	return vect;
 }
 
-vector<float> Ngonxy(float cx, float cy, float cz, float spx, float spy, float spz, float deg, int itr) {
+inline vector<float> Ngonxy(float cx, float cy, float cz, float spx, float spy, float spz, float deg, int itr) {
 	vector<float> vect;
 	vect.push_back(((spx - cx) * cos(glm::radians(deg * itr)) - sin(glm::radians(deg * itr)) * (spy - cy)) + cx);
 	vect.push_back(((spy - cy) * cos(glm::radians(deg * itr)) + sin(glm::radians(deg * itr)) * (spx - cx)) + cy);
@@ -103,7 +105,7 @@ vector<float> Ngonxy(float cx, float cy, float cz, float spx, float spy, float s
 }
 
 //ovals 
-vector<float> Ngonxy(float cx, float cy, float cz, float spxa, float spya, float spza, float spxb, float spyb, float spzb, float deg, int itr) {
+inline vector<float> Ngonxy(float cx, float cy, float cz, float spxa, float spya, float spza, float spxb, float spyb, float spzb, float deg, int itr) {
 	vector<float> vect;
 	vect.push_back(((spxa - cx) * cos(glm::radians(deg * itr)) - sin(glm::radians(deg * itr)) * (spya - cy)) + cx);
 	vect.push_back(((spyb - cy) * cos(glm::radians(deg * itr)) + sin(glm::radians(deg * itr)) * (spxb - cx)) + cy);
@@ -111,7 +113,7 @@ vector<float> Ngonxy(float cx, float cy, float cz, float spxa, float spya, float
 	return vect;
 }
 
-vector<float> Ngonxz(float cx, float cy, float cz, float spxa, float spya, float spza, float spxb, float spyb, float spzb, float deg, int itr) {
+inline vector<float> Ngonxz(float cx, float cy, float cz, float spxa, float spya, float spza, float spxb, float spyb, float spzb, float deg, int itr) {
 	vector<float> vect;
 	vect.push_back(((spxa - cx) * cos(glm::radians(deg * itr)) - sin(glm::radians(deg * itr)) * (spza - cz)) + cx);
 	vect.push_back(cy);
@@ -119,7 +121,7 @@ vector<float> Ngonxz(float cx, float cy, float cz, float spxa, float spya, float
 	return vect;
 }
 
-vector<float> Ngonyz(float cx, float cy, float cz, float spxa, float spya, float spza, float spxb, float spyb, float spzb, float deg, int itr) {
+inline vector<float> Ngonyz(float cx, float cy, float cz, float spxa, float spya, float spza, float spxb, float spyb, float spzb, float deg, int itr) {
 	vector<float> vect;
 	vect.push_back(cx);
 	vect.push_back(((spya - cy) * cos(glm::radians(deg * itr)) - sin(glm::radians(deg * itr)) * (spza - cz)) + cy);

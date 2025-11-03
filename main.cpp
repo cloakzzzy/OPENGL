@@ -18,12 +18,16 @@
 #include "Shader.hpp"
 #include "Camera.hpp"
 #include "Torus.hpp"
+#include <chrono>
 
 #include <cstdarg>
 #include <iostream>
 #include <vector>
 #include <thread>
 #include <cstring>
+#include <iomanip>
+
+#include "Engine.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -74,9 +78,11 @@ int solveQuartic(float a, float b, float c, float d, float e, glm::vec4& roots) 
     return n;
 }
 
+using Engine::Entity::Primitive;
+
 int main()
 {
-
+    
     glfwSetVersion(3, 3);
     win.Create(SCR_WIDTH, SCR_HEIGHT, "hello");
 
@@ -86,333 +92,85 @@ int main()
     glfwSetMouseButtonCallback(win.Object, mouse_button_callback);
     glfwSetInputMode(win.Object, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-
+    
+    
     glewInit();
     glEnable(GL_DEPTH_TEST);
+    
 
+    Engine::Engine::Initialize();
+    auto torus1 = Primitive::CreateTorus(12.0f, 17.0f, 3.0f, 28.0f, 5.0f, 11.0f, 7.0f,
+        8.0f, 9.0f, 10.0f, 11.0f);
+    auto torus2 = Primitive::CreateTorus(13.0f, 10.0f, 4.0f, 5.0f, 10.0f, 6.0f, 9.0f,
+        8.0f, 9.0f, 10.0f, 11.0f);
+    auto torus3 = Primitive::CreateTorus(1.0f, 4.0f, 3.0f, 4.0f, 10.0f, 6.0f, 200.0f,
+        8.0f, 111.0f, 24.0f, 11.0f);
+    auto torus4 = Primitive::CreateTorus(256.f, 2.0f, 30.f, 4.0f, 50.f, 60.f, 7.0f,
+        12.0f, 9.0f, 92.0f, 11.0f);
+    auto torus5 = Primitive::CreateTorus(4.0f, 15.30f, 28.f, 32.0f, 10.f, 60.f, 12.3430f,
+        32.242340f, 9.0f, 2800.0f, 11.0f);
 
-    vector <float> vertices;
-    vector<float> crosshair;
+    // 1,2,3,4,5
+    
+    //torus5.rot_x += 240.f;
 
-    Crosshair(crosshair);
+    //torus3.Delete();
+   // torus4.Delete();
 
-
-    Gen_UVsphere(vertices, 50, 0.0f, 0.f, 0.f, 1.0f);
-
-    VAO VAO1;
-
-    VAO1.Bind();
-
-    Shader sphere_shader;
-    sphere_shader.SetFiles("sphere.vert", "sphere.frag");
-    sphere_shader.Use();
-
-    VBO sphere_vbo;
-    sphere_vbo.Create(vertices);
-
-    VAO1.LinkVBO(sphere_vbo, 6, 0, 3, 0);
-
-
-    unsigned int sphere_instanceVBO;
-
-    glGenBuffers(1, &sphere_instanceVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, sphere_instanceVBO);
-    glBufferData(GL_ARRAY_BUFFER, 7 * 20 * sizeof(float), __nullptr, GL_DYNAMIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, sphere_instanceVBO);
-
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
-    glVertexAttribDivisor(1, 1);
-
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
-    glVertexAttribDivisor(2, 1);
-
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(4 * sizeof(float)));
-    glVertexAttribDivisor(3, 1);
-
-
-
-
-
-
-    VAO1.Unbind();
-
-    vector<float> spheres(7 * 18);
-
-    TorusBuffer tb;
-    float* torus_buffer = tb.Create(10 * 11, 70);
+    float x = 2.0f;
+    float y = 3.0f;
 
     /*
-    torus_buffer[0] = 0.f;
-    torus_buffer[1] = 0.f;
-    torus_buffer[2] = 0.f;
+    auto start = std::chrono::high_resolution_clock::now();
+    
+    for (long long i = 0; i < 1000000; i++) {
+        torus5.rot_x += torus2.pos_z * 3.0f;
+       // x += y * 3.0f;
+        
+    }
+    
 
-    torus_buffer[3] = 2.5f;
-    torus_buffer[4] = 1.3f;
+    auto end = std::chrono::high_resolution_clock::now();
 
-    torus_buffer[5] = 0.f;
-    torus_buffer[6] = 0.5f;
-    torus_buffer[7] = 0.0f;
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "Time taken: " << duration << " ms\n";
 
-    torus_buffer[8] = 0.0f;
-    torus_buffer[9] = 0.0f;
-    torus_buffer[10] = 0.f;
+    std::cout << x << '\n';
     */
+    
+    std::cout << "Array:\n\n";
 
-    torus_buffer[11] = 0.f;
-    torus_buffer[12] = 0.f;
-    torus_buffer[13] = 0.f;
+   
 
-    torus_buffer[14] = 1.4f;
-    torus_buffer[15] = 0.5f;
-
-    torus_buffer[16] = 1.f;
-    torus_buffer[17] = 0.f;
-    torus_buffer[18] = 0.0f;
-
-    torus_buffer[19] = 0.0f;
-    torus_buffer[20] = 75.f;
-    torus_buffer[21] = 34.f;
+    for (int i = 0; i < Torus::InstanceBuffer.size(); i++) {
+        if (i % 11 == 0) {
+            std::cout << "==================\n";
+        }
+        std::cout << std::setprecision(10)<< Torus::InstanceBuffer[i] << '\n';
+    }
+    
 
 
-
-    tb.SendToGPU(0, 11);
-
-    float R = torus_buffer[14];
-    float T = torus_buffer[15];
-
-
-
-    processInput(win.Object);
-
-    VAO1.Bind();
-
-
+    
+    
     float ang = 0.f;
     const unsigned int h = 50;
 
 
-
+    
     win.MainLoop([&] {
 
         processInput(win.Object);
 
 
-        tb.SendToGPU(0, 22);
 
-        glm::vec4 roots;
-
-        std::fill(spheres.begin(), spheres.end(), 0.0f);
-
-        //cam.position.z = 0.f;
-
-        glm::vec3 r = glm::normalize(glm::vec3(cam.direction.x, cam.direction.y, cam.direction.z));
-        //glm::vec3 r = glm::vec3(0.f, 0.f, -1.0f);
-
-        glm::vec3 p = cam.position - glm::vec3(torus_buffer[11], torus_buffer[12], torus_buffer[13]);
-
-
-
-        glm::vec3 p2 = p;
-        p.x = p2.x * cos(-torus_buffer[20] * RAD) - p2.z * sin(-torus_buffer[20] * RAD);
-        p.z = p2.x * sin(-torus_buffer[20] * RAD) + p2.z * cos(-torus_buffer[20] * RAD);
-        glm::vec3 p1 = p;
-        p.x = p1.x * cos(-torus_buffer[21] * RAD) - p1.y * sin(-torus_buffer[21] * RAD);
-        p.y = p1.x * sin(-torus_buffer[21] * RAD) + p1.y * cos(-torus_buffer[21] * RAD);
-
-        glm::vec3 r2 = r;
-        r.x = r2.x * cos(-torus_buffer[20] * RAD) - r2.z * sin(-torus_buffer[20] * RAD);
-        r.z = r2.x * sin(-torus_buffer[20] * RAD) + r2.z * cos(-torus_buffer[20] * RAD);
-
-        glm::vec3 r1 = r;
-        r.x = r1.x * cos(-torus_buffer[21] * RAD) - r1.y * sin(-torus_buffer[21] * RAD);
-        r.y = r1.x * sin(-torus_buffer[21] * RAD) + r1.y * cos(-torus_buffer[21] * RAD);
-
-        //shows ghost ray, with spheres
-
-        float t = 4.f;
-        for (int i = 0; i < 91; i += 7) {
-            spheres[i] = p.x + r.x * t;
-            spheres[i + 1] = p.y + r.y * t;
-            spheres[i + 2] = p.z + r.z * t;
-            spheres[i + 3] = 0.1f;
-            spheres[i + 4] = 1.f;
-            spheres[i + 5] = 1.f;
-            spheres[i + 6] = 0.f;
-            t += 3.f;
-        }
-
-
-        //green,cyan, blue
-        //cyan, green ,blue
-
-       // std::cout << r.x << " " << r.y << " " << r.z << '\n';
-
-
-        /*
-        spheres[7] = r.x;
-        spheres[8] = r.y;
-        spheres[9] = r.z;
-        spheres[10] = 0.1f;
-        spheres[11] = 0.0f;
-        spheres[12] = 0.f;
-        spheres[13] = 1.f;
-
-
-
-        spheres[0] = r2.x;
-        spheres[1] = r2.y;
-        spheres[2] = r2.z;
-        spheres[3] = 0.1f;
-        spheres[4] = 0.0f;
-        spheres[5] = 1.f;
-        spheres[6] = 0.f;
-        */
-        // torus_buffer[20] += 0.5f;
-         //torus_buffer[21] += 0.5f;
-
-
-
-        float e = 2.0f * p.x * r.x + 2.0f * p.z * r.z;
-        float f = p.x * p.x + p.z * p.z;
-        float d = r.x * r.x + r.z * r.z;
-        float c = -(p.x * p.x + p.y * p.y + p.z * p.z) + (T * T - R * R);
-        float b = -(2.0f * p.x * r.x + 2.0f * p.y * r.y + 2.0f * p.z * r.z);
-        float a = -(r.x * r.x + r.y * r.y + r.z * r.z);
-        float A = a * a;
-        float B = 2.0f * a * b;
-        float C = 2.0f * a * c + b * b - 4.0f * R * R * d;
-        float D = 2.0f * b * c - 4.0f * R * R * e;
-        float E = c * c - 4.0f * R * R * f;
-
-        int nroots = solveQuartic(A, B, C, D, E, roots);
-
-        /*
-        std::cout << roots.x << '\n';
-        std::cout << roots.y << '\n';
-        std::cout << roots.z << '\n';
-        std::cout << roots.w << '\n';
-
-        std::cout << "=========================\n";
-        */
-        /*
-        std::cout << nroots << '\n';
-        std::cout << A << '\n';
-        std::cout << B << '\n';
-        std::cout << C << '\n';
-        std::cout << D << '\n';
-        std::cout << E << '\n';
-
-        std::cout << cam.position.x << " " << cam.position.y << " " << cam.position.z << '\n';
-
-        std::cout << "=========================\n";
-
-        */
-        if (nroots > 0) {
-            glm::vec3 h = p + r * roots[0];
-
-
-            glm::vec3 h1 = h;
-            h.x = h1.x * cos(torus_buffer[21] * RAD) - h1.y * sin(torus_buffer[21] * RAD);
-            h.y = h1.x * sin(torus_buffer[21] * RAD) + h1.y * cos(torus_buffer[21] * RAD);
-            glm::vec3 h2 = h;
-            h.x = h2.x * cos(torus_buffer[20] * RAD) - h2.z * sin(torus_buffer[20] * RAD);
-            h.z = h2.x * sin(torus_buffer[20] * RAD) + h2.z * cos(torus_buffer[20] * RAD);
-
-            h += glm::vec3(torus_buffer[11], torus_buffer[12], torus_buffer[13]);
-
-
-            spheres[98] = h.x;
-            spheres[99] = h.y;
-            spheres[100] = h.z;
-            spheres[101] = 0.15f;
-        }
-
-        if (nroots > 1) {
-            glm::vec3 h = p + r * roots[1];
-
-
-            glm::vec3 h1 = h;
-            h.x = h1.x * cos(torus_buffer[21] * RAD) - h1.y * sin(torus_buffer[21] * RAD);
-            h.y = h1.x * sin(torus_buffer[21] * RAD) + h1.y * cos(torus_buffer[21] * RAD);
-            glm::vec3 h2 = h;
-            h.x = h2.x * cos(torus_buffer[20] * RAD) - h2.z * sin(torus_buffer[20] * RAD);
-            h.z = h2.x * sin(torus_buffer[20] * RAD) + h2.z * cos(torus_buffer[20] * RAD);
-
-            h += glm::vec3(torus_buffer[11], torus_buffer[12], torus_buffer[13]);
-
-
-            spheres[105] = h.x;
-            spheres[106] = h.y;
-            spheres[107] = h.z;
-            spheres[108] = 0.15f;
-        }
-        if (nroots > 2) {
-            glm::vec3 h = p + r * roots[2];
-
-
-            glm::vec3 h1 = h;
-            h.x = h1.x * cos(torus_buffer[21] * RAD) - h1.y * sin(torus_buffer[21] * RAD);
-            h.y = h1.x * sin(torus_buffer[21] * RAD) + h1.y * cos(torus_buffer[21] * RAD);
-            glm::vec3 h2 = h;
-            h.x = h2.x * cos(torus_buffer[20] * RAD) - h2.z * sin(torus_buffer[20] * RAD);
-            h.z = h2.x * sin(torus_buffer[20] * RAD) + h2.z * cos(torus_buffer[20] * RAD);
-
-            h += glm::vec3(torus_buffer[11], torus_buffer[12], torus_buffer[13]);
-
-
-            spheres[112] = h.x;
-            spheres[113] = h.y;
-            spheres[114] = h.z;
-            spheres[115] = 0.15f;
-        }
-
-        if (nroots > 3) {
-            glm::vec3 h = p + r * roots[3];
-
-
-            glm::vec3 h1 = h;
-            h.x = h1.x * cos(torus_buffer[21] * RAD) - h1.y * sin(torus_buffer[21] * RAD);
-            h.y = h1.x * sin(torus_buffer[21] * RAD) + h1.y * cos(torus_buffer[21] * RAD);
-            glm::vec3 h2 = h;
-            h.x = h2.x * cos(torus_buffer[20] * RAD) - h2.z * sin(torus_buffer[20] * RAD);
-            h.z = h2.x * sin(torus_buffer[20] * RAD) + h2.z * cos(torus_buffer[20] * RAD);
-
-            h += glm::vec3(torus_buffer[11], torus_buffer[12], torus_buffer[13]);
-
-
-            spheres[119] = h.x;
-            spheres[120] = h.y;
-            spheres[121] = h.z;
-            spheres[122] = 0.15f;
-        }
-
-
-        VAO1.Bind();
-
-        glBindBuffer(GL_ARRAY_BUFFER, sphere_instanceVBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0.f, spheres.size() * sizeof(float), &spheres.front());
-
-        sphere_vbo.Bind();
-        sphere_shader.Use();
-        sphere_shader.SetMat4("projection", glm::value_ptr(cam.GetProjection()));
-        sphere_shader.SetMat4("view", glm::value_ptr(cam.GetView()));
-
-
-        glDrawArraysInstanced(GL_TRIANGLES, 0, vertices.size() / 3.0f, 18);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        VAO1.Unbind();
-        tb.Render(cam, 2);
+        
 
 
 
 
         }, 0.53, 0.81, 0.92);
-
+    
 
     glfwTerminate();
     return 0;

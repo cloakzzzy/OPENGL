@@ -12,7 +12,7 @@
 class Shader
 {
 private:
-    void CheckCompileErrors(unsigned int shader, std::string type)
+    inline void CheckCompileErrors(unsigned int shader, std::string type)
     {
         int success;
         char infoLog[1024];
@@ -37,7 +37,7 @@ private:
     }
 public:
     unsigned int ID;
-    void SetFiles(const char* vertexPath, const char* fragmentPath)
+    inline void SetFiles(const char* vertexPath, const char* fragmentPath)
     {
         std::string vertexCode;
         std::string fragmentCode;
@@ -80,39 +80,37 @@ public:
         glDeleteShader(vertex);
         glDeleteShader(fragment);
     }
-    void Use()
+    inline void Use()
     {
         glUseProgram(ID);
     }
 
-    void SetBool(const std::string& name, bool value) const
+    inline void SetBool(const std::string& name, bool value) const
     {
         glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
     }
 
-    void SetInt(const std::string& name, int value) const
+    inline void SetInt(const std::string& name, int value) const
     {
         glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
     }
 
-    void SetFloat(const std::string& name, float value) const
+    inline void SetFloat(const std::string& name, float value) const
     {
         glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
     }
 
-    void SetVec3(const string& name, float one, float two, float three) {
+    inline void SetVec3(const string& name, float one, float two, float three) {
         glUniform3f(glGetUniformLocation(ID, name.c_str()), one, two, three);
     }
-    void SetVec2(const string& name, float one, float two) {
+
+    inline void SetVec2(const string& name, float one, float two) {
         glUniform2f(glGetUniformLocation(ID, name.c_str()), one, two);
     }
 
-    void SetMat4(const std::string& name, const float* value) {
+    inline void SetMat4(const std::string& name, const float* value) {
         glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value);
     }
 
-private:
-    // utility function for checking shader compilation/linking errors.
-    // ------------------------------------------------------------------------
 
 };
