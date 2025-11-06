@@ -5,7 +5,7 @@
 #include "EngineClass.hpp"
 #include "Camera.hpp"
 
-void Torus::GenerateModel(int acc) {
+void Engine::Entity::Torus::GenerateModel(int acc) {
 		std::vector<float> verta;
 		float th = 360.0f / float(acc);
 		theta = th;
@@ -115,9 +115,9 @@ void Torus::GenerateModel(int acc) {
 			}
 		}
 	}
-void Torus::CreateBuffers(){
-		glGenVertexArrays(1, &Engine::Engine::u_VAO);
-		glBindVertexArray(Engine::Engine::u_VAO);
+void Engine::Entity::Torus::CreateBuffers(){
+		glGenVertexArrays(1, &Engine::u_VAO);
+		glBindVertexArray(Engine::u_VAO);
 
 		glGenBuffers(1, &VBO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -167,15 +167,15 @@ void Torus::CreateBuffers(){
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-void Torus::Initialize() {
-	GenerateModel(70);
+void Engine::Entity::Torus::Initialize() {
+	GenerateModel(150);
 	CreateBuffers();
 	TorusShader.SetFiles("torus.vert", "default.frag");
 	TorusShader.Use();
 	TorusShader.SetFloat("theta", theta);
 }
 
-Torus::Torus(float pos_x, float pos_y, float pos_z,
+Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,
 	float radius, float thickness,
 	float red, float green, float blue,
 	float rotx, float roty, float rotz) {
@@ -218,23 +218,27 @@ Torus::Torus(float pos_x, float pos_y, float pos_z,
 
 }
 
-void Torus::Delete() {
-	// Required in case of any, instance buffer deletions
-	if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
-		Index = TorusBinarySearch(ObjectIDs, ID);
+void Engine::Entity::Torus::Delete() {
+	a++;
+	if (a == 1) {
+		// Required in case of any, instance buffer deletions
+		if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+			Index = TorusBinarySearch(ObjectIDs, ID);
+
+		}
+
+		//Removes object id from Objectid array;
+		ObjectIDs.erase(ObjectIDs.begin() + Index);
+		std::cout << "Delete" << '\n';
+
+		//removes info from instance buffer, stop rendering the torus.
+		InstanceBuffer.erase(InstanceBuffer.begin() + Index * 11, InstanceBuffer.begin() + Index * 11 + 11);
+
 	}
-
-	//Removes object id from Objectid array;
-	ObjectIDs.erase(ObjectIDs.begin() + Index);
-
-	//removes info from instance buffer, stop rendering the torus.
-	InstanceBuffer.erase(InstanceBuffer.begin() + Index * 11, InstanceBuffer.begin() + Index * 11 + 11);
 }
 
-void Torus::Render(Camera& cam) {
+void Engine::Entity::Torus::Render(Camera& cam) {
 	unsigned int NumInstances = ObjectIDs.size();
-
-	glBindVertexArray(Engine::Engine::u_VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);

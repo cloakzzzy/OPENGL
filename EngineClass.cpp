@@ -3,9 +3,10 @@
 #include "Camera.hpp"
 
 void Engine::Engine::Initialize() {
-	Torus::Initialize();
+	Entity::Torus::Initialize();
 }
 
 void Engine::Engine::Render(Camera& cam) {
-	Torus::Render(cam);
+	glBindVertexArray(u_VAO);
+	Entity::Torus::Render(cam);
 }
