@@ -116,9 +116,6 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
 		}
 	}
 void Engine::Entity::Torus::CreateBuffers(){
-	std::cout << Engine::test << '\n';
-	glGenVertexArrays(1, &Engine::u_VAO);
-	glBindVertexArray(Engine::u_VAO);
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -131,11 +128,11 @@ void Engine::Entity::Torus::CreateBuffers(){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(0 * sizeof(float)));
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(0 * sizeof(float)));
 	glEnableVertexAttribArray(5);
+
+	glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(6);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -145,23 +142,23 @@ void Engine::Entity::Torus::CreateBuffers(){
 
 	glBindBuffer(GL_ARRAY_BUFFER, IBO);
 
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
-	glVertexAttribDivisor(1, 1);
+	glEnableVertexAttribArray(7);
+	glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
+	glVertexAttribDivisor(7, 1);
 
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
-	glVertexAttribDivisor(2, 1);
-
-
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(5 * sizeof(float)));
-	glVertexAttribDivisor(3, 1);
+	glEnableVertexAttribArray(8);
+	glVertexAttribPointer(8, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribDivisor(8, 1);
 
 
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
-	glVertexAttribDivisor(4, 1);
+	glEnableVertexAttribArray(9);
+	glVertexAttribPointer(9, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(5 * sizeof(float)));
+	glVertexAttribDivisor(9, 1);
+
+
+	glEnableVertexAttribArray(10);
+	glVertexAttribPointer(10, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
+	glVertexAttribDivisor(10, 1);
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -219,7 +216,7 @@ Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,
 }
 
 void Engine::Entity::Torus::Delete() {
-	// Required in case of any, instance buffer deletions
+	// Required in case of any instance buffer deletions
 	if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {Index = TorusBinarySearch(ObjectIDs, ID);}
 
 	//Required if called on deleted Object
@@ -248,8 +245,12 @@ void Engine::Entity::Torus::Render(Camera& cam) {
 	TorusShader.SetMat4("projection", glm::value_ptr(cam.GetProjection()));
 
 	glDrawElementsInstanced(GL_TRIANGLES, ind.size(), GL_UNSIGNED_INT, 0, NumInstances);
-
-	//std::cout << ind.size << " " << NumInstances << '\n';
+/*
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glUseProgram(0);
+	*/
 }
 
 

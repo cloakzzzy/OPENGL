@@ -1,6 +1,7 @@
 #include "Window.hpp"
 #include <iostream>
 #include "Torus.hpp"
+#include "Sphere.hpp"
 
 void Engine::Window::Initialize() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -49,9 +50,11 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
 
     SDL_GL_SetSwapInterval(1);
 
-    Engine:Entity::Torus::Initialize();
+    glGenVertexArrays(1, &Engine::u_VAO);
+    glBindVertexArray(Engine::u_VAO);
 
-
+    Entity::Torus::Initialize();
+    Entity::Sphere::Initialize();
 
 }
 
@@ -60,9 +63,6 @@ void Engine::Window::MainLoop(function<void()> Content, Camera& cam) {
         last = now;
         now = SDL_GetPerformanceCounter();
         DeltaTime = (double)(now - last) / freq;
-
-        // Wait for an event *or* for timeout (so we also animate/render)
-        // Camera Changing
 
         {
             if (SDL_WaitEventTimeout(&WindowEvents, 10)) {

@@ -18,9 +18,10 @@ int main() {
 
 
     Engine::Engine::Initialize();
-
+    
     Engine::Window window = Engine::Engine::CreateWindow("Engine Window", 800, 600, 0.53, 0.81, 0.92);
-
+    
+    
     auto torus1 = Primitives::CreateTorus(0.0f, 0.0f, 0.0f,
         1.f, 1.f,
         1.0f, 0.0f, 0.0f,
@@ -31,40 +32,51 @@ int main() {
         0.0f, 0.0f, 1.f,
         0.0f, 0.0f, 0.0f);
 
+    
     auto torus3 = Primitives::CreateTorus(
         0.0f, 7.0f, 5.0f,
         2.f, 1.f,
-        0.0f, 1.0f, 1.f,
+        0.0f, 0.0f, 0.f,
         0.0f, 40.0f, 40.0f);
+    
+    auto sphere1 = Primitives::CreateSphere(
+        3.0f, 7.0f, 5.0f,
+        2.f,
+        0.5f, 1.0f, 0.f);
+        
+    cam.position = glm::vec3(0.f, 0.f, 0.f);
 
+    long long nums;
 
-    cam.position = glm::vec3(0.f, 2.f, 0.f);
+    
+    auto start = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    
 
     float time = 0.0;
-
+    
     window.MainLoop([&]() {
+        
+        
+        torus1.rot_z += 0.525;
+        torus1.rot_y += 0.55;
 
-       
-        torus1.rot_z += 0.125;
-        torus1.rot_y += 0.15;
+        torus2.rot_z += 0.525;
+        torus2.rot_y += 0.15;
 
-        torus3.pos_x += 0.03f;
+        torus3.red = sin(time/10);
+        torus3.green = sin(time / 10) * 0.1;
+        torus3.blue = sin(time / 10) * 0.3;
 
-        if (time >= 240.0f) {
-            torus2.Delete();
-            
-        }
-        else {
-            torus2.rot_z += 0.175;
-            torus2.rot_y += 0.12;
-        }
+        sphere1.pos_x += 0.025f;
+        
         time++;
-       
+        
 
         Engine::Engine::Render(cam);
         
     }, cam);
-
-
+    
     return 0;
 }

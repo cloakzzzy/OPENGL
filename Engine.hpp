@@ -3,3 +3,4 @@
 #include "Primitives.hpp"
 #include "EngineClass.hpp"
 #include "Window.hpp"
+#include "Sphere.hpp"

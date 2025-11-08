@@ -7,7 +7,7 @@
 
 namespace Engine {
 	class Engine;
-	namespace Entity { class Torus; }
+	namespace Entity { class Torus; class Sphere; }
 	class Window {
 		friend class Engine;
 	private:

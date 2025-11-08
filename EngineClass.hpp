@@ -5,10 +5,11 @@
 
 namespace Engine {
 	class Window;
-	namespace Entity { class Torus; }
+	namespace Entity { class Torus;}
 
 	class Engine {
 		friend class Entity::Torus;
+		friend class Window;
 		inline static unsigned int u_VAO = 20;
 		inline static int test = 2003432;
 	public:

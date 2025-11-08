@@ -12,6 +12,7 @@ Engine::Entity::Torus::TorusAttribute& Engine::Entity::Torus::TorusAttribute::op
 	if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
 	//if these operators are acted upon an object that doesn't exist, then return is -1, which is maxintval because unsigned.
 		Index = TorusBinarySearch(ObjectIDs, ID);
+		if (Index == 4294967295) return *this;
 	}
 	InstanceBuffer[Index * 11 + Offset] = NewValue;
 	Value = NewValue;
@@ -24,6 +25,7 @@ Engine::Entity::Torus::TorusAttribute& Engine::Entity::Torus::TorusAttribute::op
 	float NewValue = OtherObj.Value;
 	if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
 		Index = TorusBinarySearch(ObjectIDs, ID);
+		if (Index == 4294967295) return *this;
 	}
 	InstanceBuffer[Index * 11 + Offset] = NewValue;
 	Value = NewValue;
@@ -34,7 +36,7 @@ Engine::Entity::Torus::TorusAttribute& Engine::Entity::Torus::TorusAttribute::op
 	unsigned int &Index = p_TorusObject->Index;
 	unsigned int &ID = p_TorusObject->ID;
 	if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
-		std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
+		//std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
 		Index = TorusBinarySearch(ObjectIDs, ID);
 		if (Index == 4294967295) return *this;
 	}
@@ -43,6 +45,50 @@ Engine::Entity::Torus::TorusAttribute& Engine::Entity::Torus::TorusAttribute::op
 	
 	return *this;
 }
+
+
+Engine::Entity::Torus::TorusAttribute& Engine::Entity::Torus::TorusAttribute::operator-=(const float OtherValue) {
+	unsigned int& Index = p_TorusObject->Index;
+	unsigned int& ID = p_TorusObject->ID;
+	if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+		//std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
+		Index = TorusBinarySearch(ObjectIDs, ID);
+		if (Index == 4294967295) return *this;
+	}
+	Value -= OtherValue;
+	InstanceBuffer[Index * 11 + Offset] = Value;
+
+	return *this;
+}
+
+Engine::Entity::Torus::TorusAttribute& Engine::Entity::Torus::TorusAttribute::operator*=(const float OtherValue) {
+	unsigned int& Index = p_TorusObject->Index;
+	unsigned int& ID = p_TorusObject->ID;
+	if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+		//std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
+		Index = TorusBinarySearch(ObjectIDs, ID);
+		if (Index == 4294967295) return *this;
+	}
+	Value *= OtherValue;
+	InstanceBuffer[Index * 11 + Offset] = Value;
+
+	return *this;
+}
+
+Engine::Entity::Torus::TorusAttribute& Engine::Entity::Torus::TorusAttribute::operator/=(const float OtherValue) {
+	unsigned int& Index = p_TorusObject->Index;
+	unsigned int& ID = p_TorusObject->ID;
+	if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+		//std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
+		Index = TorusBinarySearch(ObjectIDs, ID);
+		if (Index == 4294967295) return *this;
+	}
+	Value /= OtherValue;
+	InstanceBuffer[Index * 11 + Offset] = Value;
+
+	return *this;
+}
+
 
 
 

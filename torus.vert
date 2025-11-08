@@ -1,11 +1,11 @@
 #version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 5) in vec3 lc;
+layout (location = 5) in vec3 aPos;
+layout (location = 6) in vec3 lc;
  
-layout (location = 1) in vec3 position;
-layout (location = 2) in vec2 rt;
-layout (location = 3) in vec3 Colour;
-layout (location = 4) in vec3 rot;
+layout (location = 7) in vec3 position;
+layout (location = 8) in vec2 rt;
+layout (location = 9) in vec3 Colour;
+layout (location = 10) in vec3 rot;
 
 uniform mat4 view;
 uniform mat4 projection;
