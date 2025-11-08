@@ -34,6 +34,7 @@ Engine::Entity::Torus::TorusAttribute& Engine::Entity::Torus::TorusAttribute::op
 	unsigned int &Index = p_TorusObject->Index;
 	unsigned int &ID = p_TorusObject->ID;
 	if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+		std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
 		Index = TorusBinarySearch(ObjectIDs, ID);
 		if (Index == 4294967295) return *this;
 	}

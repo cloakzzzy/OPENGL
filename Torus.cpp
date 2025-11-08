@@ -6,30 +6,30 @@
 #include "Camera.hpp"
 
 void Engine::Entity::Torus::GenerateModel(int acc) {
-		std::vector<float> verta;
-		float th = 360.0f / float(acc);
-		theta = th;
-		float cx = 0.f;
-		float cy = 0.f;
-		float cz = 0.f;
-		float r = 0.f;
-		float thick = 1.f;
+	std::vector<float> verta;
+	float th = 360.0f / float(acc);
+	theta = th;
+	float cx = 0.f;
+	float cy = 0.f;
+	float cz = 0.f;
+	float r = 0.f;
+	float thick = 1.f;
 
-		for (int i = 0; i < acc; i++) {
-			std::vector<float> cb = Ngonxz(
-				cx, cy, cz,
-				cx, cy, cz + r,
-				th, i);
+	for (int i = 0; i < acc; i++) {
+		std::vector<float> cb = Ngonxz(
+			cx, cy, cz,
+			cx, cy, cz + r,
+			th, i);
 
-			cs.push_back(cb[0]); cs.push_back(cb[1]); cs.push_back(cb[2]);
+		cs.push_back(cb[0]); cs.push_back(cb[1]); cs.push_back(cb[2]);
 
-			for (int j = 0; j < acc; j++) {
-				vector<float> a = Ngonyz(cb[0], cb[1], cb[2], cb[0], cb[1], cb[2] + thick, th, j);
-				//rotation
-				a = Ngonxz(cb[0], a[1], cb[2], a[0], a[1], a[2], th, i);
-				verta.push_back(a[0]); verta.push_back(a[1]); verta.push_back(a[2]);
-			}
+		for (int j = 0; j < acc; j++) {
+			vector<float> a = Ngonyz(cb[0], cb[1], cb[2], cb[0], cb[1], cb[2] + thick, th, j);
+			//rotation
+			a = Ngonxz(cb[0], a[1], cb[2], a[0], a[1], a[2], th, i);
+			verta.push_back(a[0]); verta.push_back(a[1]); verta.push_back(a[2]);
 		}
+	}
 
 
 		int layer;
@@ -116,56 +116,56 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
 		}
 	}
 void Engine::Entity::Torus::CreateBuffers(){
-		glGenVertexArrays(1, &Engine::u_VAO);
-		glBindVertexArray(Engine::u_VAO);
+	std::cout << Engine::test << '\n';
+	glGenVertexArrays(1, &Engine::u_VAO);
+	glBindVertexArray(Engine::u_VAO);
 
-		glGenBuffers(1, &VBO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, vert.size() * sizeof(float), &vert.front(), GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, vert.size() * sizeof(float), &vert.front(), GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		glGenBuffers(1, &EBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind.size() * sizeof(float), &ind.front(), GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind.size() * sizeof(float), &ind.front(), GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(0 * sizeof(float)));
-		glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(0 * sizeof(float)));
+	glEnableVertexAttribArray(0);
 
-		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-		glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(5);
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		////////////////////////// Instance Buffer
-		glGenBuffers(1, &IBO);
-		glBindBuffer(GL_ARRAY_BUFFER, IBO);
-		glBufferData(GL_ARRAY_BUFFER, 300 * 11 * sizeof(float), __nullptr, GL_STATIC_DRAW);
+	glGenBuffers(1, &IBO);
+	glBindBuffer(GL_ARRAY_BUFFER, IBO);
+	glBufferData(GL_ARRAY_BUFFER, 300 * 11 * sizeof(float), __nullptr, GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ARRAY_BUFFER, IBO);
+	glBindBuffer(GL_ARRAY_BUFFER, IBO);
 
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
-		glVertexAttribDivisor(1, 1);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
+	glVertexAttribDivisor(1, 1);
 
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
-		glVertexAttribDivisor(2, 1);
-
-
-		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(5 * sizeof(float)));
-		glVertexAttribDivisor(3, 1);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribDivisor(2, 1);
 
 
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
-		glVertexAttribDivisor(4, 1);
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(5 * sizeof(float)));
+	glVertexAttribDivisor(3, 1);
 
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	}
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
+	glVertexAttribDivisor(4, 1);
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
 
 void Engine::Entity::Torus::Initialize() {
 	GenerateModel(150);
@@ -219,22 +219,18 @@ Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,
 }
 
 void Engine::Entity::Torus::Delete() {
-	a++;
-	if (a == 1) {
-		// Required in case of any, instance buffer deletions
-		if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
-			Index = TorusBinarySearch(ObjectIDs, ID);
+	// Required in case of any, instance buffer deletions
+	if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {Index = TorusBinarySearch(ObjectIDs, ID);}
 
-		}
+	//Required if called on deleted Object
+	if (Index == 4294967295) return;
 
-		//Removes object id from Objectid array;
-		ObjectIDs.erase(ObjectIDs.begin() + Index);
-		std::cout << "Delete" << '\n';
+	//Removes object id from Objectid array;
+	ObjectIDs.erase(ObjectIDs.begin() + Index);
+	
+	//removes info from instance buffer, stop rendering the torus.
+	InstanceBuffer.erase(InstanceBuffer.begin() + Index * 11, InstanceBuffer.begin() + Index * 11 + 11);
 
-		//removes info from instance buffer, stop rendering the torus.
-		InstanceBuffer.erase(InstanceBuffer.begin() + Index * 11, InstanceBuffer.begin() + Index * 11 + 11);
-
-	}
 }
 
 void Engine::Entity::Torus::Render(Camera& cam) {

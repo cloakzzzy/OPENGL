@@ -1,4 +1,5 @@
 #pragma once
 #include "Torus.hpp"
-#include "Primitive.hpp"
+#include "Primitives.hpp"
 #include "EngineClass.hpp"
+#include "Window.hpp"

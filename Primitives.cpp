@@ -1,4 +1,4 @@
-#include "Primitive.hpp"
+#include "Primitives.hpp"
 #include "Torus.hpp"
 
 

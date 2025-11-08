@@ -9,16 +9,14 @@
 #include "libs/glm/gtc/matrix_transform.hpp"
 #include "libs/glm/gtc/type_ptr.hpp"
 #include "EngineClass.hpp"
-#include "Engine.hpp"
-
 
 namespace Engine {
 	namespace Entity {
 		class Primitives;
-
 		class Torus {
 			friend class Entity::Primitives;
 			friend class Engine::Engine;
+			friend class Window;
 
 		public:
 			inline static std::vector<float> InstanceBuffer;
@@ -26,7 +24,6 @@ namespace Engine {
 			unsigned int ID;
 			unsigned int Index = 0;
 		private:
-
 			inline static std::vector<float> vert;
 			inline static vector<float> cs;
 			inline static unsigned int IBO;
@@ -38,7 +35,6 @@ namespace Engine {
 			inline static unsigned int EBO;
 			inline static std::vector<float> offs;
 			inline static float num;
-
 
 			class TorusAttribute {
 				friend class Torus;
@@ -55,7 +51,6 @@ namespace Engine {
 				TorusAttribute& operator=(const float NewValue);
 				TorusAttribute& operator=(const TorusAttribute& OtherObj);
 				TorusAttribute& operator+=(const float OtherValue);
-
 			};
 
 		public:
@@ -71,10 +66,7 @@ namespace Engine {
 			TorusAttribute rot_y;
 			TorusAttribute rot_z;
 
-			int a = 0;
-
 			void Delete();
-
 
 		private:
 			static void GenerateModel(int acc);
@@ -85,28 +77,21 @@ namespace Engine {
 				int right = vec.size() - 1;
 				while (left <= right) {
 					int mid = left + (right - left) * 0.5;
-					if (vec[mid] == target) //right == left
+					if (vec[mid] == target)
 						return mid;
-					if (vec[mid] < target) // ignore right
+					if (vec[mid] < target)
 						left = mid + 1;
-					else // ignore left
+					else
 						right = mid - 1;
 				}
 				return -1;
 			}
 
-			Torus(float pos_x, float pos_y, float pos_z,
-				float radius, float thickness,
-				float red, float green, float blue,
-				float rotx, float roty, float rotz);
+			Torus(float pos_x, float pos_y, float pos_z, float radius, float thickness, float red, float green, float blue, float rotx, float roty, float rotz);
 
 			static void Initialize();
-
 			static void Render(Camera& cam);
 		};
-
 	}
-
 }
-
 
