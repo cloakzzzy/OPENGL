@@ -43,36 +43,53 @@ int main() {
         3.0f, 7.0f, 5.0f,
         2.f,
         0.5f, 1.0f, 0.f);
+    auto sphere2 = Primitives::CreateSphere(
+        10.0f, 7.0f, 0.0f,
+        2.f,
+        0.5f, 1.0f, 0.f);
         
     cam.position = glm::vec3(0.f, 0.f, 0.f);
 
-    long long nums;
+    /*
+    float sum_duration = 0;
 
+    for(int j = 0; j < 10; j++){
+        long long nums;
+        cin >> nums;
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        for (long long i = 0; i < nums; i++) {
+            sphere1.pos_x += sphere2.pos_x;
+        }
+
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+        sum_duration+=duration;
+
+        std::cout << duration << " ms\n";
+    }
     
-    auto start = std::chrono::high_resolution_clock::now();
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    
+    std::cout << (float)sum_duration / 10.f << '\n';
+    */
 
     float time = 0.0;
     
     window.MainLoop([&]() {
         
-        
         torus1.rot_z += 0.525;
         torus1.rot_y += 0.55;
 
-        torus2.rot_z += 0.525;
-        torus2.rot_y += 0.15;
+        torus2.rot_z += 0.725;
+        torus2.rot_y += 0.5;
+
 
         torus3.red = sin(time/10);
         torus3.green = sin(time / 10) * 0.1;
         torus3.blue = sin(time / 10) * 0.3;
-
-        sphere1.pos_x += 0.025f;
         
         time++;
-        
 
         Engine::Engine::Render(cam);
         

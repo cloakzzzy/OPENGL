@@ -10,7 +10,9 @@
 #include "libs/glm/gtc/type_ptr.hpp"
 #include "EngineClass.hpp"
 
+
 namespace Engine {
+	class Window;
 	namespace Entity {
 		class Primitives;
 		class Torus {
@@ -43,19 +45,96 @@ namespace Engine {
 				float Value;
 				unsigned char Offset;
 
-				void Set(unsigned char Offset, Torus* p_TorusObject, float StartingVal);
+				__forceinline void Set(unsigned char Offset, Torus* p_TorusObject, float StartingVal) {
+					this->p_TorusObject = p_TorusObject;
+					this->Offset = Offset;
+					Value = StartingVal;
+				}
 
 			public:
-				inline operator float() const { return Value; }
+				__forceinline operator float() const { return Value; }
 
-				TorusAttribute& operator=(const float NewValue);
-				TorusAttribute& operator=(const TorusAttribute& OtherObj);
+				__forceinline TorusAttribute& operator=(const float NewValue) {
+					unsigned int& Index = p_TorusObject->Index;
+					unsigned int& ID = p_TorusObject->ID;
+					if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+						//if these operators are acted upon an object that doesn't exist, then return is -1, which is maxintval because unsigned.
+						Index = TorusBinarySearch(ObjectIDs, ID);
+						if (Index == 4294967295) return *this;
+					}
+					InstanceBuffer[Index * 11 + Offset] = NewValue;
+					Value = NewValue;
+					return *this;
+				}
 
-				TorusAttribute& operator+=(const float OtherValue);
-				TorusAttribute& operator-=(const float OtherValue);
-				TorusAttribute& operator*=(const float OtherValue);
-				TorusAttribute& operator/=(const float OtherValue);
-				
+				__forceinline TorusAttribute& operator=(const TorusAttribute& OtherObj) {
+					unsigned int& Index = p_TorusObject->Index;
+					unsigned int& ID = p_TorusObject->ID;
+					float NewValue = OtherObj.Value;
+					if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+						Index = TorusBinarySearch(ObjectIDs, ID);
+						if (Index == 4294967295) return *this;
+					}
+					InstanceBuffer[Index * 11 + Offset] = NewValue;
+					Value = NewValue;
+					return *this;
+				}
+
+				__forceinline TorusAttribute& operator+=(const float OtherValue) {
+					unsigned int& Index = p_TorusObject->Index;
+					unsigned int& ID = p_TorusObject->ID;
+					if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID){
+						//std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
+						Index = TorusBinarySearch(ObjectIDs, ID);
+						if (Index == 4294967295) return *this;
+					}
+					Value += OtherValue;
+					InstanceBuffer[Index * 11 + Offset] = Value;
+
+					return *this;
+				}
+
+				__forceinline TorusAttribute& operator-=(const float OtherValue) {
+					unsigned int& Index = p_TorusObject->Index;
+					unsigned int& ID = p_TorusObject->ID;
+					if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+						//std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
+						Index = TorusBinarySearch(ObjectIDs, ID);
+						if (Index == 4294967295) return *this;
+					}
+					Value -= OtherValue;
+					InstanceBuffer[Index * 11 + Offset] = Value;
+
+					return *this;
+				}
+
+				__forceinline TorusAttribute& operator*=(const float OtherValue) {
+					unsigned int& Index = p_TorusObject->Index;
+					unsigned int& ID = p_TorusObject->ID;
+					if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+						//std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
+						Index = TorusBinarySearch(ObjectIDs, ID);
+						if (Index == 4294967295) return *this;
+					}
+					Value *= OtherValue;
+					InstanceBuffer[Index * 11 + Offset] = Value;
+
+					return *this;
+				}
+
+				__forceinline TorusAttribute& operator/=(const float OtherValue) {
+					unsigned int& Index = p_TorusObject->Index;
+					unsigned int& ID = p_TorusObject->ID;
+					if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+						//std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
+						Index = TorusBinarySearch(ObjectIDs, ID);
+						if (Index == 4294967295) return *this;
+					}
+					Value /= OtherValue;
+					InstanceBuffer[Index * 11 + Offset] = Value;
+
+					return *this;
+				}
 			};
 
 		public:

@@ -38,18 +38,96 @@ namespace Engine {
 				float Value;
 				unsigned char Offset;
 
-				void Set(unsigned char Offset, Sphere* p_TorusObject, float StartingVal);
+				__forceinline void Set(unsigned char Offset, Sphere* p_SphereObject, float StartingVal) {
+					this->p_SphereObject = p_SphereObject;
+					this->Offset = Offset;
+					Value = StartingVal;
+				}
 
 			public:
-				inline operator float() const { return Value; }
+				__forceinline operator float() const { return Value; }
 
-				SphereAttribute& operator=(const float NewValue);
-				SphereAttribute& operator=(const SphereAttribute& OtherObj);
+				__forceinline SphereAttribute& operator=(const float NewValue) {
+					unsigned int& Index = p_SphereObject->Index;
+					unsigned int& ID = p_SphereObject->ID;
+					if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+						//if these operators are acted upon an object that doesn't exist, then return is -1, which is maxintval because unsigned.
+						Index = SphereBinarySearch(ObjectIDs, ID);
+						if (Index == 4294967295) return *this;
+					}
+					InstanceBuffer[Index * 7 + Offset] = NewValue;
+					Value = NewValue;
+					return *this;
+				}
 
-				SphereAttribute& operator+=(const float OtherValue);
-				SphereAttribute& operator-=(const float OtherValue);
-				SphereAttribute& operator*=(const float OtherValue);
-				SphereAttribute& operator/=(const float OtherValue);
+				__forceinline SphereAttribute& operator=(const SphereAttribute& OtherObj) {
+					unsigned int& Index = p_SphereObject->Index;
+					unsigned int& ID = p_SphereObject->ID;
+					float NewValue = OtherObj.Value;
+					if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+						Index = SphereBinarySearch(ObjectIDs, ID);
+						if (Index == 4294967295) return *this;
+					}
+					InstanceBuffer[Index * 7 + Offset] = NewValue;
+					Value = NewValue;
+					return *this;
+				}
+
+				__forceinline SphereAttribute& operator+=(const float OtherValue) {
+					unsigned int& Index = p_SphereObject->Index;
+					unsigned int& ID = p_SphereObject->ID;
+					if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+						//std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
+						Index = SphereBinarySearch(ObjectIDs, ID);
+						if (Index == 4294967295) return *this;
+					}
+					Value += OtherValue;
+					InstanceBuffer[Index * 7 + Offset] = Value;
+
+					return *this;
+				}
+
+				__forceinline SphereAttribute& operator-=(const float OtherValue) {
+					unsigned int& Index = p_SphereObject->Index;
+					unsigned int& ID = p_SphereObject->ID;
+					if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+						//std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
+						Index = SphereBinarySearch(ObjectIDs, ID);
+						if (Index == 4294967295) return *this;
+					}
+					Value -= OtherValue;
+					InstanceBuffer[Index * 7 + Offset] = Value;
+
+					return *this;
+				}
+
+				__forceinline SphereAttribute& operator*=(const float OtherValue) {
+					unsigned int& Index = p_SphereObject->Index;
+					unsigned int& ID = p_SphereObject->ID;
+					if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+						//std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
+						Index = SphereBinarySearch(ObjectIDs, ID);
+						if (Index == 4294967295) return *this;
+					}
+					Value *= OtherValue;
+					InstanceBuffer[Index * 7 + Offset] = Value;
+
+					return *this;
+				}
+
+				__forceinline SphereAttribute& operator/=(const float OtherValue) {
+					unsigned int& Index = p_SphereObject->Index;
+					unsigned int& ID = p_SphereObject->ID;
+					if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
+						//std::cout << "BINARY SEARCH CALLED FROM += TORUS OPERATOR\n";
+						Index = SphereBinarySearch(ObjectIDs, ID);
+						if (Index == 4294967295) return *this;
+					}
+					Value /= OtherValue;
+					InstanceBuffer[Index * 7 + Offset] = Value;
+
+					return *this;
+				}
 
 			};
 		public:

@@ -12,6 +12,8 @@ void Engine::Engine::Render(Camera& cam) {
 	glBindVertexArray(u_VAO);
 	Entity::Torus::Render(cam);
 	Entity::Sphere::Render(cam);
+
+	
 }
 
 Engine::Window Engine::Engine::CreateWindow(std::string WindowTitle, unsigned int ScreenWidth, unsigned int ScreenHeight, 

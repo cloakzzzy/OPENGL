@@ -10,8 +10,7 @@ namespace Engine {
 	class Engine {
 		friend class Entity::Torus;
 		friend class Window;
-		inline static unsigned int u_VAO = 20;
-		inline static int test = 2003432;
+		inline static unsigned int u_VAO;
 	public:
 		static void Initialize();
 		static void Render(Camera& cam);
