@@ -4,7 +4,7 @@
 #include "Shader.hpp"
 #include <glew.h>
 #include "Camera.hpp"
-#include "OpenGLBuffer.hpp"
+#include "OpenGLBuffers.hpp"
 
 namespace Engine {
 	class Window;
@@ -26,18 +26,22 @@ private:
 
 	unsigned int ID;
 	unsigned int Index = 0;
-	
-	inline static std::vector<float> vert;
+
 	inline static vector<float> cs;
 	inline static float theta;
 
-	inline static std::vector<unsigned int> ind;
+	//inline static std::vector<unsigned int> TorusIndices;
+	//inline static std::vector<float> TorusVertices;
+
+	inline static std::vector<unsigned int> TorusIndices;
+	inline static std::vector<float> TorusVertices;
+
 	inline static Shader TorusShader;
-	inline static unsigned int VBO;
-	inline static unsigned int EBO;
 	inline static std::vector<float> offs;
 
-	inline static OpenGLBuffer IBO;
+	inline static OpenGL_VertexBuffer VBO;
+	inline static OpenGL_ElementBuffer EBO;
+	inline static OpenGL_InstanceBuffer IBO;
 
 	class TorusAttribute {
 		friend class Torus;
