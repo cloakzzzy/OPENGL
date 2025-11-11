@@ -2,6 +2,8 @@
 #include <iostream>
 #include "Torus.hpp"
 #include "Sphere.hpp"
+#include "EngineClass.hpp"
+#include "Primitives.hpp"
 
 void Engine::Window::Initialize() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -55,6 +57,7 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
 
     Entity::Torus::Initialize();
     Entity::Sphere::Initialize();
+    Entity::Primitives::CreateFloor();
 
 }
 

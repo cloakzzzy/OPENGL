@@ -2,7 +2,8 @@
 #include "Sphere.hpp"
 #include "EngineClass.hpp"
 #include "Camera.hpp"
-
+#include "Window.hpp"
+#include "Primitives.hpp"
 
 void Engine::Engine::Initialize() {
 	Window::Initialize();
@@ -12,7 +13,7 @@ void Engine::Engine::Render(Camera& cam) {
 	glBindVertexArray(u_VAO);
 	Entity::Torus::Render(cam);
 	Entity::Sphere::Render(cam);
-
+	Entity::Primitives::RenderFloor(cam);
 	
 }
 

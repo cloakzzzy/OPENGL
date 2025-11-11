@@ -4,6 +4,9 @@
 #include <glew.h>
 #include "EngineClass.hpp"
 #include "Camera.hpp"
+#include "OpenGLBuffer.hpp"
+
+
 
 void Engine::Entity::Torus::GenerateModel(int acc) {
 	std::vector<float> verta;
@@ -133,36 +136,20 @@ void Engine::Entity::Torus::CreateBuffers(){
 
 	glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(6);
+	
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	glGenBuffers(1, &IBO);
-	glBindBuffer(GL_ARRAY_BUFFER, IBO);
-	glBufferData(GL_ARRAY_BUFFER, 300 * 11 * sizeof(float), __nullptr, GL_STATIC_DRAW);
+	
+	IBO.CreateBuffer(GL_ARRAY_BUFFER, true, 300 * 11 * sizeof(float), 
+		std::vector<std::pair<unsigned char, unsigned int>>{
+		{OpenGLBuffer::Vec3, 7},
+		{OpenGLBuffer::Vec2, 8 },
+		{OpenGLBuffer::Vec3, 9 },
+		{OpenGLBuffer::Vec3, 10 }});
 
-	glBindBuffer(GL_ARRAY_BUFFER, IBO);
-
-	glEnableVertexAttribArray(7);
-	glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
-	glVertexAttribDivisor(7, 1);
-
-	glEnableVertexAttribArray(8);
-	glVertexAttribPointer(8, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
-	glVertexAttribDivisor(8, 1);
-
-
-	glEnableVertexAttribArray(9);
-	glVertexAttribPointer(9, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(5 * sizeof(float)));
-	glVertexAttribDivisor(9, 1);
-
-
-	glEnableVertexAttribArray(10);
-	glVertexAttribPointer(10, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
-	glVertexAttribDivisor(10, 1);
-
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
+
 
 void Engine::Entity::Torus::Initialize() {
 	GenerateModel(150);
@@ -237,20 +224,16 @@ void Engine::Entity::Torus::Render(Camera& cam) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
 	//puts instance data into IBO
-	glBindBuffer(GL_ARRAY_BUFFER, IBO);
-	glBufferData(GL_ARRAY_BUFFER, InstanceBuffer.size() * sizeof(float), &InstanceBuffer.front(), GL_DYNAMIC_DRAW);
-
+	IBO.Bind();
+	IBO.SetData(InstanceBuffer);
+	
 	TorusShader.Use();
 	TorusShader.SetMat4("view", glm::value_ptr(cam.GetView()));
 	TorusShader.SetMat4("projection", glm::value_ptr(cam.GetProjection()));
 
 	glDrawElementsInstanced(GL_TRIANGLES, ind.size(), GL_UNSIGNED_INT, 0, NumInstances);
-/*
-	glBindBuffer(GL_ARRAY_BUFFER,0);
-	glBindBuffer(GL_ARRAY_BUFFER,0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glUseProgram(0);
-	*/
+
+	
 }
 
 

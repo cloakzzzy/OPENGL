@@ -85,6 +85,7 @@ void Engine::Entity::Sphere::CreateBuffers() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(0 * sizeof(float)));
 	glEnableVertexAttribArray(0);
 
+	/*
 	glGenBuffers(1, &IBO);
 	glBindBuffer(GL_ARRAY_BUFFER, IBO);
 	glBufferData(GL_ARRAY_BUFFER, 7 * 300 * sizeof(float), __nullptr, GL_DYNAMIC_DRAW);
@@ -102,8 +103,13 @@ void Engine::Entity::Sphere::CreateBuffers() {
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(4 * sizeof(float)));
 	glVertexAttribDivisor(3, 1);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	*/
+	IBO.CreateBuffer(GL_ARRAY_BUFFER, true, 300 * 7 * sizeof(float),
+		std::vector<std::pair<unsigned char, unsigned int>>{
+		{OpenGLBuffer::Vec3, 1},
+		{OpenGLBuffer::Float,2},
+		{OpenGLBuffer::Vec3, 3}});
+	
 	
 }
 
@@ -166,9 +172,9 @@ void Engine::Entity::Sphere::Render(Camera& cam) {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
-	//puts instance data into IBO
-	glBindBuffer(GL_ARRAY_BUFFER, IBO);
-	glBufferData(GL_ARRAY_BUFFER, InstanceBuffer.size() * sizeof(float), &InstanceBuffer.front(), GL_DYNAMIC_DRAW);
+	
+	IBO.Bind();
+	IBO.SetData(InstanceBuffer);
 
 	SphereShader.Use();
 	SphereShader.SetMat4("view", glm::value_ptr(cam.GetView()));
@@ -176,9 +182,6 @@ void Engine::Entity::Sphere::Render(Camera& cam) {
 
 	glDrawElementsInstanced(GL_TRIANGLES, ind.size(), GL_UNSIGNED_INT, 0, NumInstances);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glUseProgram(0);
+
 }
 

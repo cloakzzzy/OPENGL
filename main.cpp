@@ -20,49 +20,48 @@ int main() {
     Engine::Engine::Initialize();
     
     Engine::Window window = Engine::Engine::CreateWindow("Engine Window", 800, 600, 0.53, 0.81, 0.92);
-    
-    
-    auto torus1 = Primitives::CreateTorus(0.0f, 0.0f, 0.0f,
+
+    auto torus1 = Primitives::CreateTorus(
+        0.0f, 3.0f, 0.0f,
         1.f, 1.f,
         1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 0.0f);
 
-    auto torus2 = Primitives::CreateTorus(0.0f, 0.0f, 5.0f,
+    auto torus2 = Primitives::CreateTorus(
+        0.0f, 3.0f, 5.0f,
         2.f, 1.f,
         0.0f, 0.0f, 1.f,
         0.0f, 0.0f, 0.0f);
 
-    
     auto torus3 = Primitives::CreateTorus(
-        0.0f, 7.0f, 5.0f,
+        0.0f, 3.0f, 12.0f,
         2.f, 1.f,
-        0.0f, 0.0f, 0.f,
-        0.0f, 40.0f, 40.0f);
+        1.0, 0.75, 0.0,
+        0.0f, 0.0f, 40.0f);
     
     auto sphere1 = Primitives::CreateSphere(
-        3.0f, 7.0f, 5.0f,
+        0.0f, 10.0f, 0.0f,
         2.f,
-        0.5f, 1.0f, 0.f);
-    auto sphere2 = Primitives::CreateSphere(
-        10.0f, 7.0f, 0.0f,
-        2.f,
-        0.5f, 1.0f, 0.f);
-        
-    cam.position = glm::vec3(0.f, 0.f, 0.f);
+        0.18, 0.55, 0.3);
 
-    /*
+    auto sphere2 = Primitives::CreateSphere(
+        0.0f, 10.0f, 5.0f,
+        2.f,
+        1.f, 1.f, 0.0f);
+        
+   
+    
     float sum_duration = 0;
 
+    /*
     for(int j = 0; j < 10; j++){
         long long nums;
         cin >> nums;
-
         auto start = std::chrono::high_resolution_clock::now();
 
         for (long long i = 0; i < nums; i++) {
-            sphere1.pos_x += sphere2.pos_x;
+            torus1.pos_x += torus2.pos_x;
         }
-
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
@@ -70,9 +69,11 @@ int main() {
 
         std::cout << duration << " ms\n";
     }
-    
+
     std::cout << (float)sum_duration / 10.f << '\n';
     */
+
+   
 
     float time = 0.0;
     
@@ -84,10 +85,11 @@ int main() {
         torus2.rot_z += 0.725;
         torus2.rot_y += 0.5;
 
+        torus3.rot_z += 0.45;
+        torus3.rot_y += 0.7;
 
-        torus3.red = sin(time/10);
-        torus3.green = sin(time / 10) * 0.1;
-        torus3.blue = sin(time / 10) * 0.3;
+      
+       
         
         time++;
 

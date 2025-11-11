@@ -34,8 +34,6 @@ void main()
 	pos.z += rt.x * sin((theta * lc.y + 90) * RAD);	
 
     
-
-    
     vec3 p = pos;
     //pitch
     pos.x = (cos(rot.z * RAD) * p.x) - (sin(rot.z * RAD) * p.y);
