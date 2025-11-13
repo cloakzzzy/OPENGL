@@ -73,8 +73,6 @@ int main() {
     std::cout << (float)sum_duration / 10.f << '\n';
     */
 
-   
-
     float time = 0.0;
     
     window.MainLoop([&]() {
@@ -88,9 +86,7 @@ int main() {
         torus3.rot_z += 0.45;
         torus3.rot_y += 0.7;
 
-      
-       
-        
+
         time++;
 
         Engine::Engine::Render(cam);

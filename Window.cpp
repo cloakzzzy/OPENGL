@@ -59,6 +59,8 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
     Entity::Sphere::Initialize();
     Entity::Primitives::CreateFloor();
 
+    auto OriginSphere = Entity::Primitives::CreateSphere(0.f, 0.f, 0.f, 0.5f, 0.f, 0.f, 0.f);
+
 }
 
 void Engine::Window::MainLoop(function<void()> Content, Camera& cam) {

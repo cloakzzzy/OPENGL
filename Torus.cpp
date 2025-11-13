@@ -5,8 +5,8 @@
 #include "EngineClass.hpp"
 #include "Camera.hpp"
 #include "OpenGLBuffer.hpp"
-
-
+#include "Primitives.hpp"
+#include "Sphere.hpp"
 
 void Engine::Entity::Torus::GenerateModel(int acc) {
     std::vector<float> verta;
@@ -15,7 +15,7 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
     float cx = 0.f;
     float cy = 0.f;
     float cz = 0.f;
-    float r = 0.f;
+    float r = 2.0f;
     float thick = 1.f;
 
     for (int i = 0; i < acc; i++) {
@@ -24,7 +24,7 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
             cx, cy, cz + r,
             th, i);
 
-        cs.push_back(cb[0]); cs.push_back(cb[1]); cs.push_back(cb[2]);
+        //cs.push_back(cb[0]); cs.push_back(cb[1]); cs.push_back(cb[2]);
 
         for (int j = 0; j < acc; j++) {
             vector<float> a = Ngonyz(cb[0], cb[1], cb[2], cb[0], cb[1], cb[2] + thick, th, j);
@@ -43,9 +43,6 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
 
     for (int i = 0; i < verta.size(); i += 3) {
         layer = floor(i / acc / 3.0f);
-
-
-
     }
 
     int size = verta.size() / 3;
@@ -55,9 +52,9 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
         float layer = floor(i / acc / 3.0f);
         TorusVertices.push_back(verta[i]); TorusVertices.push_back(verta[i + 1]); TorusVertices.push_back(verta[i + 2]);
 
-        TorusVertices.push_back(cs[layer * 3]);
-        TorusVertices.push_back(layer);
-        TorusVertices.push_back(cs[layer * 3 + 2]);
+        //TorusVertices.push_back(cs[layer * 3]);
+       // TorusVertices.push_back(layer);
+       // TorusVertices.push_back(cs[layer * 3 + 2]);
     }
 
     int h = 0;
@@ -121,22 +118,45 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
 void Engine::Entity::Torus::CreateBuffers() {
 
 
-    VBO.CreateBuffer(TorusVertices.size() * sizeof(float), std::vector<std::pair<unsigned char, unsigned int>>{
+    GPU_VertexBuffer.CreateBuffer(TorusVertices.size() * sizeof(float), std::vector<std::pair<unsigned char, unsigned int>>{
         {OpenGLType::Vec3, 5},
-        {OpenGLType::Vec3, 6 },
+      
     });
-    VBO.SetData(TorusVertices);
+    GPU_VertexBuffer.SetData(TorusVertices);
 
-    EBO.CreateBuffer(TorusIndices.size() * sizeof(float));
-    EBO.SetData(TorusIndices);
+    GPU_ElementBuffer.CreateBuffer(TorusIndices.size() * sizeof(float));
+    GPU_ElementBuffer.SetData(TorusIndices);
 
-    IBO.CreateBuffer(300 * 11 * sizeof(float),
+    GPU_InstanceBuffer.CreateBuffer(300 * 11 * sizeof(float),
         std::vector<std::pair<unsigned char, unsigned int>>{
             {OpenGLType::Vec3, 7},
-            { OpenGLType::Vec2, 8 },
-            { OpenGLType::Vec3, 9 },
-        { OpenGLType::Vec3, 10 }});
+            {OpenGLType::Vec2, 8 },
+            {OpenGLType::Vec3, 9 },
+            {OpenGLType::Vec3, 10 }});
 
+    /*
+    glGenBuffers(1, &Entity::Primitives::UBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, Entity::Primitives::UBO);
+    glBufferData(GL_UNIFORM_BUFFER, 65536, nullptr, GL_DYNAMIC_DRAW);
+    
+
+    GLuint blockIndex = glGetUniformBlockIndex(TorusShader.ID, "LightData");
+    glUniformBlockBinding(TorusShader.ID, blockIndex, 0);      // Block index binding point 0
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, Entity::Primitives::UBO);     // Bind UBO to binding point 0
+
+    GLuint blockIndex2 = glGetUniformBlockIndex(Entity::Sphere::SphereShader.ID, "LightData");
+    glUniformBlockBinding(Entity::Sphere::SphereShader.ID, blockIndex, 0);      // Block index binding point 0
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, Entity::Primitives::UBO);     // Bind UBO to binding point 0
+
+    
+    size_t numFloats = 65536 / sizeof(float);
+    std::vector<float> initData(numFloats, 0.5f);
+    float* ptr = (float*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, 65536, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+    if (ptr) {
+        memcpy(ptr, initData.data(), 65536);
+        glUnmapBuffer(GL_UNIFORM_BUFFER);
+    }
+    */
 }
 
 
@@ -167,7 +187,7 @@ Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,
     ObjectIDs.push_back(ID);
 
     //Inserts the torus vector to the end of the InstanceBuffer
-    InstanceBuffer.insert(InstanceBuffer.end(), torus.begin(), torus.end());
+    InstanceData.insert(InstanceData.end(), torus.begin(), torus.end());
 
     //The objects Index is the end TorusIndicesex
     Index = ObjectIDs.size() - 1;
@@ -202,27 +222,25 @@ void Engine::Entity::Torus::Delete() {
     ObjectIDs.erase(ObjectIDs.begin() + Index);
 
     //removes info from instance buffer, stop rendering the torus.
-    InstanceBuffer.erase(InstanceBuffer.begin() + Index * 11, InstanceBuffer.begin() + Index * 11 + 11);
+    InstanceData.erase(InstanceData.begin() + Index * 11, InstanceData.begin() + Index * 11 + 11);
 
 }
 
 void Engine::Entity::Torus::Render(Camera& cam) {
     unsigned int NumInstances = ObjectIDs.size();
 
-    VBO.Bind();
-    EBO.Bind();
+    GPU_VertexBuffer.Bind();
+    GPU_ElementBuffer.Bind();
 
     //puts instance data into IBO
-    IBO.Bind();
-    IBO.SetData(InstanceBuffer);
+    GPU_InstanceBuffer.Bind();
+    GPU_InstanceBuffer.SetData(InstanceData);
 
     TorusShader.Use();
     TorusShader.SetMat4("view", glm::value_ptr(cam.GetView()));
     TorusShader.SetMat4("projection", glm::value_ptr(cam.GetProjection()));
 
     glDrawElementsInstanced(GL_TRIANGLES, TorusIndices.size(), GL_UNSIGNED_INT, 0, NumInstances);
-
-
 }
 
 

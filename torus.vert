@@ -1,6 +1,6 @@
 #version 330 core
 layout (location = 5) in vec3 aPos;
-layout (location = 6) in vec3 lc;
+//layout (location = 6) in vec3 lc;
  
 layout (location = 7) in vec3 position;
 layout (location = 8) in vec2 rt;
@@ -17,21 +17,20 @@ out vec3 colour;
 
 #define RAD 3.14159f/180.0f
 
+layout(std140) uniform LightData {
+    float values[4096];
+};
+
+
 void main()
 {
     vec3 pos = aPos;
 
-    //colour = vec3(rt.x,rt.y,0.f);
     colour = Colour;
 
-    //change thickness
-    pos.x = lc.x + rt.y * (pos.x - lc.x);
-	pos.y = rt.y * pos.y;
-	pos.z = lc.z + rt.y * (pos.z - lc.z);
-
-    //change radius
-	pos.x += rt.x * cos((theta * lc.y + 90)  * RAD); 
-	pos.z += rt.x * sin((theta * lc.y + 90) * RAD);	
+    vec3 circle_centre = normalize(vec3(pos.x, 0.0f, pos.z));
+    pos = (pos - circle_centre * 2.0f) + circle_centre * rt.x;
+    pos = circle_centre * rt.x + (pos - circle_centre * rt.x) * rt.y;
 
     
     vec3 p = pos;

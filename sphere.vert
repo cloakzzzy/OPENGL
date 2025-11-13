@@ -5,6 +5,10 @@ layout (location = 1) in vec3 position;
 layout (location = 2) in float radius;
 layout (location = 3) in vec3 aCol;
 
+layout(std140) uniform LightData {
+    float values[4096];
+};
+
 out vec3 col;
 
 uniform mat4 projection;

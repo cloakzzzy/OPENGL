@@ -11,7 +11,9 @@ namespace Engine {
 	class Engine;
 	namespace Entity {
 		class Primitives;
+		class Sphere;
 		class Torus;
+		class Entity_;
 	}
 }
 
@@ -21,7 +23,7 @@ class Engine::Entity::Torus {
 	friend class Window;
 
 private:
-	inline static std::vector<float> InstanceBuffer;
+	inline static std::vector<float> InstanceData;
 	inline static std::vector<unsigned int> ObjectIDs;
 
 	unsigned int ID;
@@ -39,9 +41,9 @@ private:
 	inline static Shader TorusShader;
 	inline static std::vector<float> offs;
 
-	inline static OpenGL_VertexBuffer VBO;
-	inline static OpenGL_ElementBuffer EBO;
-	inline static OpenGL_InstanceBuffer IBO;
+	inline static OpenGL_VertexBuffer GPU_VertexBuffer;
+	inline static OpenGL_ElementBuffer GPU_ElementBuffer;
+	inline static OpenGL_InstanceBuffer GPU_InstanceBuffer;
 
 	class TorusAttribute {
 		friend class Torus;
@@ -66,7 +68,7 @@ private:
 				Index = TorusBinarySearch(ObjectIDs, ID);
 				if (Index == 4294967295) return *this;
 			}
-			InstanceBuffer[Index * 11 + Offset] = NewValue;
+			InstanceData[Index * 11 + Offset] = NewValue;
 			Value = NewValue;
 			return *this;
 		}
@@ -79,7 +81,7 @@ private:
 				Index = TorusBinarySearch(ObjectIDs, ID);
 				if (Index == 4294967295) return *this;
 			}
-			InstanceBuffer[Index * 11 + Offset] = NewValue;
+			InstanceData[Index * 11 + Offset] = NewValue;
 			Value = NewValue;
 			return *this;
 		}
@@ -92,7 +94,7 @@ private:
 				if (Index == 4294967295) return *this;
 			}
 			Value += OtherValue;
-			InstanceBuffer[Index * 11 + Offset] = Value;
+			InstanceData[Index * 11 + Offset] = Value;
 			return *this;
 		}
 
@@ -104,7 +106,7 @@ private:
 				if (Index == 4294967295) return *this;
 			}
 			Value -= OtherValue;
-			InstanceBuffer[Index * 11 + Offset] = Value;
+			InstanceData[Index * 11 + Offset] = Value;
 
 			return *this;
 		}
@@ -117,7 +119,7 @@ private:
 				if (Index == 4294967295) return *this;
 			}
 			Value *= OtherValue;
-			InstanceBuffer[Index * 11 + Offset] = Value;
+			InstanceData[Index * 11 + Offset] = Value;
 
 			return *this;
 		}
@@ -130,7 +132,7 @@ private:
 				if (Index == 4294967295) return *this;
 			}
 			Value /= OtherValue;
-			InstanceBuffer[Index * 11 + Offset] = Value;
+			InstanceData[Index * 11 + Offset] = Value;
 
 			return *this;
 		}

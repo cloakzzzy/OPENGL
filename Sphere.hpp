@@ -13,10 +13,12 @@
 namespace Engine {
 	namespace Entity {
 		class Primitives;
+		class Torus;
 		class Sphere {
 			friend class Entity::Primitives;
 			friend class Engine;
 			friend class Window;
+			friend class Torus;
 
 			inline static std::vector<float> InstanceBuffer;
 			inline static std::vector<unsigned int> ObjectIDs;
@@ -25,6 +27,7 @@ namespace Engine {
 
 			inline static std::vector<float> SphereVertices;
 			inline static std::vector<unsigned int> SphereIndices;
+
 			
 
 			inline static OpenGL_InstanceBuffer IBO;

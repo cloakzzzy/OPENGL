@@ -16,10 +16,13 @@ class Engine::Entity::Primitives {
 
 	friend class Window;
 	friend class Engine;
+	friend class Torus;
 
 	inline static unsigned int FloorVBO;
 
 	inline static Shader FloorShader;
+
+	inline static unsigned int UBO;
 
 	inline static std::vector<float> FloorVertices{
 		10000.0f, 0.f, 10000.f,
