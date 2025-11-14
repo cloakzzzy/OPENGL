@@ -4,6 +4,7 @@
 #include "Flatshapes.hpp"
 #include "EngineClass.hpp"
 #include "Camera.hpp"
+#include "EntityTemplates.hpp"
 
 void Engine::Entity::Sphere::GenerateModel(int acc) {
 
@@ -92,17 +93,7 @@ Engine::Entity::Sphere::Sphere(float pos_x, float pos_y, float pos_z, float radi
 	red,green,blue,
 	};
 
-
-	if (ObjectIDs.size() == 0) { ID = 1; }
-	else { ID = ObjectIDs.back() + 1; }
-
-	ObjectIDs.push_back(ID);
-
-	//Inserts the torus vector to the end of the InstanceBuffer
-	InstanceBuffer.insert(InstanceBuffer.end(), sphere.begin(), sphere.end());
-
-	//The objects Index is the end index
-	Index = ObjectIDs.size() - 1;
+	Entity_::DataBuffer_Add<Sphere>(sphere, ID, Index);
 
 
 	this->pos_x.Set(0, this, pos_x);
@@ -118,18 +109,7 @@ Engine::Entity::Sphere::Sphere(float pos_x, float pos_y, float pos_z, float radi
 }
 
 void Engine::Entity::Sphere::Delete() {
-	// Required in case of any instance buffer deletions
-	if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) { Index = SphereBinarySearch(ObjectIDs, ID); }
-
-	//Required if called on deleted Object
-	if (Index == 4294967295) return;
-
-	//Removes object id from Objectid array;
-	ObjectIDs.erase(ObjectIDs.begin() + Index);
-
-	//removes info from instance buffer, stop rendering the torus.
-	InstanceBuffer.erase(InstanceBuffer.begin() + Index * 7, InstanceBuffer.begin() + Index * 7 + 7);
-
+	Entity_::DataBuffer_Delete<Sphere>(ID, Index);
 }
 
 void Engine::Entity::Sphere::Render(Camera& cam) {
@@ -139,7 +119,7 @@ void Engine::Entity::Sphere::Render(Camera& cam) {
 	EBO.Bind();
 	
 
-	IBO.SetData(InstanceBuffer);
+	IBO.SetData(DataBuffer);
 	IBO.Bind();
 
 	SphereShader.Use();

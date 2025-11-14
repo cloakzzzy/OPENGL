@@ -5,6 +5,9 @@
 #include <glew.h>
 #include "Camera.hpp"
 #include "OpenGLBuffers.hpp"
+#include "Utils.hpp"
+#include "EntityTemplates.hpp"
+
 
 namespace Engine {
 	class Window;
@@ -13,168 +16,58 @@ namespace Engine {
 		class Primitives;
 		class Sphere;
 		class Torus;
-		class Entity_;
+		
+		
 	}
 }
 
 class Engine::Entity::Torus {
 	friend class Entity::Primitives;
+	friend class Entity::Entity_;
 	friend class Engine;
 	friend class Window;
+	friend class Entity::EntityAttribute<Torus>; 
+	
 
 private:
-	inline static std::vector<float> InstanceData;
+	inline static std::vector<float> DataBuffer;
 	inline static std::vector<unsigned int> ObjectIDs;
-
-	unsigned int ID;
-	unsigned int Index = 0;
-
-	inline static vector<float> cs;
-	inline static float theta;
-
-	//inline static std::vector<unsigned int> TorusIndices;
-	//inline static std::vector<float> TorusVertices;
 
 	inline static std::vector<unsigned int> TorusIndices;
 	inline static std::vector<float> TorusVertices;
 
 	inline static Shader TorusShader;
-	inline static std::vector<float> offs;
+	
+	inline constexpr static unsigned int EntitySize = 11;
 
 	inline static OpenGL_VertexBuffer GPU_VertexBuffer;
 	inline static OpenGL_ElementBuffer GPU_ElementBuffer;
 	inline static OpenGL_InstanceBuffer GPU_InstanceBuffer;
 
-	class TorusAttribute {
-		friend class Torus;
+	unsigned int ID;
+	unsigned int Index = 0;
 
-		Torus* p_TorusObject;
-		float Value;
-		unsigned char Offset;
-
-		__forceinline void Set(unsigned char Offset, Torus* p_TorusObject, float StartingVal) {
-			this->p_TorusObject = p_TorusObject;
-			this->Offset = Offset;
-			Value = StartingVal;
-		}
-
-	public:
-		inline operator float() const { return Value; }
-
-		__forceinline TorusAttribute& operator=(const float NewValue) {
-			unsigned int& Index = p_TorusObject->Index;
-			unsigned int& ID = p_TorusObject->ID;
-			if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
-				Index = TorusBinarySearch(ObjectIDs, ID);
-				if (Index == 4294967295) return *this;
-			}
-			InstanceData[Index * 11 + Offset] = NewValue;
-			Value = NewValue;
-			return *this;
-		}
-
-		__forceinline TorusAttribute& operator=(const TorusAttribute& OtherObj) {
-			unsigned int& Index = p_TorusObject->Index;
-			unsigned int& ID = p_TorusObject->ID;
-			float NewValue = OtherObj.Value;
-			if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
-				Index = TorusBinarySearch(ObjectIDs, ID);
-				if (Index == 4294967295) return *this;
-			}
-			InstanceData[Index * 11 + Offset] = NewValue;
-			Value = NewValue;
-			return *this;
-		}
-
-		__forceinline TorusAttribute& operator+=(const float OtherValue) {
-			unsigned int& Index = p_TorusObject->Index;
-			unsigned int& ID = p_TorusObject->ID;
-			if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID){
-				Index = TorusBinarySearch(ObjectIDs, ID);
-				if (Index == 4294967295) return *this;
-			}
-			Value += OtherValue;
-			InstanceData[Index * 11 + Offset] = Value;
-			return *this;
-		}
-
-		__forceinline TorusAttribute& operator-=(const float OtherValue) {
-			unsigned int& Index = p_TorusObject->Index;
-			unsigned int& ID = p_TorusObject->ID;
-			if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
-				Index = TorusBinarySearch(ObjectIDs, ID);
-				if (Index == 4294967295) return *this;
-			}
-			Value -= OtherValue;
-			InstanceData[Index * 11 + Offset] = Value;
-
-			return *this;
-		}
-
-		__forceinline TorusAttribute& operator*=(const float OtherValue) {
-			unsigned int& Index = p_TorusObject->Index;
-			unsigned int& ID = p_TorusObject->ID;
-			if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
-				Index = TorusBinarySearch(ObjectIDs, ID);
-				if (Index == 4294967295) return *this;
-			}
-			Value *= OtherValue;
-			InstanceData[Index * 11 + Offset] = Value;
-
-			return *this;
-		}
-
-		__forceinline TorusAttribute& operator/=(const float OtherValue) {
-			unsigned int& Index = p_TorusObject->Index;
-			unsigned int& ID = p_TorusObject->ID;
-			if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) {
-				Index = TorusBinarySearch(ObjectIDs, ID);
-				if (Index == 4294967295) return *this;
-			}
-			Value /= OtherValue;
-			InstanceData[Index * 11 + Offset] = Value;
-
-			return *this;
-		}
-	};
-
+	static void GenerateModel(int acc);
+	static void CreateBuffers();
+	Torus(float pos_x, float pos_y, float pos_z, float radius, float thickness, float red, float green, float blue, float rotx, float roty, float rotz);
+	static void Initialize();
+	static void Render(Camera& cam);
+	
 public:
-	TorusAttribute pos_x;
-	TorusAttribute pos_y;
-	TorusAttribute pos_z;
-	TorusAttribute radius;
-	TorusAttribute thickness;
-	TorusAttribute red;
-	TorusAttribute green;
-	TorusAttribute blue;
-	TorusAttribute rot_x;
-	TorusAttribute rot_y;
-	TorusAttribute rot_z;
+	EntityAttribute<Torus> pos_x;
+	EntityAttribute<Torus> pos_y;
+	EntityAttribute<Torus> pos_z;
+	EntityAttribute<Torus> radius;
+	EntityAttribute<Torus> thickness;
+	EntityAttribute<Torus> red;
+	EntityAttribute<Torus> green;
+	EntityAttribute<Torus> blue;
+	EntityAttribute<Torus> rot_x;
+	EntityAttribute<Torus> rot_y;
+	EntityAttribute<Torus> rot_z;
 
 	void Delete();
 
-private:
-	static void GenerateModel(int acc);
-	static void CreateBuffers();
-
-	static int TorusBinarySearch(std::vector<unsigned int>& vec, int target) {
-		int left = 0;
-		int right = vec.size() - 1;
-		while (left <= right) {
-			int mid = left + (right - left) * 0.5;
-			if (vec[mid] == target)
-				return mid;
-			if (vec[mid] < target)
-				left = mid + 1;
-			else
-				right = mid - 1;
-		}
-		return -1;
-	}
-
-	Torus(float pos_x, float pos_y, float pos_z, float radius, float thickness, float red, float green, float blue, float rotx, float roty, float rotz);
-
-	static void Initialize();
-	static void Render(Camera& cam);
+	
 };
 

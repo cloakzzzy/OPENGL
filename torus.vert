@@ -11,7 +11,6 @@ uniform mat4 view;
 uniform mat4 projection;
 //uniform vec2 change;
 uniform float xoff;
-uniform float theta;
 
 out vec3 colour;
 

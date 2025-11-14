@@ -28,7 +28,7 @@ int main() {
         0.0f, 0.0f, 0.0f);
 
     auto torus2 = Primitives::CreateTorus(
-        0.0f, 3.0f, 5.0f,
+        5.0f, 3.0f, 5.0f,
         2.f, 1.f,
         0.0f, 0.0f, 1.f,
         0.0f, 0.0f, 0.0f);
@@ -52,15 +52,15 @@ int main() {
    
     
     float sum_duration = 0;
-
-    /*
+    
+    
     for(int j = 0; j < 10; j++){
         long long nums;
         cin >> nums;
         auto start = std::chrono::high_resolution_clock::now();
 
         for (long long i = 0; i < nums; i++) {
-            torus1.pos_x += torus2.pos_x;
+            torus1.pos_y += torus2.pos_y;
         }
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -71,8 +71,8 @@ int main() {
     }
 
     std::cout << (float)sum_duration / 10.f << '\n';
-    */
-
+    
+    
     float time = 0.0;
     
     window.MainLoop([&]() {
@@ -86,7 +86,10 @@ int main() {
         torus3.rot_z += 0.45;
         torus3.rot_y += 0.7;
 
+        sphere1.pos_x += 0.01;
+        sphere1.pos_y += 0.03;
 
+        
         time++;
 
         Engine::Engine::Render(cam);

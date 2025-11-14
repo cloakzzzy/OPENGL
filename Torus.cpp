@@ -7,11 +7,11 @@
 #include "OpenGLBuffer.hpp"
 #include "Primitives.hpp"
 #include "Sphere.hpp"
+#include "EntityTemplates.hpp"
 
 void Engine::Entity::Torus::GenerateModel(int acc) {
     std::vector<float> verta;
     float th = 360.0f / float(acc);
-    theta = th;
     float cx = 0.f;
     float cy = 0.f;
     float cz = 0.f;
@@ -116,7 +116,7 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
     }
 }
 void Engine::Entity::Torus::CreateBuffers() {
-
+    
 
     GPU_VertexBuffer.CreateBuffer(TorusVertices.size() * sizeof(float), std::vector<std::pair<unsigned char, unsigned int>>{
         {OpenGLType::Vec3, 5},
@@ -165,7 +165,6 @@ void Engine::Entity::Torus::Initialize() {
     CreateBuffers();
     TorusShader.SetFiles("torus.vert", "default.frag");
     TorusShader.Use();
-    TorusShader.SetFloat("theta", theta);
 }
 
 Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,
@@ -180,18 +179,7 @@ Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,
     rotx,roty,rotz
     };
 
-
-    if (ObjectIDs.size() == 0) { ID = 1; }
-    else { ID = ObjectIDs.back() + 1; }
-
-    ObjectIDs.push_back(ID);
-
-    //Inserts the torus vector to the end of the InstanceBuffer
-    InstanceData.insert(InstanceData.end(), torus.begin(), torus.end());
-
-    //The objects Index is the end TorusIndicesex
-    Index = ObjectIDs.size() - 1;
-
+    Entity_::DataBuffer_Add<Torus>(torus, ID, Index);
 
 
     this->pos_x.Set(0, this, pos_x);
@@ -211,20 +199,10 @@ Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,
 
 }
 
-void Engine::Entity::Torus::Delete() {
-    // Required in case of any instance buffer deletions
-    if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) { Index = TorusBinarySearch(ObjectIDs, ID); }
-
-    //Required if called on deleted Object
-    if (Index == 4294967295) return;
-
-    //Removes object id from Objectid array;
-    ObjectIDs.erase(ObjectIDs.begin() + Index);
-
-    //removes info from instance buffer, stop rendering the torus.
-    InstanceData.erase(InstanceData.begin() + Index * 11, InstanceData.begin() + Index * 11 + 11);
-
+void Engine::Entity::Torus::Delete() { 
+    Entity_::DataBuffer_Delete<Torus>(ID, Index);
 }
+
 
 void Engine::Entity::Torus::Render(Camera& cam) {
     unsigned int NumInstances = ObjectIDs.size();
@@ -234,7 +212,7 @@ void Engine::Entity::Torus::Render(Camera& cam) {
 
     //puts instance data into IBO
     GPU_InstanceBuffer.Bind();
-    GPU_InstanceBuffer.SetData(InstanceData);
+    GPU_InstanceBuffer.SetData(DataBuffer);
 
     TorusShader.Use();
     TorusShader.SetMat4("view", glm::value_ptr(cam.GetView()));
