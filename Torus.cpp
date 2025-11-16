@@ -6,7 +6,6 @@
 #include "Camera.hpp"
 #include "OpenGLBuffer.hpp"
 #include "Primitives.hpp"
-#include "Sphere.hpp"
 #include "EntityTemplates.hpp"
 
 void Engine::Entity::Torus::GenerateModel(int acc) {
@@ -133,37 +132,13 @@ void Engine::Entity::Torus::CreateBuffers() {
             {OpenGLType::Vec2, 8 },
             {OpenGLType::Vec3, 9 },
             {OpenGLType::Vec3, 10 }});
-
-    /*
-    glGenBuffers(1, &Entity::Primitives::UBO);
-    glBindBuffer(GL_UNIFORM_BUFFER, Entity::Primitives::UBO);
-    glBufferData(GL_UNIFORM_BUFFER, 65536, nullptr, GL_DYNAMIC_DRAW);
-    
-
-    GLuint blockIndex = glGetUniformBlockIndex(TorusShader.ID, "LightData");
-    glUniformBlockBinding(TorusShader.ID, blockIndex, 0);      // Block index binding point 0
-    glBindBufferBase(GL_UNIFORM_BUFFER, 0, Entity::Primitives::UBO);     // Bind UBO to binding point 0
-
-    GLuint blockIndex2 = glGetUniformBlockIndex(Entity::Sphere::SphereShader.ID, "LightData");
-    glUniformBlockBinding(Entity::Sphere::SphereShader.ID, blockIndex, 0);      // Block index binding point 0
-    glBindBufferBase(GL_UNIFORM_BUFFER, 0, Entity::Primitives::UBO);     // Bind UBO to binding point 0
-
-    
-    size_t numFloats = 65536 / sizeof(float);
-    std::vector<float> initData(numFloats, 0.5f);
-    float* ptr = (float*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, 65536, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-    if (ptr) {
-        memcpy(ptr, initData.data(), 65536);
-        glUnmapBuffer(GL_UNIFORM_BUFFER);
-    }
-    */
 }
 
 
 void Engine::Entity::Torus::Initialize() {
     GenerateModel(150);
     CreateBuffers();
-    TorusShader.SetFiles("torus.vert", "default.frag");
+    TorusShader.SetFiles("torus.vert", "torus.frag");
     TorusShader.Use();
 }
 
@@ -215,6 +190,7 @@ void Engine::Entity::Torus::Render(Camera& cam) {
     GPU_InstanceBuffer.SetData(DataBuffer);
 
     TorusShader.Use();
+    TorusShader.SetVec3("ViewPos", cam.position.x, cam.position.y, cam.position.z);
     TorusShader.SetMat4("view", glm::value_ptr(cam.GetView()));
     TorusShader.SetMat4("projection", glm::value_ptr(cam.GetProjection()));
 

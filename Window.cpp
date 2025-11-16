@@ -4,6 +4,7 @@
 #include "Sphere.hpp"
 #include "EngineClass.hpp"
 #include "Primitives.hpp"
+#include "PointLight.hpp"
 
 void Engine::Window::Initialize() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -14,9 +15,14 @@ void Engine::Window::Initialize() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4); 
+
 }
 
 Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsigned int ScreenHeight, float Red, float Green, float Blue) {
+   
+    
     WindowObject = SDL_CreateWindow(WindowTitle.c_str(), ScreenWidth, ScreenHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
     if (!WindowObject) {
@@ -35,6 +41,7 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
 
     glewInit();
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_MULTISAMPLE);
 
     // --- Timing variables ---
     now = SDL_GetPerformanceCounter();
@@ -52,9 +59,11 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
 
     SDL_GL_SetSwapInterval(1);
 
+
     glGenVertexArrays(1, &Engine::u_VAO);
     glBindVertexArray(Engine::u_VAO);
 
+    Entity::PointLight::Initialize();
     Entity::Torus::Initialize();
     Entity::Sphere::Initialize();
     Entity::Primitives::CreateFloor();

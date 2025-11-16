@@ -9,13 +9,14 @@ namespace Engine {
 		class Sphere;
 		template<typename T>
 		class EntityAttribute;
+		class PointLight;
 	}
 }
-
 
 class Engine::Entity::Entity_{
 	friend class Entity::Torus;
 	friend class Entity::Sphere;
+	friend class Entity::PointLight;
 
 	Entity_();
 
@@ -52,13 +53,14 @@ class Engine::Entity::Entity_{
 
 template <typename T>
 class Engine::Entity::EntityAttribute {
-	friend class Entity::Torus;
-	friend class Entity::Sphere;
+	friend T;
 
+public:
 	T* p_EntityObject;
 	float Value;
 	unsigned char Offset;
 
+private:
 	__forceinline void Set(unsigned char Offset, T* p_EntityObject, float StartingVal) {
 		this->p_EntityObject = p_EntityObject;
 		this->Offset = Offset;

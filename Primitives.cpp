@@ -33,6 +33,7 @@ void Engine::Entity::Primitives::RenderFloor(Camera& cam) {
 	FloorShader.Use();
 	FloorShader.SetMat4("view", glm::value_ptr(cam.GetView()));
 	FloorShader.SetMat4("projection", glm::value_ptr(cam.GetProjection()));
+	FloorShader.SetVec3("cam_pos", cam.position.x, cam.position.y, cam.position.z);
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }

@@ -4,12 +4,14 @@
 #include "Camera.hpp"
 #include "Window.hpp"
 #include "Primitives.hpp"
+#include "PointLight.hpp"
 
 void Engine::Engine::Initialize() {
 	Window::Initialize();
 }
 
 void Engine::Engine::Render(Camera& cam) {
+	Entity::PointLight::UpdateBuffer();
 	glBindVertexArray(u_VAO);
 	Entity::Torus::Render(cam);
 	Entity::Sphere::Render(cam);

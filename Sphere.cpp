@@ -125,6 +125,7 @@ void Engine::Entity::Sphere::Render(Camera& cam) {
 	SphereShader.Use();
 	SphereShader.SetMat4("view", glm::value_ptr(cam.GetView()));
 	SphereShader.SetMat4("projection", glm::value_ptr(cam.GetProjection()));
+	SphereShader.SetVec3("ViewPos", cam.position.x, cam.position.y, cam.position.z);
 
 	glDrawElementsInstanced(GL_TRIANGLES, SphereIndices.size(), GL_UNSIGNED_INT, 0, NumInstances);
 

@@ -16,7 +16,7 @@ namespace Engine {
 		class Primitives;
 		class Sphere;
 		class Torus;
-		
+		class PointLight;
 		
 	}
 }
@@ -27,6 +27,7 @@ class Engine::Entity::Torus {
 	friend class Engine;
 	friend class Window;
 	friend class Entity::EntityAttribute<Torus>; 
+	friend class Entity::PointLight;
 	
 
 private:

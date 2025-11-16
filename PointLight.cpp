@@ -1,45 +1,61 @@
 #include "PointLight.hpp"
+#include "EntityTemplates.hpp"
+#include "Torus.hpp"
+#include "Sphere.hpp"
 
 Engine::Entity::PointLight::PointLight(float pos_x, float pos_y, float pos_z, float red, float green, float blue) {
+    
+    //padding to adjust for std 140 alightment
     std::vector<float> point_light{
-    pos_x,pos_y,pos_z,
-    red,green,blue
-    };
+        pos_x ,NULL, NULL, NULL, 
+        pos_y, NULL, NULL, NULL,
+        pos_z, NULL, NULL, NULL,
+        red,  NULL, NULL, NULL,
+        green,NULL, NULL, NULL,
+        blue, NULL, NULL, NULL};
 
+    Entity_::DataBuffer_Add<PointLight>(point_light, ID, Index);
 
-    if (ObjectIDs.size() == 0) { ID = 1; }
-    else { ID = ObjectIDs.back() + 1; }
-
-    ObjectIDs.push_back(ID);
-
-    PointLightData.insert(PointLightData.end(), point_light.begin(), point_light.end());
-
-    Index = ObjectIDs.size() - 1;
-
-    /*
     this->pos_x.Set(0, this, pos_x);
-    this->pos_y.Set(1, this, pos_y);
-    this->pos_z.Set(2, this, pos_z);
+    this->pos_y.Set(4, this, pos_y);
+    this->pos_z.Set(8, this, pos_z);
 
-    this->radius.Set(3, this, radius);
-    this->thickness.Set(4, this, thickness);
+    this->red.Set(12, this, red);
+    this->green.Set(16, this, green);
+    this->blue.Set(20, this, blue);
 
-    this->red.Set(5, this, red);
-    this->green.Set(6, this, green);
-    this->blue.Set(7, this, blue);
+    for (auto i : DataBuffer) {
+        std::cout << i << '\n';
+    }
 
-    this->rot_x.Set(8, this, rotx);
-    this->rot_y.Set(9, this, roty);
-    this->rot_z.Set(10, this, rotz);
-    */
 }
 
 void Engine::Entity::PointLight::Delete() {
-    if (Index >= ObjectIDs.size() or ObjectIDs[Index] != ID) { Index = PointLight_BinarySearch(ObjectIDs, ID); }
+    Entity_::DataBuffer_Delete<PointLight>(ID, Index);
+}
 
-    if (Index == 4294967295) return;
+void Engine::Entity::PointLight::CreateBuffers() {
 
-    ObjectIDs.erase(ObjectIDs.begin() + Index);
+   glGenBuffers(1, &UBO);
+   glBindBuffer(GL_UNIFORM_BUFFER, UBO);
+   glBufferData(GL_UNIFORM_BUFFER, MAX_UBO_SIZE, nullptr, GL_DYNAMIC_DRAW);
 
-    PointLightData.erase(PointLightData.begin() + Index * 11, PointLightData.begin() + Index * 11 + 11);
+   unsigned int blockIndex = glGetUniformBlockIndex(Entity::Torus::TorusShader.ID, "LightData");
+   glUniformBlockBinding(Entity::Torus::TorusShader.ID, blockIndex, 0);     
+   glBindBufferBase(GL_UNIFORM_BUFFER, 0, UBO);     
+
+   unsigned int blockIndex2 = glGetUniformBlockIndex(Entity::Sphere::SphereShader.ID, "LightData");
+   glUniformBlockBinding(Entity::Sphere::SphereShader.ID, blockIndex, 0);    
+   glBindBufferBase(GL_UNIFORM_BUFFER, 0, UBO);     
+
+    
+}
+
+void Engine::Entity::PointLight::Initialize() {
+    CreateBuffers();
+}
+
+void Engine::Entity::PointLight::UpdateBuffer() {
+    glBindBuffer(GL_UNIFORM_BUFFER, UBO);
+    glBufferData(GL_UNIFORM_BUFFER, DataBuffer.size() * sizeof(float), &DataBuffer.front(), GL_DYNAMIC_DRAW);
 }

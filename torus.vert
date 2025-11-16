@@ -20,12 +20,26 @@ layout(std140) uniform LightData {
     float values[4096];
 };
 
+out vec3 FragPos;
+out vec3 TorusPos;
+out vec3 BefFrag;
+out vec3 TorusCol;
+out vec3 Rot;
 
 void main()
 {
+    //colour = Colour;
+    TorusCol = Colour;
+    
     vec3 pos = aPos;
+    BefFrag = aPos;
 
-    colour = Colour;
+    TorusPos = position;
+    
+    Rot = rot;
+
+
+   // colour = vec3(values[0]);
 
     vec3 circle_centre = normalize(vec3(pos.x, 0.0f, pos.z));
     pos = (pos - circle_centre * 2.0f) + circle_centre * rt.x;
@@ -45,6 +59,8 @@ void main()
 
     //change position
     pos += position;
+
+    FragPos = pos;
 
     gl_Position = projection * view * vec4(pos, 1.0f);
 }

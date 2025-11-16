@@ -11,6 +11,7 @@ namespace Engine {
 		class Torus; 
 		class Sphere;
 		class Primitives;
+		class PointLight;
 	}
 }
 
