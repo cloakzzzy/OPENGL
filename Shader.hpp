@@ -85,31 +85,35 @@ public:
         glUseProgram(ID);
     }
 
-    inline void SetBool(const std::string& name, bool value) const
+    inline unsigned int GetUniformLocation(std::string name) {
+        return glGetUniformLocation(ID, name.c_str());
+    }
+
+    inline void SetBool(unsigned int location, bool value) const
     {
-        glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
+        glUniform1i(location, (int)value);
     }
 
-    inline void SetInt(const std::string& name, int value) const
+    inline void SetInt(unsigned int location, int value) const
     {
-        glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+        glUniform1i(location, value);
     }
 
-    inline void SetFloat(const std::string& name, float value) const
+    inline void SetFloat(unsigned int location, float value) const
     {
-        glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+        glUniform1f(location, value);
     }
 
-    inline void SetVec3(const string& name, float one, float two, float three) {
-        glUniform3f(glGetUniformLocation(ID, name.c_str()), one, two, three);
+    inline void SetVec3(unsigned int location,  float one, float two, float three) {
+        glUniform3f(location, one, two, three);
     }
 
-    inline void SetVec2(const string& name, float one, float two) {
-        glUniform2f(glGetUniformLocation(ID, name.c_str()), one, two);
+    inline void SetVec2(unsigned int location, float one, float two) {
+        glUniform2f(location, one, two);
     }
 
-    inline void SetMat4(const std::string& name, const float* value) {
-        glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value);
+    inline void SetMat4(unsigned int location, const float* value) {
+        glUniformMatrix4fv(location, 1, GL_FALSE, value);
     }
 
 

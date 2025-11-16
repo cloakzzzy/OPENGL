@@ -8,6 +8,7 @@ namespace Engine {
 	namespace Entity {
 		class PointLight;
 		class Torus;
+		class Primitives;
 	}
 }
 

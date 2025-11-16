@@ -46,6 +46,11 @@ class Engine::Entity::Sphere {
 			
 	inline static Shader SphereShader;
 
+	inline static unsigned int uloc_ViewPos;
+	inline static unsigned int uloc_view;
+	inline static unsigned int uloc_projection;
+	inline static unsigned int uloc_NumLights;
+
 public:
 
 	EntityAttribute<Sphere> pos_x;

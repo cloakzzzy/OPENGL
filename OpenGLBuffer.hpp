@@ -29,13 +29,13 @@ private:
 public:
 	inline void SetData(std::vector<float>& Data) {
 		glBindBuffer(BufferType, BufferID);
-		glBufferData(BufferType, Data.size() * sizeof(float), &Data.front(), GL_DYNAMIC_DRAW);
+		glBufferSubData(BufferType, 0, Data.size() * sizeof(float), &Data.front());
 		glBindBuffer(BufferType, 0);
 	}
 
 	inline void SetData(std::vector<unsigned int>& Data) {
 		glBindBuffer(BufferType, BufferID);
-		glBufferData(BufferType, Data.size() * sizeof(float), &Data.front(), GL_DYNAMIC_DRAW);
+		glBufferSubData(BufferType, 0, Data.size() * sizeof(float), &Data.front());
 		glBindBuffer(BufferType, 0);
 	}
 

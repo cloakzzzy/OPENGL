@@ -53,6 +53,11 @@ private:
 	Torus(float pos_x, float pos_y, float pos_z, float radius, float thickness, float red, float green, float blue, float rotx, float roty, float rotz);
 	static void Initialize();
 	static void Render(Camera& cam);
+
+	inline static unsigned int uloc_ViewPos;
+	inline static unsigned int uloc_view;
+	inline static unsigned int uloc_projection;
+	inline static unsigned int uloc_NumLights;
 	
 public:
 	EntityAttribute<Torus> pos_x;

@@ -74,11 +74,13 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
 
 void Engine::Window::MainLoop(function<void()> Content, Camera& cam) {
     while (IsRunning) {
+        
         last = now;
         now = SDL_GetPerformanceCounter();
         DeltaTime = (double)(now - last) / freq;
 
         {
+            
             if (SDL_WaitEventTimeout(&WindowEvents, 10)) {
                 // We got at least one event — process it
                 do {
@@ -130,6 +132,7 @@ void Engine::Window::MainLoop(function<void()> Content, Camera& cam) {
 
                 } while (SDL_PollEvent(&WindowEvents));
             }
+            
             const bool* keys = SDL_GetKeyboardState(NULL);
 
             float cameraSpeed = static_cast<float>(5.0f) * DeltaTime;
@@ -158,10 +161,10 @@ void Engine::Window::MainLoop(function<void()> Content, Camera& cam) {
             }
 
         }
-
+        
         glClearColor(Red, Green, Blue, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        
         Content();
 
         double fps = 1.0 / DeltaTime;

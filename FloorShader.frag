@@ -4,13 +4,17 @@ out vec4 FragColor;
 in vec3 FragPos;
 
 uniform vec3 cam_pos;
+uniform vec3 col1;
+uniform vec3 col2;
 
 void main()
 {
 	float step = 1.0f;
 
-	vec3 col1 = vec3(0.6f);
-	vec3 col2 = vec3(0.8f);
+	//vec3 col1 = vec3(0.6f);
+	//vec3 col2 = vec3(0.8f);
+
+
 
 	float distance = length(cam_pos.xz - FragPos.xz);
 

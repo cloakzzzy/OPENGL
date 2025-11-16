@@ -5,6 +5,7 @@
 #include "EngineClass.hpp"
 #include "Camera.hpp"
 #include "EntityTemplates.hpp"
+#include "Primitives.hpp"
 
 void Engine::Entity::Sphere::GenerateModel(int acc) {
 
@@ -84,6 +85,13 @@ void Engine::Entity::Sphere::Initialize() {
 	GenerateModel(150);
 	CreateBuffers();
 	SphereShader.SetFiles("sphere.vert", "sphere.frag");
+
+	SphereShader.Use();
+
+	uloc_ViewPos = SphereShader.GetUniformLocation("ViewPos");
+	uloc_view = SphereShader.GetUniformLocation("view");
+	uloc_projection = SphereShader.GetUniformLocation("projection");
+	uloc_NumLights = SphereShader.GetUniformLocation("NumLights");
 }
 
 Engine::Entity::Sphere::Sphere(float pos_x, float pos_y, float pos_z, float radius, float red, float green, float blue) {
@@ -123,9 +131,10 @@ void Engine::Entity::Sphere::Render(Camera& cam) {
 	IBO.Bind();
 
 	SphereShader.Use();
-	SphereShader.SetMat4("view", glm::value_ptr(cam.GetView()));
-	SphereShader.SetMat4("projection", glm::value_ptr(cam.GetProjection()));
-	SphereShader.SetVec3("ViewPos", cam.position.x, cam.position.y, cam.position.z);
+	SphereShader.SetVec3(uloc_ViewPos, cam.position.x, cam.position.y, cam.position.z);
+	SphereShader.SetMat4(uloc_view, glm::value_ptr(cam.GetView()));
+	SphereShader.SetMat4(uloc_projection, glm::value_ptr(cam.GetProjection()));
+	SphereShader.SetInt(uloc_NumLights, Entity::Primitives::NumLights);
 
 	glDrawElementsInstanced(GL_TRIANGLES, SphereIndices.size(), GL_UNSIGNED_INT, 0, NumInstances);
 

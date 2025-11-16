@@ -2,6 +2,7 @@
 #include "EntityTemplates.hpp"
 #include "Torus.hpp"
 #include "Sphere.hpp"
+#include "Primitives.hpp"
 
 Engine::Entity::PointLight::PointLight(float pos_x, float pos_y, float pos_z, float red, float green, float blue) {
     
@@ -24,10 +25,7 @@ Engine::Entity::PointLight::PointLight(float pos_x, float pos_y, float pos_z, fl
     this->green.Set(16, this, green);
     this->blue.Set(20, this, blue);
 
-    for (auto i : DataBuffer) {
-        std::cout << i << '\n';
-    }
-
+    Entity::Primitives::NumLights++;
 }
 
 void Engine::Entity::PointLight::Delete() {
@@ -57,5 +55,5 @@ void Engine::Entity::PointLight::Initialize() {
 
 void Engine::Entity::PointLight::UpdateBuffer() {
     glBindBuffer(GL_UNIFORM_BUFFER, UBO);
-    glBufferData(GL_UNIFORM_BUFFER, DataBuffer.size() * sizeof(float), &DataBuffer.front(), GL_DYNAMIC_DRAW);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, DataBuffer.size() * sizeof(float), &DataBuffer.front());
 }

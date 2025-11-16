@@ -32,8 +32,6 @@ private:
 	double monob = 0;
 	double toggleb = false;
 
-	SDL_Event WindowEvents;
-
 	SDL_Window* WindowObject;
 
 	float Red; float Green; float Blue;
@@ -44,6 +42,7 @@ private:
 	bool IsRunning = true;
 
 public:
+	SDL_Event WindowEvents;
 	void MainLoop(function<void()> Content, Camera& cam);
 
 	~Window();

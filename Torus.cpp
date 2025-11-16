@@ -140,6 +140,10 @@ void Engine::Entity::Torus::Initialize() {
     CreateBuffers();
     TorusShader.SetFiles("torus.vert", "torus.frag");
     TorusShader.Use();
+    uloc_ViewPos = TorusShader.GetUniformLocation("ViewPos");
+    uloc_view = TorusShader.GetUniformLocation("view");
+    uloc_projection = TorusShader.GetUniformLocation("projection");
+    uloc_NumLights = TorusShader.GetUniformLocation("NumLights");
 }
 
 Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,
@@ -190,9 +194,10 @@ void Engine::Entity::Torus::Render(Camera& cam) {
     GPU_InstanceBuffer.SetData(DataBuffer);
 
     TorusShader.Use();
-    TorusShader.SetVec3("ViewPos", cam.position.x, cam.position.y, cam.position.z);
-    TorusShader.SetMat4("view", glm::value_ptr(cam.GetView()));
-    TorusShader.SetMat4("projection", glm::value_ptr(cam.GetProjection()));
+    TorusShader.SetVec3(uloc_ViewPos, cam.position.x, cam.position.y, cam.position.z);
+    TorusShader.SetMat4(uloc_view, glm::value_ptr(cam.GetView()));
+    TorusShader.SetMat4(uloc_projection, glm::value_ptr(cam.GetProjection()));
+    TorusShader.SetInt(uloc_NumLights, Entity::Primitives::NumLights);
 
     glDrawElementsInstanced(GL_TRIANGLES, TorusIndices.size(), GL_UNSIGNED_INT, 0, NumInstances);
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Utils.hpp"
+#include <iostream>
 
 namespace Engine {
 	namespace Entity {
@@ -56,7 +57,7 @@ class Engine::Entity::EntityAttribute {
 	friend T;
 
 public:
-	T* p_EntityObject;
+	T* p_EntityObject = nullptr;
 	float Value;
 	unsigned char Offset;
 
@@ -128,7 +129,7 @@ public:
 			if (Index == 4294967295) return *this;
 		}
 		Value *= OtherValue;
-		T::DataBuffer[Index * 11 + Offset] = Value;
+		T::DataBuffer[Index * T::EntitySize + Offset] = Value;
 
 		return *this;
 	}
@@ -141,8 +142,9 @@ public:
 			if (Index == 4294967295) return *this;
 		}
 		Value /= OtherValue;
-		T::DataBuffer[Index * 11 + Offset] = Value;
+		T::DataBuffer[Index * T::EntitySize + Offset] = Value;
 
 		return *this;
 	}
+
 };

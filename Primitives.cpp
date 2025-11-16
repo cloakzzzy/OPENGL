@@ -24,6 +24,14 @@ void Engine::Entity::Primitives::CreateFloor() {
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 
 	FloorShader.SetFiles("FloorShader.vert", "FloorShader.frag");
+
+	FloorShader.Use();
+
+	uloc_view = FloorShader.GetUniformLocation("view");
+	uloc_projection = FloorShader.GetUniformLocation("projection");
+	uloc_cam_pos = FloorShader.GetUniformLocation("cam_pos");
+	uloc_col1 = FloorShader.GetUniformLocation("col1");
+	uloc_col2 = FloorShader.GetUniformLocation("col2");
 	
 }
 
@@ -31,9 +39,11 @@ void Engine::Entity::Primitives::RenderFloor(Camera& cam) {
 	glBindBuffer(GL_ARRAY_BUFFER, FloorVBO);
 	
 	FloorShader.Use();
-	FloorShader.SetMat4("view", glm::value_ptr(cam.GetView()));
-	FloorShader.SetMat4("projection", glm::value_ptr(cam.GetProjection()));
-	FloorShader.SetVec3("cam_pos", cam.position.x, cam.position.y, cam.position.z);
+    FloorShader.SetMat4(uloc_view, glm::value_ptr(cam.GetView()));
+	FloorShader.SetMat4(uloc_projection, glm::value_ptr(cam.GetProjection()));
+    FloorShader.SetVec3(uloc_cam_pos, cam.position.x, cam.position.y, cam.position.z);
+	FloorShader.SetVec3(uloc_col1, 0.1, 0.1, 0.1);
+    FloorShader.SetVec3(uloc_col2, 0.2, 0.2, 0.2);
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
