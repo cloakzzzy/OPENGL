@@ -19,12 +19,12 @@ int main() {
     Engine::Engine::Initialize();
     
     //Engine::Window window = Engine::Engine::CreateWindow("Engine Window", 800, 600, 0.53, 0.81, 0.92);
-    Engine::Window window = Engine::Engine::CreateWindow("Engine Window", 800, 600, 0.0,0.0,0.0);
+    Engine::Window window = Engine::Engine::CreateWindow("Engine Window", 800, 600, 0.4,0.4,0.4);
 
     
     auto torus1 = Primitives::CreateTorus(
-        0.0f, 3.0f, 0.0f,
-        1.f, 1.f,
+        0.0f, 5.0f, -6.0f,
+        3.5f, 1.5f,
         1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 0.0f);
 
@@ -48,7 +48,7 @@ int main() {
 
     
     auto sphere2 = Primitives::CreateSphere(
-        0.0f, 15.0f, 5.0f,
+        0.0f, 20.0f, 5.0f,
         2.f,
         0.55, 0.18, 0.3);
     
@@ -70,9 +70,10 @@ int main() {
         0.25f,
         1.0f, 1.0f, 1.0f);
    
-    auto light1 = PointLight::Create(0.0f, 10.f, 5.0f, 1.0,0.045, 0.0075);
-    auto light2 = PointLight::Create(0.0f, 10.f, -5.0f, 1.0, 0.045, 0.0075);
-    
+    auto light1 = Lights::Create_PointLight(0.0f, 10.f, 5.0f, 1.0,0.045, 0.0075);
+    auto light2 = Lights::Create_PointLight(0.0f, 10.f, -5.0f, 1.0, 0.045, 0.0075);
+    auto dlight1 = Lights::Create_DirectionalLight(1.f, 0, 0.f);
+
     /*
     float sum_duration = 0;
     for(int j = 0; j < 10; j++){
@@ -94,11 +95,12 @@ int main() {
     std::cout << (float)sum_duration / 10.f << '\n';
     */
 
+    
     float time = 0;
-    
-    
+
+     
     window.MainLoop([&]() {
-        
+
         
         torus1.rot_z += 0.525;
         torus1.rot_y += 0.55;
@@ -109,8 +111,6 @@ int main() {
         torus3.rot_z += 0.45;
         torus3.rot_y += 0.7;
         
-        
-       
         light1.pos_x = 5.0f * cos(time);
         light1.pos_z = 5.0f * sin(time);
 
@@ -123,11 +123,11 @@ int main() {
         light_sphere2.pos_x = 10.0f * cos(time + 0.3) - 0.0f;
         light_sphere2.pos_z = 10.0f * sin(time + 0.2) + 3.0f;
         
+       
+
         
         Engine::Engine::Render(cam);
 
-        
-        
 
         time+=0.02;
         

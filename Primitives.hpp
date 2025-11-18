@@ -23,8 +23,6 @@ class Engine::Entity::Primitives {
 
 	inline static unsigned int FloorVBO;
 
-	inline static int NumLights = 0;
-
 	inline static Shader FloorShader;
 
 	inline static unsigned int UBO;
@@ -54,4 +52,3 @@ public:
 		float red, float green, float blue);
 
 };
-

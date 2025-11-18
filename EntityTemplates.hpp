@@ -11,6 +11,7 @@ namespace Engine {
 		template<typename T>
 		class EntityAttribute;
 		class PointLight;
+		class DirectionalLight;
 	}
 }
 
@@ -18,6 +19,7 @@ class Engine::Entity::Entity_{
 	friend class Entity::Torus;
 	friend class Entity::Sphere;
 	friend class Entity::PointLight;
+	friend class Entity::DirectionalLight;
 
 	Entity_();
 

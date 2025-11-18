@@ -1,11 +1,10 @@
-#version 330 core
-layout (location = 5) in vec3 aPos;
-//layout (location = 6) in vec3 lc;
+#version 430 core
+layout (location = 5) in vec3 aVertex;
  
-layout (location = 7) in vec3 position;
-layout (location = 8) in vec2 rt;
-layout (location = 9) in vec3 Colour;
-layout (location = 10) in vec3 rot;
+layout (location = 7) in vec3 aPosition;
+layout (location = 8) in vec2 aRT;
+layout (location = 9) in vec3 aColour;
+layout (location = 10) in vec3 aRotation;
 
 uniform mat4 view;
 uniform mat4 projection;
@@ -16,51 +15,44 @@ out vec3 colour;
 
 #define RAD 3.14159f/180.0f
 
-layout(std140) uniform LightData {
-    float values[4096];
-};
-
 out vec3 FragPos;
 out vec3 TorusPos;
 out vec3 BefFrag;
 out vec3 TorusCol;
-out vec3 Rot;
+out vec3 Rotation;
 
 void main()
 {
-    //colour = Colour;
-    TorusCol = Colour;
+    TorusCol = aColour;
     
-    vec3 pos = aPos;
-    BefFrag = aPos;
+    vec3 Vertex = aVertex;
+    BefFrag = aVertex;
 
-    TorusPos = position;
+    TorusPos = aPosition;
     
-    Rot = rot;
+    Rotation = aRotation;
 
 
    // colour = vec3(values[0]);
 
-    vec3 circle_centre = normalize(vec3(pos.x, 0.0f, pos.z));
-    pos = (pos - circle_centre * 2.0f) + circle_centre * rt.x;
-    pos = circle_centre * rt.x + (pos - circle_centre * rt.x) * rt.y;
+    vec3 circle_centre = normalize(vec3(Vertex.x, 0.0f, Vertex.z));
+    Vertex = (Vertex - circle_centre * 2.0f) + circle_centre * aRT.x;
+    Vertex = circle_centre * aRT.x + (Vertex - circle_centre * aRT.x) * aRT.y;
 
     
-    vec3 p = pos;
+    vec3 v1 = Vertex;
     //pitch
-    pos.x = (cos(rot.z * RAD) * p.x) - (sin(rot.z * RAD) * p.y);
-    pos.y = (sin(rot.z * RAD) * p.x) + (cos(rot.z * RAD) * p.y);
-    vec3 p1 = pos;
+    Vertex.x = (cos(aRotation.z * RAD) * v1.x) - (sin(aRotation.z * RAD) * v1.y);
+    Vertex.y = (sin(aRotation.z * RAD) * v1.x) + (cos(aRotation.z * RAD) * v1.y);
+    vec3 v2 = Vertex;
     //yaw
-    pos.x = (cos(rot.y * RAD) * p1.x) - (sin(rot.y * RAD) * p1.z);
-    pos.z = (sin(rot.y * RAD) * p1.x) + (cos(rot.y * RAD) * p1.z);
-    
-    
+    Vertex.x = (cos(aRotation.y * RAD) * v2.x) - (sin(aRotation.y * RAD) * v2.z);
+    Vertex.z = (sin(aRotation.y * RAD) * v2.x) + (cos(aRotation.y * RAD) * v2.z);
 
     //change position
-    pos += position;
+    Vertex += aPosition;
 
-    FragPos = pos;
+    FragPos = Vertex;
 
-    gl_Position = projection * view * vec4(pos, 1.0f);
+    gl_Position = projection * view * vec4(Vertex, 1.0f);
 }

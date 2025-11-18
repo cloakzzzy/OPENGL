@@ -5,6 +5,7 @@
 #include "Window.hpp"
 #include "Primitives.hpp"
 #include "PointLight.hpp"
+#include "DirectionalLight.hpp"
 
 void Engine::Engine::Initialize() {
 	Window::Initialize();
@@ -12,6 +13,7 @@ void Engine::Engine::Initialize() {
 
 void Engine::Engine::Render(Camera& cam) {
 	Entity::PointLight::UpdateBuffer();
+	Entity::DirectionalLight::UpdateBuffer();
 	glBindVertexArray(u_VAO);
 	Entity::Torus::Render(cam);
 	Entity::Sphere::Render(cam);

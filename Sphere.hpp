@@ -49,7 +49,8 @@ class Engine::Entity::Sphere {
 	inline static unsigned int uloc_ViewPos;
 	inline static unsigned int uloc_view;
 	inline static unsigned int uloc_projection;
-	inline static unsigned int uloc_NumLights;
+	inline static unsigned int uloc_Num_PointLights;
+	inline static unsigned int uloc_Num_DirectionalLights;
 
 public:
 

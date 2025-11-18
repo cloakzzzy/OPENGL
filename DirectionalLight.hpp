@@ -7,49 +7,47 @@ namespace Engine {
 	class Engine;
 	namespace Entity {
 		class PointLight;
+		class DirectionalLight;
 		class Primitives;
 		class Lights;
 	}
 }
 
-class Engine::Entity::PointLight {
-	friend class Entity::EntityAttribute<PointLight>;
+class Engine::Entity::DirectionalLight {
+	friend class Entity::EntityAttribute<DirectionalLight>;
 	friend class Entity::Entity_;
 	friend class Window;
 	friend class Engine;
 	friend class Lights;
+	
 
 	inline static std::vector<unsigned int> ObjectIDs;
-	inline constexpr static unsigned int EntitySize = 6;
+	inline constexpr static unsigned int EntitySize = 3;
 
 	inline static std::vector<float> DataBuffer;
 	unsigned int Index = 0;
-	
+
 	inline constexpr static unsigned int MAX_UBO_SIZE = 65536;
 
-	inline static unsigned int UBO;
 	inline static unsigned int SSBO;
 
 	unsigned int ID;
-	
 
-	PointLight(float pos_x, float pos_y, float pos_z, float red, float green, float blue);
+
+	DirectionalLight(float dir_x, float dir_y, float dir_z);
 
 	static void Initialize();
 
 	static void CreateBuffers();
 
 public:
-	
-	EntityAttribute<PointLight> pos_x;
-	EntityAttribute<PointLight> pos_y;
-	EntityAttribute<PointLight> pos_z;
-	EntityAttribute<PointLight> constant;
-	EntityAttribute<PointLight> linear;
-	EntityAttribute<PointLight> quadratic;
-	
 
-	
+	EntityAttribute<DirectionalLight> dir_x;
+	EntityAttribute<DirectionalLight> dir_y;
+	EntityAttribute<DirectionalLight> dir_z;
+
+
+
 	static void UpdateBuffer();
 
 	void Delete();

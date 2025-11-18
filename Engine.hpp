@@ -4,4 +4,6 @@
 #include "EngineClass.hpp"
 #include "Window.hpp"
 #include "Sphere.hpp"
+#include "Lights.hpp"
 #include "PointLight.hpp"
+#include "DirectionalLight.hpp"

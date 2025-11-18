@@ -7,6 +7,7 @@
 #include "OpenGLBuffer.hpp"
 #include "Primitives.hpp"
 #include "EntityTemplates.hpp"
+#include "Lights.hpp"
 
 void Engine::Entity::Torus::GenerateModel(int acc) {
     std::vector<float> verta;
@@ -143,7 +144,8 @@ void Engine::Entity::Torus::Initialize() {
     uloc_ViewPos = TorusShader.GetUniformLocation("ViewPos");
     uloc_view = TorusShader.GetUniformLocation("view");
     uloc_projection = TorusShader.GetUniformLocation("projection");
-    uloc_NumLights = TorusShader.GetUniformLocation("NumLights");
+    uloc_Num_PointLights = TorusShader.GetUniformLocation("Num_PointLights");
+    uloc_Num_DirectionalLights = TorusShader.GetUniformLocation("Num_DirectionalLights");
 }
 
 Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,
@@ -197,7 +199,8 @@ void Engine::Entity::Torus::Render(Camera& cam) {
     TorusShader.SetVec3(uloc_ViewPos, cam.position.x, cam.position.y, cam.position.z);
     TorusShader.SetMat4(uloc_view, glm::value_ptr(cam.GetView()));
     TorusShader.SetMat4(uloc_projection, glm::value_ptr(cam.GetProjection()));
-    TorusShader.SetInt(uloc_NumLights, Entity::Primitives::NumLights);
+    TorusShader.SetInt(uloc_Num_PointLights, Entity::Lights::Num_PointLights);
+    TorusShader.SetInt(uloc_Num_DirectionalLights, Entity::Lights::Num_DirectionalLights);
 
     glDrawElementsInstanced(GL_TRIANGLES, TorusIndices.size(), GL_UNSIGNED_INT, 0, NumInstances);
 }

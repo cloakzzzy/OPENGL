@@ -12,6 +12,7 @@ namespace Engine {
 		class Sphere;
 		class Primitives;
 		class PointLight;
+		class DirectionalLight;
 	}
 }
 

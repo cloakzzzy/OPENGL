@@ -1,4 +1,5 @@
 #include "OpenGLBuffer.hpp"
+#include <iostream>
 
 void OpenGLBuffer::_CreateBuffer(unsigned int BufferType ,bool IsInstanceBuffer, 
 	unsigned int SizeInBytes, std::vector<std::pair<unsigned char, unsigned int>> BufferStructure) {
@@ -6,7 +7,7 @@ void OpenGLBuffer::_CreateBuffer(unsigned int BufferType ,bool IsInstanceBuffer,
 
 	glGenBuffers(1, &BufferID);
 	glBindBuffer(BufferType, BufferID);
-	glBufferData(BufferType, SizeInBytes, __nullptr, GL_DYNAMIC_DRAW);
+	glBufferData(BufferType, SizeInBytes, __nullptr, GL_STATIC_DRAW);
 
 	if (BufferType == GL_ELEMENT_ARRAY_BUFFER) return;
 

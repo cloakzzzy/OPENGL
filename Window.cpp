@@ -5,13 +5,14 @@
 #include "EngineClass.hpp"
 #include "Primitives.hpp"
 #include "PointLight.hpp"
+#include "DirectionalLight.hpp"
 
 void Engine::Window::Initialize() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cerr << "[ENGINE][ERROR]SDL_Init failed: " << SDL_GetError() << "\n";
         return;
     }
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -43,6 +44,16 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
 
+    const GLubyte* renderer = glGetString(GL_RENDERER);
+    const GLubyte* vendor = glGetString(GL_VENDOR);
+    const GLubyte* version = glGetString(GL_VERSION);
+    const GLubyte* glslVer = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+    std::cout << "Renderer: " << renderer << std::endl;
+    std::cout << "Vendor: " << vendor << std::endl;
+    std::cout << "OpenGL version supported: " << version << std::endl;
+    std::cout << "GLSL version: " << glslVer << std::endl;
+
     // --- Timing variables ---
     now = SDL_GetPerformanceCounter();
     last = 0;
@@ -64,12 +75,12 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
     glBindVertexArray(Engine::u_VAO);
 
     Entity::PointLight::Initialize();
+    Entity::DirectionalLight::Initialize();
     Entity::Torus::Initialize();
     Entity::Sphere::Initialize();
     Entity::Primitives::CreateFloor();
 
-    auto OriginSphere = Entity::Primitives::CreateSphere(0.f, 0.f, 0.f, 0.5f, 0.f, 0.f, 0.f);
-
+   
 }
 
 void Engine::Window::MainLoop(function<void()> Content, Camera& cam) {
