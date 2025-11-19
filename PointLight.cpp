@@ -4,8 +4,6 @@
 
 Engine::Entity::PointLight::PointLight(float pos_x, float pos_y, float pos_z, float constant, float linear, float quadratic) {
     
- 
-
     std::vector<float> point_light{
         pos_x ,pos_y,pos_z,
         constant, linear, quadratic};
@@ -46,7 +44,6 @@ void Engine::Entity::PointLight::CreateBuffers() {
    glGenBuffers(1, &SSBO);
    glBindBuffer(GL_SHADER_STORAGE_BUFFER, SSBO);
    glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_UBO_SIZE, nullptr, GL_DYNAMIC_DRAW);
-
    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, SSBO);
 
     

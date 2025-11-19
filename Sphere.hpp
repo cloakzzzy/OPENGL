@@ -18,39 +18,36 @@ namespace Engine {
 		class PointLight;
 		class Torus;
 		class Sphere;
+		class Entity_;
 	}
 }
 
 class Engine::Entity::Sphere {
 	friend class Entity::Primitives;
-	friend class Engine;
+	friend class Engine_;
 	friend class Window;
 	friend class Torus;
-	friend class Entity::Entity_;
+	friend class Entity_;
 	friend class Entity::EntityAttribute<Sphere>;
 	friend class Entity::PointLight;
 
 	inline static std::vector<float> DataBuffer;
 	inline static std::vector<unsigned int> ObjectIDs;
-	inline static std::vector<float> SphereVertices;
-	inline static std::vector<unsigned int> SphereIndices;
+	inline static std::vector<float> VertexData;
+	inline static std::vector<unsigned int> IndicesData;
 	inline constexpr static unsigned int EntitySize = 7;
 
 	unsigned int ID;
 	unsigned int Index = 0;
 
-	inline static OpenGL_InstanceBuffer IBO;
-	inline static OpenGL_VertexBuffer VBO;
-	inline static OpenGL_ElementBuffer EBO;
+	inline static OpenGL_InstanceBuffer GPU_InstanceBuffer;
+	inline static OpenGL_VertexBuffer GPU_VertexBuffer;
+	inline static OpenGL_ElementBuffer GPU_ElementBuffer;
 
 			
-	inline static Shader SphereShader;
+	inline static Shader PrimitiveShader;
 
-	inline static unsigned int uloc_ViewPos;
-	inline static unsigned int uloc_view;
-	inline static unsigned int uloc_projection;
-	inline static unsigned int uloc_Num_PointLights;
-	inline static unsigned int uloc_Num_DirectionalLights;
+	
 
 public:
 
@@ -71,6 +68,5 @@ private:
 	Sphere(float pos_x, float pos_y, float pos_z, float radius, float red, float green, float blue);
 
 	static void Initialize();
-	static void Render(Camera& cam);
-
+	
 };

@@ -35,15 +35,15 @@ void Engine::Entity::Sphere::GenerateModel(int acc) {
 
 
 	for (int i = 0; i < vert.size(); i += 3) {
-		SphereVertices.push_back(vert[i]);
-		SphereVertices.push_back(vert[i + 1]);
-		SphereVertices.push_back(vert[i + 2]);
+		VertexData.push_back(vert[i]);
+		VertexData.push_back(vert[i + 1]);
+		VertexData.push_back(vert[i + 2]);
 		
 		float layer = floor((i / 3) / acc);
 		float v = (i / 3) % (int)acc;
 		
-		SphereVertices.push_back(v / acc);
-		SphereVertices.push_back(layer / layers);
+		VertexData.push_back(v / acc);
+		VertexData.push_back(layer / layers);
 
 		//std::cout << v / acc << " " << layer / layers << '\n';
 	}
@@ -54,25 +54,25 @@ void Engine::Entity::Sphere::GenerateModel(int acc) {
 		if (i > (size - acc * 1) - 1 and (i % acc != 0)) {
 
 			if (i + 1 != size - 1) {
-				SphereIndices.push_back(i);
-				SphereIndices.push_back(i + 1);
-				SphereIndices.push_back(size - 1);
+				IndicesData.push_back(i);
+				IndicesData.push_back(i + 1);
+				IndicesData.push_back(size - 1);
 			}
 
 		}
 		else {
 
-			SphereIndices.push_back(i);
-			SphereIndices.push_back(i + 1);
-			SphereIndices.push_back(i + acc);
-			SphereIndices.push_back(i + 1);
-			SphereIndices.push_back(i + acc);
+			IndicesData.push_back(i);
+			IndicesData.push_back(i + 1);
+			IndicesData.push_back(i + acc);
+			IndicesData.push_back(i + 1);
+			IndicesData.push_back(i + acc);
 
 			if ((i + acc + 1) != size) {
-				SphereIndices.push_back(i + acc + 1);
+				IndicesData.push_back(i + acc + 1);
 			}
 			else {
-				SphereIndices.push_back(size - 1);
+				IndicesData.push_back(size - 1);
 			}
 		}
 	}
@@ -82,21 +82,24 @@ void Engine::Entity::Sphere::GenerateModel(int acc) {
 void Engine::Entity::Sphere::CreateBuffers() {
 
 
-	EBO.CreateBuffer(SphereIndices.size() * sizeof(float));
-	EBO.SetData(SphereIndices);
+	GPU_ElementBuffer.CreateBuffer(IndicesData.size() * sizeof(float));
+	GPU_ElementBuffer.SetData(IndicesData);
 
-	VBO.CreateBuffer(SphereVertices.size() * sizeof(float), std::vector<std::pair<unsigned char, unsigned int>>{
+	GPU_VertexBuffer.CreateBuffer(VertexData.size() * sizeof(float), std::vector<std::pair<unsigned char, unsigned int>>{
 		{OpenGLType::Vec3, 0},
 		{OpenGLType::Vec2, 13}
 	});
 
-	VBO.SetData(SphereVertices);
+	GPU_VertexBuffer.SetData(VertexData);
 
-	IBO.CreateBuffer(7 * 300 * sizeof(float), std::vector<std::pair<unsigned char, unsigned int>>{
+	GPU_InstanceBuffer.CreateBuffer(7 * 300 * sizeof(float), std::vector<std::pair<unsigned char, unsigned int>>{
 		{OpenGLType::Vec3, 1},
 		{OpenGLType::Float, 2 },
 		{OpenGLType::Vec3, 3 }
 	});
+
+
+
 	// load and create a texture B
    // -------------------------
 	/*
@@ -132,15 +135,9 @@ void Engine::Entity::Sphere::Initialize() {
 
 	GenerateModel(150);
 	CreateBuffers();
-	SphereShader.SetFiles("sphere.vert", "sphere.frag");
+	PrimitiveShader.SetFiles("sphere.vert", "sphere.frag");
 
-	SphereShader.Use();
-
-	uloc_ViewPos = SphereShader.GetUniformLocation("ViewPos");
-	uloc_view = SphereShader.GetUniformLocation("view");
-	uloc_projection = SphereShader.GetUniformLocation("projection");
-	uloc_Num_PointLights = SphereShader.GetUniformLocation("Num_PointLights");
-	uloc_Num_DirectionalLights = SphereShader.GetUniformLocation("Num_DirectionalLights");
+	PrimitiveShader.Use();
 }
 
 Engine::Entity::Sphere::Sphere(float pos_x, float pos_y, float pos_z, float radius, float red, float green, float blue) {
@@ -169,29 +166,3 @@ void Engine::Entity::Sphere::Delete() {
 	Entity_::DataBuffer_Delete<Sphere>(ID, Index);
 }
 
-void Engine::Entity::Sphere::Render(Camera& cam) {
-	unsigned int NumInstances = ObjectIDs.size();
-
-	VBO.Bind();
-	EBO.Bind();
-	
-
-	IBO.SetData(DataBuffer);
-	IBO.Bind();
-
-	SphereShader.Use();
-	SphereShader.SetVec3(uloc_ViewPos, cam.position.x, cam.position.y, cam.position.z);
-	SphereShader.SetMat4(uloc_view, glm::value_ptr(cam.GetView()));
-	SphereShader.SetMat4(uloc_projection, glm::value_ptr(cam.GetProjection()));
-	SphereShader.SetInt(uloc_Num_PointLights, Entity::Lights::Num_PointLights);
-	SphereShader.SetInt(uloc_Num_DirectionalLights, Entity::Lights::Num_DirectionalLights);
-
-	// bind textures on corresponding texture units
-	
-	glDrawElementsInstanced(GL_TRIANGLES, SphereIndices.size(), GL_UNSIGNED_INT, 0, NumInstances);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glUseProgram(0);
-}

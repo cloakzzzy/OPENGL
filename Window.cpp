@@ -44,15 +44,16 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
 
-    const GLubyte* renderer = glGetString(GL_RENDERER);
+    const GLubyte* GPU = glGetString(GL_RENDERER);
     const GLubyte* vendor = glGetString(GL_VENDOR);
     const GLubyte* version = glGetString(GL_VERSION);
     const GLubyte* glslVer = glGetString(GL_SHADING_LANGUAGE_VERSION);
 
-    std::cout << "Renderer: " << renderer << std::endl;
+    std::cout << "GPU: " << GPU << std::endl;
     std::cout << "Vendor: " << vendor << std::endl;
     std::cout << "OpenGL version supported: " << version << std::endl;
     std::cout << "GLSL version: " << glslVer << std::endl;
+    std::cout << "\n========================================\n\n";
 
     // --- Timing variables ---
     now = SDL_GetPerformanceCounter();
@@ -71,8 +72,8 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
     SDL_GL_SetSwapInterval(1);
 
 
-    glGenVertexArrays(1, &Engine::u_VAO);
-    glBindVertexArray(Engine::u_VAO);
+    glGenVertexArrays(1, &Engine_::u_VAO);
+    glBindVertexArray(Engine_::u_VAO);
 
     Entity::PointLight::Initialize();
     Entity::DirectionalLight::Initialize();
@@ -80,7 +81,12 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
     Entity::Sphere::Initialize();
     Entity::Primitives::CreateFloor();
 
+    glGenBuffers(1, &Entity::Entity_::GlobalUniforms_SSBO);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, Entity::Entity_::GlobalUniforms_SSBO);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, 5000, nullptr, GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, Entity::Entity_::GlobalUniforms_SSBO);
    
+    
 }
 
 void Engine::Window::MainLoop(function<void()> Content, Camera& cam) {

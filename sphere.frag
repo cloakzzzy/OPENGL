@@ -7,23 +7,22 @@ in vec3 FragPos;
 in vec3 SpherePos;
 in vec2 TexCoord;
 
-uniform vec3 ViewPos;
-uniform int Num_PointLights;
-uniform int Num_DirectionalLights;
 
-uniform sampler2D texture1;
-uniform sampler2D texture2;
 
-//layout(std430) uniform LightData {
-   // float values[4096];
-//};
+layout(std430, binding = 2) buffer GlobalUniforms {
+    vec3 CameraPosition;
+    mat4 CameraProjection;
+    mat4 CameraView;
+    
+    uint Num_DirectionalLights;
+    uint Num_PointLights;
+};
 
-// SSBO at binding = 0
+
 layout(std430, binding = 0) buffer Data_PointLight {
     float PointLight_Values[];
 };
 
-// SSBO at binding = 0
 layout(std430, binding = 1) buffer Data_DirectionalLight {
     float DirectionalLight_Values[];
 };
@@ -45,7 +44,7 @@ void CalcPointLight(out vec3 result, vec3 LightPos, vec3 Terms, vec3 TorusCol, v
 
     // specular
     float specularStrength = 0.6f;
-    vec3 viewDir = normalize(ViewPos - FragPos);
+    vec3 viewDir = normalize(CameraPosition - FragPos);
     vec3 reflectDir = reflect(-lightDir, Normal);  
     
     vec3 halfwayDir = normalize(lightDir + viewDir);
@@ -76,7 +75,7 @@ void CalcDirectionalLight(out vec3 result, vec3 lightDir, vec3 TorusCol, vec3 No
 
     // specular
     float specularStrength = 0.6f;
-    vec3 viewDir = normalize(ViewPos - FragPos);
+    vec3 viewDir = normalize(CameraPosition - FragPos);
     vec3 reflectDir = reflect(-lightDir, Normal);  
     
     vec3 halfwayDir = normalize(lightDir + viewDir);

@@ -50,7 +50,7 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
 
     for (int i = 0; i < verta.size(); i += 3) {
         float layer = floor(i / acc / 3.0f);
-        TorusVertices.push_back(verta[i]); TorusVertices.push_back(verta[i + 1]); TorusVertices.push_back(verta[i + 2]);
+        VertexData.push_back(verta[i]); VertexData.push_back(verta[i + 1]); VertexData.push_back(verta[i + 2]);
 
         //TorusVertices.push_back(cs[layer * 3]);
        // TorusVertices.push_back(layer);
@@ -70,46 +70,46 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
                 first = false;
             }
             if (h == acc - 1) {
-                TorusIndices.push_back(start + 1);
-                TorusIndices.push_back(acc - 1);
-                TorusIndices.push_back(0);
+                IndicesData.push_back(start + 1);
+                IndicesData.push_back(acc - 1);
+                IndicesData.push_back(0);
 
-                TorusIndices.push_back(start + 1);
-                TorusIndices.push_back(b);
-                TorusIndices.push_back(0);
+                IndicesData.push_back(start + 1);
+                IndicesData.push_back(b);
+                IndicesData.push_back(0);
 
                 break;
             }
             start = i;
-            TorusIndices.push_back(i);
-            TorusIndices.push_back(h);
-            TorusIndices.push_back(h + 1);
+            IndicesData.push_back(i);
+            IndicesData.push_back(h);
+            IndicesData.push_back(h + 1);
 
-            TorusIndices.push_back(i);
-            TorusIndices.push_back(i + 1);
-            TorusIndices.push_back(h + 1);
+            IndicesData.push_back(i);
+            IndicesData.push_back(i + 1);
+            IndicesData.push_back(h + 1);
 
             h++;
         }
 
         else {
             if ((i + 1) % acc != 0) {
-                TorusIndices.push_back(i + acc);
-                TorusIndices.push_back(i + acc + 1);
-                TorusIndices.push_back(i + 1);
+                IndicesData.push_back(i + acc);
+                IndicesData.push_back(i + acc + 1);
+                IndicesData.push_back(i + 1);
 
-                TorusIndices.push_back(i + acc);
-                TorusIndices.push_back(i);
-                TorusIndices.push_back(i + 1);
+                IndicesData.push_back(i + acc);
+                IndicesData.push_back(i);
+                IndicesData.push_back(i + 1);
 
                 if ((i + 2) % acc == 0) {
-                    TorusIndices.push_back(acc * floor((float)i * divide));
-                    TorusIndices.push_back(acc * ceil((float)i * divide));
-                    TorusIndices.push_back(i + acc + 1);
+                    IndicesData.push_back(acc * floor((float)i * divide));
+                    IndicesData.push_back(acc * ceil((float)i * divide));
+                    IndicesData.push_back(i + acc + 1);
 
-                    TorusIndices.push_back(i + 1);
-                    TorusIndices.push_back(i + acc + 1);
-                    TorusIndices.push_back(acc * floor((float)i * divide));
+                    IndicesData.push_back(i + 1);
+                    IndicesData.push_back(i + acc + 1);
+                    IndicesData.push_back(acc * floor((float)i * divide));
                 }
             }
         }
@@ -118,14 +118,13 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
 void Engine::Entity::Torus::CreateBuffers() {
     
 
-    GPU_VertexBuffer.CreateBuffer(TorusVertices.size() * sizeof(float), std::vector<std::pair<unsigned char, unsigned int>>{
-        {OpenGLType::Vec3, 5},
-      
+    GPU_VertexBuffer.CreateBuffer(VertexData.size() * sizeof(float), std::vector<std::pair<unsigned char, unsigned int>>{
+        {OpenGLType::Vec3, 5}, 
     });
-    GPU_VertexBuffer.SetData(TorusVertices);
+    GPU_VertexBuffer.SetData(VertexData);
 
-    GPU_ElementBuffer.CreateBuffer(TorusIndices.size() * sizeof(float));
-    GPU_ElementBuffer.SetData(TorusIndices);
+    GPU_ElementBuffer.CreateBuffer(IndicesData.size() * sizeof(float));
+    GPU_ElementBuffer.SetData(IndicesData);
 
     GPU_InstanceBuffer.CreateBuffer(300 * 11 * sizeof(float),
         std::vector<std::pair<unsigned char, unsigned int>>{
@@ -139,13 +138,7 @@ void Engine::Entity::Torus::CreateBuffers() {
 void Engine::Entity::Torus::Initialize() {
     GenerateModel(150);
     CreateBuffers();
-    TorusShader.SetFiles("torus.vert", "torus.frag");
-    TorusShader.Use();
-    uloc_ViewPos = TorusShader.GetUniformLocation("ViewPos");
-    uloc_view = TorusShader.GetUniformLocation("view");
-    uloc_projection = TorusShader.GetUniformLocation("projection");
-    uloc_Num_PointLights = TorusShader.GetUniformLocation("Num_PointLights");
-    uloc_Num_DirectionalLights = TorusShader.GetUniformLocation("Num_DirectionalLights");
+    PrimitiveShader.SetFiles("torus.vert", "torus.frag");
 }
 
 Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,
@@ -182,27 +175,6 @@ Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,
 
 void Engine::Entity::Torus::Delete() { 
     Entity_::DataBuffer_Delete<Torus>(ID, Index);
-}
-
-
-void Engine::Entity::Torus::Render(Camera& cam) {
-    unsigned int NumInstances = ObjectIDs.size();
-
-    GPU_VertexBuffer.Bind();
-    GPU_ElementBuffer.Bind();
-
-    //puts instance data into IBO
-    GPU_InstanceBuffer.Bind();
-    GPU_InstanceBuffer.SetData(DataBuffer);
-
-    TorusShader.Use();
-    TorusShader.SetVec3(uloc_ViewPos, cam.position.x, cam.position.y, cam.position.z);
-    TorusShader.SetMat4(uloc_view, glm::value_ptr(cam.GetView()));
-    TorusShader.SetMat4(uloc_projection, glm::value_ptr(cam.GetProjection()));
-    TorusShader.SetInt(uloc_Num_PointLights, Entity::Lights::Num_PointLights);
-    TorusShader.SetInt(uloc_Num_DirectionalLights, Entity::Lights::Num_DirectionalLights);
-
-    glDrawElementsInstanced(GL_TRIANGLES, TorusIndices.size(), GL_UNSIGNED_INT, 0, NumInstances);
 }
 
 

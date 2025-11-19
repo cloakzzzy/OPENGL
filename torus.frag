@@ -8,19 +8,22 @@ in vec3 BefFrag;
 in vec3 TorusPos;
 in vec3 Rotation;
 
-uniform vec3 ViewPos;
-uniform int Num_PointLights;
-uniform int Num_DirectionalLights;
 
-// SSBO at binding = 0
+layout(std430, binding = 2) buffer CameraData {
+    vec3 CameraPosition;
+    mat4 CameraProjection;
+    mat4 CameraView;
 
-// Struct definition
+    uint Num_DirectionalLights;
+    uint Num_PointLights;
+};
 
-layout(std430, binding = 0) buffer LightData {
+
+layout(std430, binding = 0) buffer Data_PointLight {
     float PointLight_Values[];
 };
 
-// SSBO at binding = 0
+
 layout(std430, binding = 1) buffer Data_DirectionalLight {
     float DirectionalLight_Values[];
 };
@@ -54,7 +57,7 @@ void CalcPointLight(out vec3 result, vec3 LightPos, vec3 Terms, vec3 TorusCol, v
 
     // specular
     float SpecularStrength = 0.4f;
-    vec3 ViewDir = normalize(ViewPos - FragPos);
+    vec3 ViewDir = normalize(CameraPosition - FragPos);
     vec3 ReflectDir = reflect(-LightDir, Normal); 
     
     vec3 HalfwayDir = normalize(LightDir + ViewDir);
@@ -85,7 +88,7 @@ void CalcDirectionalLight(out vec3 result, vec3 lightDir, vec3 TorusCol, vec3 No
 
     // specular
     float specularStrength = 0.1f;
-    vec3 viewDir = normalize(ViewPos - FragPos);
+    vec3 viewDir = normalize(CameraPosition - FragPos);
     vec3 reflectDir = reflect(-lightDir, Normal);  
     
     vec3 halfwayDir = normalize(lightDir + viewDir);

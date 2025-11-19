@@ -1,14 +1,20 @@
 #version 430 core
 
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 position;
-layout (location = 2) in float radius;
-layout (location = 3) in vec3 aCol;
-layout (location = 13) in vec2 aTexCoord;
+layout (location = 0) in vec3 a_VertexPos;
+layout (location = 1) in vec3 a_Position;
+layout (location = 2) in float a_Radius;
+layout (location = 3) in vec3 a_Col;
+layout (location = 13) in vec2 a_TexCoord;
 
 
-uniform mat4 projection;
-uniform mat4 view;
+layout(std430, binding = 2) buffer GlobalUniforms {
+    vec3 CameraPosition;
+    mat4 CameraProjection;
+    mat4 CameraView;
+
+    uint Num_DirectionalLights;
+    uint Num_PointLights;
+};
 
 out vec3 FragPos;
 out vec3 SpherePos;
@@ -18,18 +24,19 @@ out vec2 TexCoord;
 
 void main()
 {
-    TexCoord = vec2(aTexCoord.x, aTexCoord.y);
-    SpherePos = position;
-    SphereCol = aCol;
     
-    vec3 pos = aPos;
-
-    pos *= radius;
-
-    pos += position;
-
-    FragPos = pos;
+    TexCoord = vec2(a_TexCoord.x, a_TexCoord.y);
+    SpherePos = a_Position;
+    SphereCol = a_Col;
     
-    gl_Position = projection * view * vec4(pos, 1.0f);
+    vec3 t_VertexPos = a_VertexPos;
+
+    t_VertexPos *= a_Radius;
+
+    t_VertexPos += a_Position;
+
+    FragPos = t_VertexPos;
+    
+    gl_Position = CameraProjection * CameraView * vec4(t_VertexPos, 1.0f);
 }   
 

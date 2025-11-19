@@ -14,14 +14,9 @@ Engine::Entity::DirectionalLight::DirectionalLight(float dir_x, float dir_y, flo
     this->dir_y.Set(1, this, dir_y);
     this->dir_z.Set(2, this, dir_z);
 
-    
 
     Entity::Lights::Num_DirectionalLights++;
 
-    std::cout << DataBuffer.size() << '\n';
-    for (auto i : DataBuffer) {
-        std::cout << i << " ";
-    }
 }
 
 void Engine::Entity::DirectionalLight::Delete() {
@@ -60,7 +55,4 @@ void Engine::Entity::DirectionalLight::Initialize() {
 void Engine::Entity::DirectionalLight::UpdateBuffer() {
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, SSBO);
     glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, DataBuffer.size() * sizeof(float), &DataBuffer.front());
-    std::vector<float> data(3);
-    glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, data.size() * sizeof(float), data.data());
- 
 }

@@ -10,6 +10,7 @@ namespace Engine {
 		class DirectionalLight;
 		class Primitives;
 		class Lights;
+		class Entity_;
 	}
 }
 

@@ -5,7 +5,7 @@
 #include "Camera.hpp"
 
 namespace Engine {
-	class Engine;
+	class Engine_;
 	class Window;
 	namespace Entity {
 		class Torus; 
@@ -17,7 +17,7 @@ namespace Engine {
 }
 
 class Engine::Window {
-	friend class Engine;
+	friend class Engine_;
 private:
 
 	double now;

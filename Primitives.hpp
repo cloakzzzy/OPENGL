@@ -3,7 +3,7 @@
 #include "Torus.hpp"
 
 namespace Engine {
-	class Engine;
+	class Engine_;
 	namespace Entity {
 		class Torus;
 		class Sphere;
@@ -16,7 +16,7 @@ namespace Engine {
 class Engine::Entity::Primitives {
 
 	friend class Window;
-	friend class Engine;
+	friend class Engine_;
 	friend class Torus;
 	friend class PointLight;
 	friend class Sphere;
@@ -42,6 +42,23 @@ class Engine::Entity::Primitives {
 		10000.0f, 0.f, 10000.f,
 	};
 
+	template<typename Primitive>
+	
+	static void Render() {
+		unsigned int NumInstances = Primitive::ObjectIDs.size();
+
+		Primitive::GPU_VertexBuffer.Bind();
+		Primitive::GPU_ElementBuffer.Bind();
+
+		//puts instance data into IBO
+		Primitive::GPU_InstanceBuffer.Bind();
+		Primitive::GPU_InstanceBuffer.SetData(Primitive::DataBuffer);
+
+		Primitive::PrimitiveShader.Use();
+
+		glDrawElementsInstanced(GL_TRIANGLES, Primitive::IndicesData.size(), GL_UNSIGNED_INT, 0, NumInstances);
+	}
+	
 	static void CreateFloor();
 	static void RenderFloor(Camera& cam);
 

@@ -4,6 +4,8 @@
 #include <iostream>
 
 namespace Engine {
+	class Engine_;
+	class Window;
 	namespace Entity {
 		class Entity_;
 		class Torus;
@@ -20,8 +22,13 @@ class Engine::Entity::Entity_{
 	friend class Entity::Sphere;
 	friend class Entity::PointLight;
 	friend class Entity::DirectionalLight;
+	friend class Window;
+	friend class Engine_;
 
 	Entity_();
+
+	inline static unsigned int GlobalUniforms_SSBO;
+	
 
 	template <typename T>
 	static void DataBuffer_Add(std::vector<float>& Payload, unsigned int& ID, unsigned int& Index) {

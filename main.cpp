@@ -12,14 +12,16 @@ const unsigned int SCR_HEIGHT = 600;
 
 Camera cam(SCR_WIDTH, SCR_HEIGHT, 90, float(SCR_WIDTH) / float(SCR_HEIGHT), 0.2, 100);
 
+//using namespace Engine;
 using namespace Engine::Entity;
+
 
 int main() {
 
-    Engine::Engine::Initialize();
+    Engine::Engine_::Initialize();
     
     //Engine::Window window = Engine::Engine::CreateWindow("Engine Window", 800, 600, 0.53, 0.81, 0.92);
-    Engine::Window window = Engine::Engine::CreateWindow("Engine Window", 800, 600, 0.4,0.4,0.4);
+    Engine::Window window = Engine::Engine_::CreateWindow("Engine Window", 800, 600, 0.4,0.4,0.4);
 
     
     auto torus1 = Primitives::CreateTorus(
@@ -58,7 +60,7 @@ int main() {
         2.f,
         0.18, 0.3, 0.55);
         
-
+    /*
     auto light_sphere1 = Primitives::CreateSphere(
         0.0f, 10.f, 5.0f,
         0.25f,
@@ -72,7 +74,9 @@ int main() {
    
     auto light1 = Lights::Create_PointLight(0.0f, 10.f, 5.0f, 1.0,0.045, 0.0075);
     auto light2 = Lights::Create_PointLight(0.0f, 10.f, -5.0f, 1.0, 0.045, 0.0075);
-    auto dlight1 = Lights::Create_DirectionalLight(1.f, 0, 0.f);
+    */
+
+    auto dlight1 = Lights::Create_DirectionalLight(0.707f, 0.707, 0.707f);
 
     /*
     float sum_duration = 0;
@@ -110,7 +114,9 @@ int main() {
 
         torus3.rot_z += 0.45;
         torus3.rot_y += 0.7;
-        
+
+
+        /*
         light1.pos_x = 5.0f * cos(time);
         light1.pos_z = 5.0f * sin(time);
 
@@ -122,11 +128,10 @@ int main() {
 
         light_sphere2.pos_x = 10.0f * cos(time + 0.3) - 0.0f;
         light_sphere2.pos_z = 10.0f * sin(time + 0.2) + 3.0f;
-        
-       
+        */
 
         
-        Engine::Engine::Render(cam);
+        Engine::Engine_::Render(cam);
 
 
         time+=0.02;

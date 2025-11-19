@@ -9,6 +9,7 @@ namespace Engine {
 		class PointLight;
 		class Primitives;
 		class Lights;
+		class Entity_;
 	}
 }
 

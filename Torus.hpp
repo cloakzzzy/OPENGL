@@ -11,20 +11,20 @@
 
 namespace Engine {
 	class Window;
-	class Engine;
+	class Engine_;
 	namespace Entity {
 		class Primitives;
 		class Sphere;
 		class Torus;
 		class PointLight;
-		
+		class Entity_;
 	}
 }
 
 class Engine::Entity::Torus {
 	friend class Entity::Primitives;
 	friend class Entity::Entity_;
-	friend class Engine;
+	friend class Engine_;
 	friend class Window;
 	friend class Entity::EntityAttribute<Torus>; 
 	friend class Entity::PointLight;
@@ -34,10 +34,10 @@ private:
 	inline static std::vector<float> DataBuffer;
 	inline static std::vector<unsigned int> ObjectIDs;
 
-	inline static std::vector<unsigned int> TorusIndices;
-	inline static std::vector<float> TorusVertices;
+	inline static std::vector<unsigned int> IndicesData;
+	inline static std::vector<float> VertexData;
 
-	inline static Shader TorusShader;
+	inline static Shader PrimitiveShader;
 	
 	inline constexpr static unsigned int EntitySize = 11;
 
@@ -52,8 +52,7 @@ private:
 	static void CreateBuffers();
 	Torus(float pos_x, float pos_y, float pos_z, float radius, float thickness, float red, float green, float blue, float rotx, float roty, float rotz);
 	static void Initialize();
-	static void Render(Camera& cam);
-
+	
 	inline static unsigned int uloc_ViewPos;
 	inline static unsigned int uloc_view;
 	inline static unsigned int uloc_projection;

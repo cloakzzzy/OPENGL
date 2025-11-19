@@ -2,11 +2,15 @@
 
 namespace Engine {
 	class Window;
-	class Engine;
-	namespace Entity { class Torus; class Sphere; class PointLight; }
+	class Engine_;
+	namespace Entity { 
+		class Torus; 
+		class Sphere; 
+		class PointLight; 
+	}
 }
 
-class Engine::Engine {
+class Engine::Engine_ {
 	friend class Entity::Torus;
 	friend class Window;
 	inline static unsigned int u_VAO;
