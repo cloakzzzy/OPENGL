@@ -42,7 +42,7 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
 
     glewInit();
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_MULTISAMPLE);
+    //glEnable(GL_MULTISAMPLE);
 
     const GLubyte* GPU = glGetString(GL_RENDERER);
     const GLubyte* vendor = glGetString(GL_VENDOR);
@@ -179,8 +179,8 @@ void Engine::Window::MainLoop(function<void()> Content, Camera& cam) {
 
         }
         
-        glClearColor(Red, Green, Blue, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //glClearColor(Red, Green, Blue, 1.0f);
+        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         Content();
 

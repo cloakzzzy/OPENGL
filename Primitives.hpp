@@ -22,6 +22,14 @@ class Engine::Entity::Primitives {
 	friend class Sphere;
 
 	inline static unsigned int FloorVBO;
+	inline static unsigned int depthMapFBO;
+	inline static unsigned int depthMap;
+	inline static Shader simpleDepthShader;
+	inline static Shader debugDepthQuad;
+
+
+	const static unsigned int SHADOW_WIDTH = 600, SHADOW_HEIGHT = 600;
+
 
 	inline static Shader FloorShader;
 

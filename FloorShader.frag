@@ -6,21 +6,37 @@ in vec3 FragPos;
 uniform vec3 cam_pos;
 uniform vec3 col1;
 uniform vec3 col2;
+uniform sampler2D shadowMap;
+
+in vec4 FragPosLightSpace;
+
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+    // perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(shadowMap, projCoords.xy).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+
+    return shadow;
+}
 
 void main()
 {
+
+	FragColor = vec4(ShadowCalculation(FragPosLightSpace));
+	return;
 	float step = 1.0f;
-
-	//vec3 col1 = vec3(0.6f);
-	//vec3 col2 = vec3(0.8f);
-
-
-
+	
 	float distance = length(cam_pos.xz - FragPos.xz);
 
 	float fog = 1.0f;
 
-	//fog = 0.1 + 1.f / distance;
 	
 
 	float cellx = ceil(FragPos.x / step);
