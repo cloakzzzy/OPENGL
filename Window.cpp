@@ -42,7 +42,8 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
 
     glewInit();
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_MULTISAMPLE);
+    glDepthMask(GL_TRUE);
+    glEnable(GL_MULTISAMPLE);
 
     const GLubyte* GPU = glGetString(GL_RENDERER);
     const GLubyte* vendor = glGetString(GL_VENDOR);

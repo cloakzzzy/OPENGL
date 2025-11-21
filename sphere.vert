@@ -16,6 +16,9 @@ layout(std430, binding = 2) buffer GlobalUniforms {
     uint Num_PointLights;
 };
 
+out vec4 FragPosLightSpace;
+uniform mat4 lightSpaceMatrix;
+
 out vec3 FragPos;
 out vec3 SpherePos;
 out vec3 SphereCol;
@@ -36,7 +39,10 @@ void main()
     t_VertexPos += a_Position;
 
     FragPos = t_VertexPos;
+
+    FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
     
     gl_Position = CameraProjection * CameraView * vec4(t_VertexPos, 1.0f);
+
 }   
 

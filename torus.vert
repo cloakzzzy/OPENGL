@@ -6,6 +6,9 @@ layout (location = 8) in vec2 a_RT;
 layout (location = 9) in vec3 a_Colour;
 layout (location = 10) in vec3 a_Rotation;
 
+uniform mat4 lightSpaceMatrix;
+out vec4 FragPosLightSpace;
+
 out vec3 colour;
 
 #define RAD 3.14159f/180.0f
@@ -56,6 +59,8 @@ void main()
     t_VertexPos += a_Position;
 
     FragPos = t_VertexPos;
+
+    FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
 
     gl_Position = CameraProjection * CameraView * vec4(t_VertexPos, 1.0f);
 }

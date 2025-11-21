@@ -42,15 +42,19 @@ int main() {
         1.0, 0.75, 0.0,
         0.0f, 0.0f, 0.0f);
     
+    auto torus4 = Primitives::CreateTorus(
+        -5.0f, 4.0f, 3.f,
+        2.f, 1.f,
+        0.0, 1.0, 0.50,
+        0.0f, 0.0f, 0.0f);
     
     auto sphere1 = Primitives::CreateSphere(
         0.0f, 10.0f, 0.0f,
         2.f,
         0.18, 0.55, 0.3);
 
-    
     auto sphere2 = Primitives::CreateSphere(
-        0.0f, 20.0f, 5.0f,
+        0.0f, 10.0f, 5.f,
         2.f,
         0.55, 0.18, 0.3);
     
@@ -59,6 +63,28 @@ int main() {
         0.f, 10.0f, 0.0f,
         2.f,
         0.18, 0.3, 0.55);
+
+    auto sphere4 = Primitives::CreateSphere(
+        0.707 * 20.f, 0.707 * 20.f, 0.707 * 20.f,
+        1.f,
+        1.0f, 1.0f, 1.0f);
+
+    auto sphere5 = Primitives::CreateSphere(
+        -5.f, 3.0f, -0.5f,
+        1.f,
+        1.0f, 0.5, 1.0f);
+
+    /*
+    auto sphere6 = Primitives::CreateSphere(
+        0.707 * 13.f, 0.707 * 13.f, 0.707 * 13.f,
+        1.f,
+        1.0f, 0.5, 1.0f);
+        */
+
+    auto sphere6 = Primitives::CreateSphere(
+        5.f, 3.0f, -0.5f,
+        1.f,
+        1.0f, 0.5, 1.0f);
         
     /*
     auto light_sphere1 = Primitives::CreateSphere(

@@ -85,7 +85,11 @@ public:
         glUseProgram(ID);
     }
 
-    inline unsigned int GetUniformLocation(std::string name) {
+    inline void Unbind() {
+        glUseProgram(0);
+    }
+
+    inline int GetUniformLocation(std::string name) {
         return glGetUniformLocation(ID, name.c_str());
     }
 

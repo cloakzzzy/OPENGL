@@ -41,7 +41,7 @@ void Engine::Entity::Primitives::CreateFloor() {
 
 	// 1. render depth of scene to texture (from light's perspective)
 		// --------------------------------------------------------------
-	const unsigned int SHADOW_WIDTH = 800, SHADOW_HEIGHT = 600;
+	const unsigned int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
 	glGenFramebuffers(1, &depthMapFBO);
 	// create depth texture
 	glGenTextures(1, &depthMap);
@@ -59,20 +59,21 @@ void Engine::Entity::Primitives::CreateFloor() {
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	//FloorShader.Use();
-	//FloorShader.SetInt(FloorShader.GetUniformLocation("shadowMap"), 5);
+	FloorShader.Use();
+	FloorShader.SetInt(FloorShader.GetUniformLocation("shadowMap"), 5);
 
 	debugDepthQuad.Use();
 	debugDepthQuad.SetInt(debugDepthQuad.GetUniformLocation("depthMap"), 6);
-	
-	std::cout << "gdgd" << debugDepthQuad.GetUniformLocation("depthMap") << '\n';
 
+	Entity::Torus::PrimitiveShader.Use();
+	Entity::Torus::PrimitiveShader.SetInt(Entity::Torus::PrimitiveShader.GetUniformLocation("shadowMap"), 7);
+
+	Entity::Sphere::PrimitiveShader.Use();
+	Entity::Sphere::PrimitiveShader.SetInt(Entity::Sphere::PrimitiveShader.GetUniformLocation("shadowMap"), 8);
 	
 }
 
 void Engine::Entity::Primitives::RenderFloor(Camera& cam) {
-	
-	
 	
 
 	

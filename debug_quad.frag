@@ -22,12 +22,12 @@ void main()
 
     if (depthValue < 1.0f){
         FragColor = vec4(0.2f);
-        return;
+        //return;
     }
 
     // FragColor = vec4(vec3(LinearizeDepth(depthValue) / far_plane), 1.0); // perspective
     //FragColor = vec4(vec3(depthValue), 1.0); // orthographic
    
-    FragColor = vec4(0.5); // orthographic
+    FragColor = vec4(depthValue); // orthographic
    // FragColor = vec4(0.5f);
 }
