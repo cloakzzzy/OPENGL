@@ -43,7 +43,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal)
     float currentDepth = projCoords.z;
     // calculate bias (based on depth map resolution and slope)
     vec3 lightDir = normalize(vec3(0.707 * 10.f) - FragPos);
-    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.01);
     // check whether current frag pos is in shadow
     // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
     // PCF
@@ -57,10 +57,10 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal)
             shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
         }    
     }
-    shadow /= 9.0;
+    shadow /= 12.0;
     
     // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
-    if(projCoords.z > 1.0)
+   if(projCoords.z > 1.0)
         shadow = 0.0f;
         
     return shadow;
@@ -117,8 +117,10 @@ void CalcPointLight(out vec3 result, vec3 LightPos, vec3 Terms, vec3 TorusCol, v
 void CalcDirectionalLight(out vec3 result, vec3 lightDir, vec3 TorusCol, vec3 Normal, float Shadow){
     vec3 LightColour = vec3(1.0f);
     // ambient
-    float ambientStrength = 0.01;
+    float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * LightColour;
+
+
 
     //diffuse
     float diff = max(dot(Normal, lightDir), 0.0);
@@ -136,7 +138,8 @@ void CalcDirectionalLight(out vec3 result, vec3 lightDir, vec3 TorusCol, vec3 No
     vec3 specular = specularStrength * spec * LightColour; 
 
 
-    result = (ambient + 1.0f - Shadow) *  (diffuse + specular) * TorusCol;
+    result = (ambient + (1.0 - Shadow) * (diffuse + specular)) * TorusCol;    
+   
 }
 
 void main()

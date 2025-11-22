@@ -52,7 +52,8 @@ int main() {
         0.0f, 10.0f, 0.0f,
         2.f,
         0.18, 0.55, 0.3);
-
+    
+    
     auto sphere2 = Primitives::CreateSphere(
         0.0f, 10.0f, 5.f,
         2.f,
@@ -63,44 +64,44 @@ int main() {
         0.f, 10.0f, 0.0f,
         2.f,
         0.18, 0.3, 0.55);
-
+    
+    
     auto sphere4 = Primitives::CreateSphere(
-        0.707 * 20.f, 0.707 * 20.f, 0.707 * 20.f,
+        0.707 * 20.f, 2.0f, 0.707 * 20.f,
         1.f,
         1.0f, 1.0f, 1.0f);
-
+    
     auto sphere5 = Primitives::CreateSphere(
         -5.f, 3.0f, -0.5f,
         1.f,
         1.0f, 0.5, 1.0f);
-
-    /*
+        
+    
     auto sphere6 = Primitives::CreateSphere(
-        0.707 * 13.f, 0.707 * 13.f, 0.707 * 13.f,
+        0.707 * 13.f, 10.0, 0.707 * 13.f,
         1.f,
         1.0f, 0.5, 1.0f);
-        */
-
-    auto sphere6 = Primitives::CreateSphere(
+      
+    auto sphere7 = Primitives::CreateSphere(
         5.f, 3.0f, -0.5f,
         1.f,
         1.0f, 0.5, 1.0f);
-        
+      
     /*
     auto light_sphere1 = Primitives::CreateSphere(
         0.0f, 10.f, 5.0f,
         0.25f,
         1.0f, 1.0f, 1.0f);
-    
+    */
     
     auto light_sphere2 = Primitives::CreateSphere(
         0.0f, 10.f, -5.0f,
         0.25f,
         1.0f, 1.0f, 1.0f);
    
-    auto light1 = Lights::Create_PointLight(0.0f, 10.f, 5.0f, 1.0,0.045, 0.0075);
-    auto light2 = Lights::Create_PointLight(0.0f, 10.f, -5.0f, 1.0, 0.045, 0.0075);
-    */
+   // auto light1 = Lights::Create_PointLight(0.0f, 10.f, 5.0f, 1.0,0.045, 0.0075);
+    //auto light2 = Lights::Create_PointLight(0.0f, 10.f, -5.0f, 1.0, 0.045, 0.0075);
+    //
 
     auto dlight1 = Lights::Create_DirectionalLight(0.707f, 0.707, 0.707f);
 
@@ -132,16 +133,16 @@ int main() {
     window.MainLoop([&]() {
 
         
-        torus1.rot_z += 0.525;
+          torus1.rot_z += 0.525;
         torus1.rot_y += 0.55;
 
-        torus2.rot_z += 0.725;
+       torus2.rot_z += 0.725;
         torus2.rot_y += 0.5;
 
         torus3.rot_z += 0.45;
         torus3.rot_y += 0.7;
 
-
+        
         /*
         light1.pos_x = 5.0f * cos(time);
         light1.pos_z = 5.0f * sin(time);

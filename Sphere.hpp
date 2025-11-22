@@ -46,7 +46,7 @@ class Engine::Entity::Sphere {
 
 			
 	inline static Shader PrimitiveShader;
-
+	inline static Shader DepthShader;
 	
 
 public:

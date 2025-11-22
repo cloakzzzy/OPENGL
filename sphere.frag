@@ -125,7 +125,7 @@ void CalcDirectionalLight(out vec3 result, vec3 lightDir, vec3 TorusCol, vec3 No
     vec3 specular = specularStrength * spec * LightColour; 
 
 
-    result = (ambient + 1.0f - Shadow) *  (diffuse + specular) * TorusCol;
+    result = (ambient + (1.0 - Shadow) * (diffuse + specular)) * TorusCol;    
 }
 
 void main()

@@ -38,6 +38,7 @@ private:
 	inline static std::vector<float> VertexData;
 
 	inline static Shader PrimitiveShader;
+	inline static Shader DepthShader;
 	
 	inline constexpr static unsigned int EntitySize = 11;
 

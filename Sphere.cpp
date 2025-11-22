@@ -136,10 +136,11 @@ void Engine::Entity::Sphere::Initialize() {
 	GenerateModel(150);
 	CreateBuffers();
 	PrimitiveShader.SetFiles("sphere.vert", "sphere.frag");
+	DepthShader.SetFiles("depthshader_sphere.vert", "depthshader.frag");
 
 	PrimitiveShader.Use();
-}
 
+}
 Engine::Entity::Sphere::Sphere(float pos_x, float pos_y, float pos_z, float radius, float red, float green, float blue) {
 	vector<float> sphere{
 	pos_x,pos_y,pos_z,

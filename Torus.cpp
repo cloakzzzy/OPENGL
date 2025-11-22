@@ -139,6 +139,7 @@ void Engine::Entity::Torus::Initialize() {
     GenerateModel(150);
     CreateBuffers();
     PrimitiveShader.SetFiles("torus.vert", "torus.frag");
+    DepthShader.SetFiles("depthshader_torus.vert", "depthshader.frag");
 }
 
 Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,
