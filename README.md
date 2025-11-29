@@ -1,4 +1,6 @@
-# An Demo
+# A Demo
+
+<img width="791" height="601" alt="image" src="https://github.com/user-attachments/assets/639706d5-76cc-4358-84dd-a3f2b343037e" />
 
 ```cpp
 #include <SDL3/SDL.h>
@@ -113,5 +115,3 @@ int main() {
     return 0;
 }
 ```
-## Result
-<img width="791" height="601" alt="image" src="https://github.com/user-attachments/assets/639706d5-76cc-4358-84dd-a3f2b343037e" />
