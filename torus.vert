@@ -3,8 +3,8 @@ layout (location = 5) in vec3 a_VertexPos;
  
 layout (location = 7) in vec3 a_Position;
 layout (location = 8) in vec2 a_RT;
-layout (location = 9) in vec3 a_Colour;
-layout (location = 10) in vec3 a_Rotation;
+layout (location = 9) in float a_Colour;
+layout (location = 10) in vec2 a_Rotation;
 
 uniform mat4 lightSpaceMatrix;
 out vec4 FragPosLightSpace;
@@ -26,11 +26,13 @@ out vec3 FragPos;
 out vec3 TorusPos;
 out vec3 BefFrag;
 out vec3 TorusCol;
-out vec3 Rotation;
+out vec2 Rotation;
 
 void main()
 {
-    TorusCol = a_Colour;
+    uint u_Col = floatBitsToUint(a_Colour);
+    uvec3 Colors = uvec3(u_Col & 0xFFu,  (u_Col >> 8) & 0xFFu, (u_Col >> 16) & 0xFFu); 
+    TorusCol = vec3(Colors / 255.0f);
     
     vec3 t_VertexPos = a_VertexPos;
     BefFrag = a_VertexPos;
@@ -46,15 +48,18 @@ void main()
 
     
     vec3 v1 = t_VertexPos;
+
+    //z pitch
+    // y yaw
     
     //pitch
-    t_VertexPos.x = (cos(a_Rotation.z * RAD) * v1.x) - (sin(a_Rotation.z * RAD) * v1.y);
-    t_VertexPos.y = (sin(a_Rotation.z * RAD) * v1.x) + (cos(a_Rotation.z * RAD) * v1.y);
+    t_VertexPos.x = (cos(a_Rotation.y * RAD) * v1.x) - (sin(a_Rotation.y * RAD) * v1.y);
+    t_VertexPos.y = (sin(a_Rotation.y * RAD) * v1.x) + (cos(a_Rotation.y * RAD) * v1.y);
     vec3 v2 = t_VertexPos;
 
     //yaw
-    t_VertexPos.x = (cos(a_Rotation.y * RAD) * v2.x) - (sin(a_Rotation.y * RAD) * v2.z);
-    t_VertexPos.z = (sin(a_Rotation.y * RAD) * v2.x) + (cos(a_Rotation.y * RAD) * v2.z);
+    t_VertexPos.x = (cos(a_Rotation.x * RAD) * v2.x) - (sin(a_Rotation.x * RAD) * v2.z);
+    t_VertexPos.z = (sin(a_Rotation.x * RAD) * v2.x) + (cos(a_Rotation.x * RAD) * v2.z);
 
     t_VertexPos += a_Position;
 

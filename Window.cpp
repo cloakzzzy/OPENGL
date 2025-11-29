@@ -44,6 +44,8 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
     glEnable(GL_MULTISAMPLE);
+    glEnable(GL_CULL_FACE);
+    
 
     const GLubyte* GPU = glGetString(GL_RENDERER);
     const GLubyte* vendor = glGetString(GL_VENDOR);
@@ -187,7 +189,7 @@ void Engine::Window::MainLoop(function<void()> Content, Camera& cam) {
 
         double fps = 1.0 / DeltaTime;
 
-        //std::cout << "\rFrame time: " << (DeltaTime * 1000.0) << " ms  |  FPS: " << fps << "       " << std::flush;
+        std::cout << "\rFrame time: " << (DeltaTime * 1000.0) << " ms  |  FPS: " << fps << "       " << std::flush;
 
         SDL_GL_SwapWindow(WindowObject);
 

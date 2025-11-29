@@ -12,6 +12,8 @@ namespace Engine {
 		class Sphere;
 		template<typename T>
 		class EntityAttribute;
+		template<typename T>
+		class EntityAttribute_Packed;
 		class PointLight;
 		class DirectionalLight;
 	}
@@ -43,6 +45,18 @@ class Engine::Entity::Entity_{
 		//The objects Index is the end TorusIndicesex
 		Index = T::ObjectIDs.size() - 1;
 	}
+	template<typename T>
+	static void Generate_ID(unsigned int& ID, unsigned int& Index) {
+
+		for (int i = 0; i < T::EntitySize; i++) { T::DataBuffer.push_back(NULL);}
+
+		if (T::ObjectIDs.size() == 0) { ID = 1; }
+		else { ID = T::ObjectIDs.back() + 1; }
+
+		T::ObjectIDs.push_back(ID);
+
+		Index = T::ObjectIDs.size() - 1;
+	}
 
 	template<typename T>
 	static void DataBuffer_Delete(unsigned int& ID, unsigned int& Index) {
@@ -57,8 +71,9 @@ class Engine::Entity::Entity_{
 
 		//removes info from instance buffer, stop rendering the torus.
 		T::DataBuffer.erase(T::DataBuffer.begin() + Index * T::EntitySize, T::DataBuffer.begin() + Index * T::EntitySize + T::EntitySize);
+	
+		ID = NULL;
 	}
-
 };
 
 template <typename T>
@@ -76,6 +91,8 @@ private:
 		this->Offset = Offset;
 		Value = StartingVal;
 	}
+	EntityAttribute() {};
+	EntityAttribute(unsigned char Offset, T* p_EntityObject) : Offset(Offset), p_EntityObject(p_EntityObject) {}
 
 public:
 	inline operator float() const { return Value; }
@@ -157,3 +174,183 @@ public:
 	}
 
 };
+
+template <typename T>
+class Engine::Entity::EntityAttribute_Packed {
+	friend T;
+
+public:
+	T* p_EntityObject = nullptr;
+	unsigned char Offset;
+	unsigned char BitOffset;
+	unsigned char Value;
+
+private:
+	__forceinline void Set(unsigned char Offset,unsigned char BitOffset, T* p_EntityObject, unsigned char StartingVal) {
+		this->p_EntityObject = p_EntityObject;
+		this->Offset = Offset;
+		this->BitOffset = BitOffset;
+		Value = StartingVal;
+	}
+	EntityAttribute_Packed() {};
+
+	EntityAttribute_Packed(unsigned char Offset, unsigned char BitOffset, T* p_EntityObject) : Offset(Offset), BitOffset(BitOffset), p_EntityObject(p_EntityObject) {}
+
+public:
+	inline operator float() const { return Value; }
+	/*
+	__forceinline EntityAttribute_Packed& operator=(const unsigned char NewValue) {
+		unsigned int& Index = p_EntityObject->Index;
+		unsigned int& ID = p_EntityObject->ID;
+		if (Index >= T::ObjectIDs.size() or T::ObjectIDs[Index] != ID) {
+			Index = BinarySearch(T::ObjectIDs, ID);
+			if (Index == 4294967295) return *this;
+		}
+		
+		Value = NewValue;
+
+		float& f = T::DataBuffer[Index * T::EntitySize + Offset];
+		unsigned int u = std::bit_cast<unsigned int>(f);
+		u &= ~(0xFFu << BitOffset);
+		u |= (static_cast<unsigned int>(Value) << BitOffset);
+		f = std::bit_cast<float>(u);
+
+		return *this;
+	}
+	*/
+
+	__forceinline EntityAttribute_Packed& operator=(const unsigned char NewValue) {
+		unsigned int& Index = p_EntityObject->Index;
+		unsigned int& ID = p_EntityObject->ID;
+		if (Index >= T::ObjectIDs.size() or T::ObjectIDs[Index] != ID) {
+			Index = BinarySearch(T::ObjectIDs, ID);
+			if (Index == 4294967295) return *this;
+		}
+		Value = NewValue;
+
+		union {float f;unsigned int u;} tmp;
+
+		tmp.f = T::DataBuffer[Index * T::EntitySize + Offset];
+
+		tmp.u &= ~(0xFFu << BitOffset);
+		tmp.u |= (static_cast<unsigned int>(Value) << BitOffset);
+
+		T::DataBuffer[Index * T::EntitySize + Offset] = tmp.f;
+
+
+		return *this;
+	}
+	__forceinline EntityAttribute_Packed& operator=(const EntityAttribute_Packed& OtherObj) {
+		unsigned int& Index = p_EntityObject->Index;
+		unsigned int& ID = p_EntityObject->ID;
+		float NewValue = OtherObj.Value;
+		if (Index >= T::ObjectIDs.size() or T::ObjectIDs[Index] != ID) {
+			Index = BinarySearch(T::ObjectIDs, ID);
+			if (Index == 4294967295) return *this;
+		}
+		Value = NewValue;
+
+		union { float f; unsigned int u; } tmp;
+
+		tmp.f = T::DataBuffer[Index * T::EntitySize + Offset];
+
+		tmp.u &= ~(0xFFu << BitOffset);
+		tmp.u |= (static_cast<unsigned int>(Value) << BitOffset);
+
+		T::DataBuffer[Index * T::EntitySize + Offset] = tmp.f;
+
+		return *this;
+
+
+	}
+
+	__forceinline EntityAttribute_Packed& operator+=(const unsigned char OtherValue) {
+		unsigned int& Index = p_EntityObject->Index;
+		unsigned int& ID = p_EntityObject->ID;
+		if (Index >= T::ObjectIDs.size() or T::ObjectIDs[Index] != ID) {
+			Index = BinarySearch(T::ObjectIDs, ID);
+			if (Index == 4294967295) return *this;
+		}
+
+		Value += OtherValue;
+
+		union { float f; unsigned int u; } tmp;
+
+		tmp.f = T::DataBuffer[Index * T::EntitySize + Offset];
+
+		tmp.u &= ~(0xFFu << BitOffset);
+		tmp.u |= (static_cast<unsigned int>(Value) << BitOffset);
+
+		T::DataBuffer[Index * T::EntitySize + Offset] = tmp.f;
+
+		return *this;
+	}
+
+	__forceinline EntityAttribute_Packed& operator-=(const unsigned char OtherValue) {
+		unsigned int& Index = p_EntityObject->Index;
+		unsigned int& ID = p_EntityObject->ID;
+		if (Index >= T::ObjectIDs.size() or T::ObjectIDs[Index] != ID) {
+			Index = BinarySearch(T::ObjectIDs, ID);
+			if (Index == 4294967295) return *this;
+		}
+		Value -= OtherValue;
+
+		union { float f; unsigned int u; } tmp;
+
+		tmp.f = T::DataBuffer[Index * T::EntitySize + Offset];
+
+		tmp.u &= ~(0xFFu << BitOffset);
+		tmp.u |= (static_cast<unsigned int>(Value) << BitOffset);
+
+		T::DataBuffer[Index * T::EntitySize + Offset] = tmp.f;
+
+		return *this;
+	}
+
+	__forceinline EntityAttribute_Packed& operator*=(const unsigned char OtherValue) {
+		unsigned int& Index = p_EntityObject->Index;
+		unsigned int& ID = p_EntityObject->ID;
+		if (Index >= T::ObjectIDs.size() or T::ObjectIDs[Index] != ID) {
+			Index = BinarySearch(T::ObjectIDs, ID);
+			if (Index == 4294967295) return *this;
+		}
+		Value *= OtherValue;
+
+		union { float f; unsigned int u; } tmp;
+
+		tmp.f = T::DataBuffer[Index * T::EntitySize + Offset];
+
+		tmp.u &= ~(0xFFu << BitOffset);
+		tmp.u |= (static_cast<unsigned int>(Value) << BitOffset);
+
+		T::DataBuffer[Index * T::EntitySize + Offset] = tmp.f;
+
+		return *this;
+	}
+
+	__forceinline EntityAttribute_Packed& operator/=(const unsigned char OtherValue) {
+		unsigned int& Index = p_EntityObject->Index;
+		unsigned int& ID = p_EntityObject->ID;
+		if (Index >= T::ObjectIDs.size() or T::ObjectIDs[Index] != ID) {
+			Index = BinarySearch(T::ObjectIDs, ID);
+			if (Index == 4294967295) return *this;
+		}
+		Value /= OtherValue;
+
+		union { float f; unsigned int u; } tmp;
+
+		tmp.f = T::DataBuffer[Index * T::EntitySize + Offset];
+
+		tmp.u &= ~(0xFFu << BitOffset);
+		tmp.u |= (static_cast<unsigned int>(Value) << BitOffset);
+
+		T::DataBuffer[Index * T::EntitySize + Offset] = tmp.f;
+
+		return *this;
+	}
+
+};
+
+
+
+

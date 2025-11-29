@@ -4,24 +4,18 @@
 #include "Lights.hpp"
 
 Engine::Entity::DirectionalLight::DirectionalLight(float dir_x, float dir_y, float dir_z) {
+   
+    Entity_::Generate_ID<DirectionalLight>(ID, Index);
 
-
-    std::vector<float> dir_light{dir_x ,dir_y,dir_z};
-
-    Entity_::DataBuffer_Add<DirectionalLight>(dir_light, ID, Index);
-
-    this->dir_x.Set(0, this, dir_x);
-    this->dir_y.Set(1, this, dir_y);
-    this->dir_z.Set(2, this, dir_z);
-
+    this->dir_x = dir_x;
+    this->dir_y = dir_y;
+    this->dir_z = dir_z;
 
     Entity::Lights::Num_DirectionalLights++;
 
 }
 
-void Engine::Entity::DirectionalLight::Delete() {
-    Entity_::DataBuffer_Delete<DirectionalLight>(ID, Index);
-}
+void Engine::Entity::DirectionalLight::Delete() {Entity_::DataBuffer_Delete<DirectionalLight>(ID, Index);}
 
 void Engine::Entity::DirectionalLight::CreateBuffers() {
 

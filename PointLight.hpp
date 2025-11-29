@@ -42,12 +42,12 @@ class Engine::Entity::PointLight {
 
 public:
 	
-	EntityAttribute<PointLight> pos_x;
-	EntityAttribute<PointLight> pos_y;
-	EntityAttribute<PointLight> pos_z;
-	EntityAttribute<PointLight> constant;
-	EntityAttribute<PointLight> linear;
-	EntityAttribute<PointLight> quadratic;
+	EntityAttribute<PointLight> pos_x{ 0, this };
+	EntityAttribute<PointLight> pos_y{ 1, this };
+	EntityAttribute<PointLight> pos_z{ 2, this };
+	EntityAttribute<PointLight> constant{ 3, this };
+	EntityAttribute<PointLight> linear{ 4, this };
+	EntityAttribute<PointLight> quadratic{ 5, this };
 	
 
 	

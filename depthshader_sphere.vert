@@ -3,7 +3,7 @@
 layout (location = 0) in vec3 a_VertexPos;
 layout (location = 1) in vec3 a_Position;
 layout (location = 2) in float a_Radius;
-layout (location = 3) in vec3 a_Col;
+layout (location = 3) in float a_Col;
 layout (location = 13) in vec2 a_TexCoord;
 
 

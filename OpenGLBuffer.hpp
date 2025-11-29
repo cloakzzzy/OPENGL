@@ -5,10 +5,11 @@
 #include <map>
 
 struct OpenGLType {
-	const static unsigned char Float = 1 * sizeof(float);
-	const static unsigned char Vec2 = 2 * sizeof(float);
-	const static unsigned char Vec3 = 3 * sizeof(float);
-	const static unsigned char Vec4 = 4 * sizeof(float);
+	static constexpr unsigned char Float = sizeof(float);
+    static constexpr unsigned char Uint = sizeof(unsigned int) + 1;
+	static constexpr unsigned char Vec2 = 2 * sizeof(float);
+	static constexpr unsigned char Vec3 = 3 * sizeof(float);
+	static constexpr unsigned char Vec4 = 4 * sizeof(float);
 };
 
 class OpenGLBuffer {

@@ -3,20 +3,16 @@
 #include "Lights.hpp"
 
 Engine::Entity::PointLight::PointLight(float pos_x, float pos_y, float pos_z, float constant, float linear, float quadratic) {
-    
-    std::vector<float> point_light{
-        pos_x ,pos_y,pos_z,
-        constant, linear, quadratic};
 
-    Entity_::DataBuffer_Add<PointLight>(point_light, ID, Index);
+    Entity_::Generate_ID<PointLight>(ID, Index);
 
-    this->pos_x.Set(0, this, pos_x);
-    this->pos_y.Set(1, this, pos_y);
-    this->pos_z.Set(2, this, pos_z);
+    this->pos_x = pos_x;
+    this->pos_y = pos_y;
+    this->pos_z = pos_z;
 
-    this->constant.Set(3, this, constant);
-    this->linear.Set(4, this, linear);
-    this->quadratic.Set(5, this, quadratic);
+    this->constant = constant;
+    this->linear = linear;
+    this->quadratic = quadratic;
 
     Entity::Lights::Num_PointLights++;
 }

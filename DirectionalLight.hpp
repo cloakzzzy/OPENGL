@@ -43,9 +43,9 @@ class Engine::Entity::DirectionalLight {
 
 public:
 
-	EntityAttribute<DirectionalLight> dir_x;
-	EntityAttribute<DirectionalLight> dir_y;
-	EntityAttribute<DirectionalLight> dir_z;
+	EntityAttribute<DirectionalLight> dir_x{ 0, this };
+	EntityAttribute<DirectionalLight> dir_y{ 1, this };
+	EntityAttribute<DirectionalLight> dir_z{ 2, this };
 
 
 

@@ -127,10 +127,12 @@ class Engine::Entity::Primitives {
 
 	inline static std::vector<float> FloorVertices{
 		10000.0f, 0.f, 10000.f,
+		-10000.0f, 0.f, -10000.f,
 		-10000.0f, 0.f, 10000.f,
-		-10000.0f, 0.f, -10000.f,
-		-10000.0f, 0.f, -10000.f,
+		
 		10000.0f, 0.f, -10000.f,
+		-10000.0f, 0.f, -10000.f,
+		
 		10000.0f, 0.f, 10000.f,
 	};
 
@@ -156,7 +158,7 @@ class Engine::Entity::Primitives {
 
 public:
 	static Entity::Torus CreateTorus(float pos_x, float pos_y, float pos_z, float radius, float thickness,
-		float red, float green, float blue, float rotx, float roty, float rotz);
+		float red, float green, float blue, float rot_yaw, float rot_pitch);
 	static Entity::Sphere CreateSphere(float pos_x, float pos_y, float pos_z, float radius,
 		float red, float green, float blue);
 

@@ -11,7 +11,9 @@ void OpenGLBuffer::_CreateBuffer(unsigned int BufferType ,bool IsInstanceBuffer,
 
 	if (BufferType == GL_ELEMENT_ARRAY_BUFFER) return;
 
-	for (auto Element : BufferStructure) VertexSize += Element.first;
+	for (auto Element : BufferStructure) {
+		VertexSize += Element.first;
+	}
 
 	for (unsigned int ElementNum = 0; ElementNum < BufferStructure.size(); ElementNum++) {
 		switch (BufferStructure[ElementNum].first) {
@@ -39,6 +41,7 @@ void OpenGLBuffer::_CreateBuffer(unsigned int BufferType ,bool IsInstanceBuffer,
 			glVertexAttribDivisor(BufferStructure[ElementNum].second, IsInstanceBuffer);
 			ElementOffset += OpenGLType::Vec4;
 			break;
+		
 		}
 	}
 	glBindBuffer(BufferType, 0);

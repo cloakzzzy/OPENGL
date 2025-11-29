@@ -8,6 +8,7 @@
 #include "Primitives.hpp"
 #include "EntityTemplates.hpp"
 #include "Lights.hpp"
+#include <bit>
 
 void Engine::Entity::Torus::GenerateModel(int acc) {
     std::vector<float> verta;
@@ -64,20 +65,25 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
     float divide = 1.0f / acc;
 
     for (int i = 0; i < size - (acc * (acc - acc)); i++) {
+        
         if (i > ((size - acc)) - 1) {
+            
             if (first == true) {
                 b = i;
                 first = false;
             }
+            
             if (h == acc - 1) {
+                
                 IndicesData.push_back(start + 1);
                 IndicesData.push_back(acc - 1);
                 IndicesData.push_back(0);
 
-                IndicesData.push_back(start + 1);
                 IndicesData.push_back(b);
+                IndicesData.push_back(start + 1);
+         
                 IndicesData.push_back(0);
-
+                
                 break;
             }
             start = i;
@@ -86,10 +92,11 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
             IndicesData.push_back(h + 1);
 
             IndicesData.push_back(i);
-            IndicesData.push_back(i + 1);
             IndicesData.push_back(h + 1);
+            IndicesData.push_back(i + 1);
 
             h++;
+            
         }
 
         else {
@@ -98,26 +105,31 @@ void Engine::Entity::Torus::GenerateModel(int acc) {
                 IndicesData.push_back(i + acc + 1);
                 IndicesData.push_back(i + 1);
 
-                IndicesData.push_back(i + acc);
-                IndicesData.push_back(i);
-                IndicesData.push_back(i + 1);
+                IndicesData.push_back(i + acc); // 1
+                IndicesData.push_back(i + 1);  //3
+                IndicesData.push_back(i);  //2
+                
+
+
+               
 
                 if ((i + 2) % acc == 0) {
-                    IndicesData.push_back(acc * floor((float)i * divide));
-                    IndicesData.push_back(acc * ceil((float)i * divide));
-                    IndicesData.push_back(i + acc + 1);
-
-                    IndicesData.push_back(i + 1);
-                    IndicesData.push_back(i + acc + 1);
-                    IndicesData.push_back(acc * floor((float)i * divide));
+                    
+                    IndicesData.push_back(acc * floor((float)i * divide)); // 1,
+                    IndicesData.push_back(i + acc + 1); // 3
+                    IndicesData.push_back(acc * ceil((float)i * divide));// 2
+                    
+                    
+                    IndicesData.push_back(i + 1); // 1
+                    IndicesData.push_back(i + acc + 1); //2 
+                    IndicesData.push_back(acc * floor((float)i * divide)); //3
+                    
                 }
             }
         }
     }
 }
 void Engine::Entity::Torus::CreateBuffers() {
-    
-
     GPU_VertexBuffer.CreateBuffer(VertexData.size() * sizeof(float), std::vector<std::pair<unsigned char, unsigned int>>{
         {OpenGLType::Vec3, 5}, 
     });
@@ -130,8 +142,8 @@ void Engine::Entity::Torus::CreateBuffers() {
         std::vector<std::pair<unsigned char, unsigned int>>{
             {OpenGLType::Vec3, 7},
             {OpenGLType::Vec2, 8 },
-            {OpenGLType::Vec3, 9 },
-            {OpenGLType::Vec3, 10 }});
+            {OpenGLType::Float, 9 },
+            {OpenGLType::Vec2, 10 }});
 }
 
 
@@ -142,40 +154,25 @@ void Engine::Entity::Torus::Initialize() {
     DepthShader.SetFiles("depthshader_torus.vert", "depthshader.frag");
 }
 
-Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,
-    float radius, float thickness,
-    float red, float green, float blue,
-    float rotx, float roty, float rotz) {
+Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,float radius, float thickness,float red, float green, float blue,float rot_yaw, float rot_pitch) {
+   
+    Entity_::Generate_ID<Torus>(ID, Index);
 
-    vector<float> torus{
-    pos_x,pos_y,pos_z,
-    radius, thickness,
-    red,green,blue,
-    rotx,roty,rotz
-    };
+    this->pos_x = pos_x;
+    this->pos_y = pos_y;
+    this->pos_z = pos_z;
 
-    Entity_::DataBuffer_Add<Torus>(torus, ID, Index);
+    this->radius = radius;
+    this->thickness = thickness;
 
+    this->red = red;
+    this->green = green;
+    this->blue = blue;
 
-    this->pos_x.Set(0, this, pos_x);
-    this->pos_y.Set(1, this, pos_y);
-    this->pos_z.Set(2, this, pos_z);
-
-    this->radius.Set(3, this, radius);
-    this->thickness.Set(4, this, thickness);
-
-    this->red.Set(5, this, red);
-    this->green.Set(6, this, green);
-    this->blue.Set(7, this, blue);
-
-    this->rot_x.Set(8, this, rotx);
-    this->rot_y.Set(9, this, roty);
-    this->rot_z.Set(10, this, rotz);
-
+    this->rot_yaw = rot_yaw;
+    this->rot_pitch = rot_pitch;
 }
 
-void Engine::Entity::Torus::Delete() { 
-    Entity_::DataBuffer_Delete<Torus>(ID, Index);
-}
+void Engine::Entity::Torus::Delete() { Entity_::DataBuffer_Delete<Torus>(ID, Index);}
 
 

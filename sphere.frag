@@ -31,7 +31,7 @@ layout(std430, binding = 1) buffer Data_DirectionalLight {
     float DirectionalLight_Values[];
 };
 
-float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal)
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 LightDir)
 {
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -42,8 +42,8 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal)
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // calculate bias (based on depth map resolution and slope)
-    vec3 lightDir = normalize(vec3(0.707 * 10.f) - FragPos);
-    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.01);
+    vec3 lightDir = normalize(vec3(normalize(LightDir) * 35.f) - FragPos);
+    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
     // check whether current frag pos is in shadow
     // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
     // PCF
@@ -139,8 +139,7 @@ void main()
     vec3 normal;
     CalcSphereNormal(normal, FragPos);
 
-    float shadow = ShadowCalculation(FragPosLightSpace, normalize(normal));
-
+   
    // FragColor = vec4(shadow);
 
   ///  FragColor = vec4(FragPosLightSpace);
@@ -159,12 +158,12 @@ void main()
 
     for(int i = 0; i < Num_DirectionalLights * 3; i+=3){
         vec3 LightDir = normalize(vec3(DirectionalLight_Values[i], DirectionalLight_Values[i + 1], DirectionalLight_Values[i + 2]));
-	    
+	    float shadow = ShadowCalculation(FragPosLightSpace, normalize(normal), LightDir);
+
         vec3 Result;
         CalcDirectionalLight(Result, LightDir, SphereCol, normal, shadow);
         SumResult += Result;
     }
-
 
 
     SumResult = SumResult / (SumResult + vec3(1.0));

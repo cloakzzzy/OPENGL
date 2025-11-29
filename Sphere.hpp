@@ -29,13 +29,14 @@ class Engine::Entity::Sphere {
 	friend class Torus;
 	friend class Entity_;
 	friend class Entity::EntityAttribute<Sphere>;
+	friend class Entity::EntityAttribute_Packed<Sphere>;
 	friend class Entity::PointLight;
 
 	inline static std::vector<float> DataBuffer;
 	inline static std::vector<unsigned int> ObjectIDs;
 	inline static std::vector<float> VertexData;
 	inline static std::vector<unsigned int> IndicesData;
-	inline constexpr static unsigned int EntitySize = 7;
+	inline constexpr static unsigned int EntitySize = 5;
 
 	unsigned int ID;
 	unsigned int Index = 0;
@@ -50,22 +51,22 @@ class Engine::Entity::Sphere {
 	
 
 public:
-
-	EntityAttribute<Sphere> pos_x;
-	EntityAttribute<Sphere> pos_y;
-	EntityAttribute<Sphere> pos_z;
-	EntityAttribute<Sphere> radius;
-	EntityAttribute<Sphere> red;
-	EntityAttribute<Sphere> green;
-	EntityAttribute<Sphere> blue;
+	EntityAttribute<Sphere> pos_x{0,this};
+	EntityAttribute<Sphere> pos_y{1, this };
+	EntityAttribute<Sphere> pos_z{2, this };
+	EntityAttribute<Sphere> radius{3, this };
+	EntityAttribute_Packed<Sphere> red{4, 0, this};
+	EntityAttribute_Packed<Sphere> green{4, 8, this };
+	EntityAttribute_Packed<Sphere> blue{4, 16, this };
 
 	void Delete();
 
 private:
 	static void GenerateModel(int acc);
 	static void CreateBuffers();
+	unsigned int Colour;
 	
-	Sphere(float pos_x, float pos_y, float pos_z, float radius, float red, float green, float blue);
+	Sphere(float pos_x, float pos_y, float pos_z, float radius, unsigned char red, unsigned char green, unsigned char blue);
 
 	static void Initialize();
 	
