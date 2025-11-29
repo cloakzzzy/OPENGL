@@ -1,6 +1,6 @@
-#An Example Render
+# An Demo
 
-```<cpp>
+```cpp
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_mouse.h>
 #include <glew.h>  
@@ -113,5 +113,5 @@ int main() {
     return 0;
 }
 ```
-
+## Result
 <img width="791" height="601" alt="image" src="https://github.com/user-attachments/assets/639706d5-76cc-4358-84dd-a3f2b343037e" />
