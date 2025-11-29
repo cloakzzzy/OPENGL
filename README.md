@@ -1,6 +1,7 @@
 # A Demo
 
-<img width="533" height="400" alt="image" src="https://github.com/user-attachments/assets/639706d5-76cc-4358-84dd-a3f2b343037e" />
+<img width="533" height="400" alt="image" src="https://github.com/user-attachments/assets/a8927ca6-cd59-448e-803d-fc9536f3d26f" />
+
 
 ```cpp
 #include <SDL3/SDL.h>
