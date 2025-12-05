@@ -10,17 +10,20 @@ layout(std430, binding = 2) buffer GlobalUniforms {
     uint Num_PointLights;
 };
 
-uniform mat4 lightSpaceMatrix;
+uniform mat4 lightSpaceMatrix[3];
 
 out vec3 FragPos;
-out vec4 FragPosLightSpace;
-out mat4 lsp;
+out vec4 FragPosLightSpace[3];
+
 
 void main()
 {
     FragPos = aPos;
-    FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
-    lsp = lightSpaceMatrix;
+    
+
+    for (int i = 0;i < Num_DirectionalLights; i++){
+        FragPosLightSpace[i] = lightSpaceMatrix[i] * vec4(FragPos, 1.0);
+    }
 
     gl_Position = CameraProjection * CameraView * vec4(aPos, 1.0f);
 }

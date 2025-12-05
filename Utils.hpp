@@ -7,7 +7,7 @@ namespace Engine {
 	}
 }
 
-static int BinarySearch(std::vector<unsigned int>& vec, int target) {
+static int BinarySearch(std::vector<uint32_t>& vec, int target) {
 	int left = 0;
 	int right = vec.size() - 1;
 	while (left <= right) {

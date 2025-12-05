@@ -13,6 +13,8 @@
 #include "Utils.hpp"
 
 namespace Engine {
+	struct Colour;
+	struct Colours;
 	namespace Entity {
 		class Primitives;
 		class PointLight;

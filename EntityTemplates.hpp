@@ -2,6 +2,10 @@
 #include <vector>
 #include "Utils.hpp"
 #include <iostream>
+#include "libs/glm/glm.hpp"
+#include "libs/glm/gtc/matrix_transform.hpp"
+#include "libs/glm/gtc/type_ptr.hpp"
+#include <glew.h>
 
 namespace Engine {
 	class Engine_;
@@ -16,6 +20,7 @@ namespace Engine {
 		class EntityAttribute_Packed;
 		class PointLight;
 		class DirectionalLight;
+		class Lights;
 	}
 }
 
@@ -31,6 +36,13 @@ class Engine::Entity::Entity_{
 
 	inline static unsigned int GlobalUniforms_SSBO;
 	
+	static void SetGlobalCameraData(glm::vec3 CameraPosition, glm::mat4 CameraProjection, glm::mat4 CameraView) {
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, GlobalUniforms_SSBO);
+		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::vec3), glm::value_ptr(CameraPosition));
+		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 16, sizeof(glm::mat4), glm::value_ptr(CameraProjection));
+		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 16 + sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(CameraView));
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+	}
 
 	template <typename T>
 	static void DataBuffer_Add(std::vector<float>& Payload, unsigned int& ID, unsigned int& Index) {

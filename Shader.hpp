@@ -103,6 +103,10 @@ public:
         glUniform1i(location, value);
     }
 
+    inline void SetUint(unsigned int location, unsigned int value) const {
+        glUniform1ui(location, value);
+    }
+
     inline void SetFloat(unsigned int location, float value) const
     {
         glUniform1f(location, value);

@@ -9,6 +9,7 @@
 #include "EntityTemplates.hpp"
 #include "Lights.hpp"
 #include <bit>
+#include "Colours.hpp"
 
 void Engine::Entity::Torus::GenerateModel(int acc) {
     std::vector<float> verta;
@@ -143,7 +144,8 @@ void Engine::Entity::Torus::CreateBuffers() {
             {OpenGLType::Vec3, 7},
             {OpenGLType::Vec2, 8 },
             {OpenGLType::Float, 9 },
-            {OpenGLType::Vec2, 10 }});
+            {OpenGLType::Vec2, 10 }}
+    );
 }
 
 
@@ -174,5 +176,3 @@ Engine::Entity::Torus::Torus(float pos_x, float pos_y, float pos_z,float radius,
 }
 
 void Engine::Entity::Torus::Delete() { Entity_::DataBuffer_Delete<Torus>(ID, Index);}
-
-

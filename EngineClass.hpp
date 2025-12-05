@@ -7,6 +7,8 @@ namespace Engine {
 		class Torus; 
 		class Sphere; 
 		class PointLight; 
+		class DirectionalLight;
+		class Camera;
 	}
 }
 
@@ -16,7 +18,7 @@ class Engine::Engine_ {
 	inline static unsigned int u_VAO;
 public:
 	static void Initialize();
-	static void Render(Camera& cam);
+	static void Render(Entity::Camera& cam);
 	static Window CreateWindow(std::string WindowTitle, unsigned int ScreenWidth, unsigned int ScreenHeight, float Red,
 		float Green, float Blue);
 };

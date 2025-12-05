@@ -8,9 +8,9 @@ in vec3 SpherePos;
 in vec2 TexCoord;
 
 
-uniform sampler2D shadowMap;
+uniform sampler2D shadowMaps[3];
 
-in vec4 FragPosLightSpace;
+in vec4 FragPosLightSpace[3];
 
 layout(std430, binding = 2) buffer GlobalUniforms {
     vec3 CameraPosition;
@@ -31,7 +31,7 @@ layout(std430, binding = 1) buffer Data_DirectionalLight {
     float DirectionalLight_Values[];
 };
 
-float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 LightDir)
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 LightDir, sampler2D shadowMap)
 {
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -136,8 +136,8 @@ void main()
         return;
     }
 
-    vec3 normal;
-    CalcSphereNormal(normal, FragPos);
+    vec3 Normal;
+    CalcSphereNormal(Normal, FragPos);
 
    
    // FragColor = vec4(shadow);
@@ -152,21 +152,34 @@ void main()
 	    vec3 Terms = vec3(PointLight_Values[i + 3], PointLight_Values[i + 4], PointLight_Values[i + 5]);
 
         vec3 Result;
-        CalcPointLight(Result, LightPos, Terms, SphereCol , normal);
+        CalcPointLight(Result, LightPos, Terms, SphereCol , Normal);
         SumResult += Result;
     }
 
-    for(int i = 0; i < Num_DirectionalLights * 3; i+=3){
-        vec3 LightDir = normalize(vec3(DirectionalLight_Values[i], DirectionalLight_Values[i + 1], DirectionalLight_Values[i + 2]));
-	    float shadow = ShadowCalculation(FragPosLightSpace, normalize(normal), LightDir);
-
+    for(int i = 0; i < Num_DirectionalLights; i++){
         vec3 Result;
-        CalcDirectionalLight(Result, LightDir, SphereCol, normal, shadow);
-        SumResult += Result;
-    }
+        vec3 LightDir = normalize(vec3(DirectionalLight_Values[i * 3], DirectionalLight_Values[i * 3 + 1], DirectionalLight_Values[i * 3 + 2]));
+      
+        float shadow = ShadowCalculation(FragPosLightSpace[i],normalize(Normal), LightDir, shadowMaps[i]);
 
+        if(shadow == 1.0f){
+            CalcDirectionalLight(Result, LightDir, SphereCol, Normal, shadow);
+            Result *= Num_DirectionalLights;
+            Result = Result / (Result + vec3(1.0));
+            FragColor = vec4(Result, 1.0f);
+            return;
+        }
+        if(shadow == 0.f){
+            CalcDirectionalLight(Result, LightDir, SphereCol, Normal, shadow);
+            SumResult += Result;
+            continue;
+        }
+        CalcDirectionalLight(Result, LightDir, SphereCol, Normal, shadow);
+        SumResult += Result;
+        
+    }
 
     SumResult = SumResult / (SumResult + vec3(1.0));
-  	
+
     FragColor = vec4(SumResult, 1.0);
 }

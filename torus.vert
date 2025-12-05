@@ -6,8 +6,8 @@ layout (location = 8) in vec2 a_RT;
 layout (location = 9) in float a_Colour;
 layout (location = 10) in vec2 a_Rotation;
 
-uniform mat4 lightSpaceMatrix;
-out vec4 FragPosLightSpace;
+uniform mat4 lightSpaceMatrix[3];
+out vec4 FragPosLightSpace[3];
 
 out vec3 colour;
 
@@ -65,7 +65,9 @@ void main()
 
     FragPos = t_VertexPos;
 
-    FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
+    for (int i = 0;i < 3; i++){
+        FragPosLightSpace[i] = lightSpaceMatrix[i] * vec4(FragPos, 1.0);
+    }
 
     gl_Position = CameraProjection * CameraView * vec4(t_VertexPos, 1.0f);
 }

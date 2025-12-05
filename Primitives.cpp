@@ -5,10 +5,21 @@
 #include "libs/glm/glm.hpp"
 #include "libs/glm/gtc/matrix_transform.hpp"
 #include "libs/glm/gtc/type_ptr.hpp"
+#include "Colours.hpp"
+#include "DirectionalLight.hpp"
 
 Engine::Entity::Torus Engine::Entity::Primitives::CreateTorus(float pos_x, float pos_y, float pos_z,
 	float radius, float thickness, float red, float green, float blue, float rot_yaw, float rot_pitch) {
 	return Entity::Torus::Torus(pos_x, pos_y, pos_z, radius, thickness, red, green, blue, rot_yaw, rot_pitch);
+}
+
+Engine::Entity::Torus Engine::Entity::Primitives::CreateTorus(float pos_x, float pos_y, float pos_z,
+	float radius, float thickness, Engine::Colour colour, float rot_yaw, float rot_pitch) {
+	return Entity::Torus::Torus(pos_x, pos_y, pos_z, radius, thickness, colour.red, colour.green, colour.blue, rot_yaw, rot_pitch);
+}
+
+Engine::Entity::Sphere Engine::Entity::Primitives::CreateSphere(float pos_x, float pos_y, float pos_z, float radius, Engine::Colour colour) {
+	return Entity::Sphere::Sphere(pos_x, pos_y, pos_z, radius, colour.red, colour.green, colour.blue);
 }
 
 Engine::Entity::Sphere Engine::Entity::Primitives::CreateSphere(float pos_x, float pos_y, float pos_z, float radius, float red, float green, float blue) {
@@ -37,45 +48,30 @@ void Engine::Entity::Primitives::CreateFloor() {
 	uloc_col2 = FloorShader.GetUniformLocation("col2");
 
 	//simpleDepthShader.SetFiles("shadow_mapping_depth.vert", "shadow_mapping_depth.frag");
-	debugDepthQuad.SetFiles("debug_quad.vert", "debug_quad.frag");
-
+	
 	FloorDepthShader.SetFiles("floorshader_depth.vert", "depthshader.frag");
 
-
-	// 1. render depth of scene to texture (from light's perspective)
-		// --------------------------------------------------------------
-
-	const uint32_t SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
-	glGenFramebuffers(1, &depthMapFBO);
-	// create depth texture
-	glGenTextures(1, &depthMap);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-
-	// attach depth texture as FBO's depth buffer
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	FloorShader.Use();
-	FloorShader.SetInt(FloorShader.GetUniformLocation("shadowMap"), 5);
+	FloorShader.SetInt(FloorShader.GetUniformLocation("shadowMaps[0]"), 5);
+
+	FloorShader.SetVec3(uloc_col1, 0.1, 0.1, 0.1);
+	FloorShader.SetVec3(uloc_col2, 0.2, 0.2, 0.2);
+
+
+	Entity::Primitives::FloorShader.SetVec3(Entity::Primitives::uloc_col1, 0.1, 0.1, 0.1);
+	Entity::Primitives::FloorShader.SetVec3(Entity::Primitives::uloc_col2, 0.2, 0.2, 0.2);
 
 	debugDepthQuad.Use();
 	debugDepthQuad.SetInt(debugDepthQuad.GetUniformLocation("depthMap"), 6);
 
+	/*
 	Entity::Torus::PrimitiveShader.Use();
 	Entity::Torus::PrimitiveShader.SetInt(Entity::Torus::PrimitiveShader.GetUniformLocation("shadowMap"), 7);
 
 	Entity::Sphere::PrimitiveShader.Use();
 	Entity::Sphere::PrimitiveShader.SetInt(Entity::Sphere::PrimitiveShader.GetUniformLocation("shadowMap"), 8);
+	*/
+
 
 }
 

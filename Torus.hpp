@@ -1,17 +1,14 @@
 #pragma once
 #include <vector>
-#include "Flatshapes.hpp"
 #include "Shader.hpp"
-#include <glew.h>
-#include "Camera.hpp"
 #include "OpenGLBuffers.hpp"
-#include "Utils.hpp"
 #include "EntityTemplates.hpp"
-
 
 namespace Engine {
 	class Window;
 	class Engine_;
+	struct Colour;
+	struct Colours;
 	namespace Entity {
 		class Primitives;
 		class Sphere;

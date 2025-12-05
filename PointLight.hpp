@@ -20,18 +20,18 @@ class Engine::Entity::PointLight {
 	friend class Engine;
 	friend class Lights;
 
-	inline static std::vector<unsigned int> ObjectIDs;
-	inline constexpr static unsigned int EntitySize = 6;
+	inline static std::vector<uint32_t> ObjectIDs;
+	inline constexpr static uint32_t EntitySize = 6;
 
 	inline static std::vector<float> DataBuffer;
-	unsigned int Index = 0;
+	uint32_t Index = 0;
 	
-	inline constexpr static unsigned int MAX_UBO_SIZE = 65536;
+	inline constexpr static uint32_t MAX_UBO_SIZE = 65536;
 
-	inline static unsigned int UBO;
-	inline static unsigned int SSBO;
+	inline static uint32_t UBO;
+	inline static uint32_t SSBO;
 
-	unsigned int ID;
+	uint32_t ID;
 	
 
 	PointLight(float pos_x, float pos_y, float pos_z, float red, float green, float blue);

@@ -8,9 +8,9 @@ in vec3 BefFrag;
 in vec3 TorusPos;
 in vec2 Rotation;
 
-uniform sampler2D shadowMap;
+uniform sampler2D shadowMaps[3];
 
-in vec4 FragPosLightSpace;
+in vec4 FragPosLightSpace[3];
 
 layout(std430, binding = 2) buffer CameraData {
     vec3 CameraPosition;
@@ -31,25 +31,28 @@ layout(std430, binding = 1) buffer Data_DirectionalLight {
     float DirectionalLight_Values[];
 };
 
-float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 LightDir)
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 Normal, vec3 LightDir, sampler2D shadowMap)
 {
-    // perform perspective divide
+   // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(shadowMap, projCoords.xy).r; 
+
+   // return closestDepth;
+
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // calculate bias (based on depth map resolution and slope)
-    vec3 lightDir = normalize(vec3(normalize(LightDir) * 35.f) - FragPos);
-    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
-    // check whether current frag pos is in shadow
-    // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
-    // PCF
+    vec3 normal = Normal;
+    vec3 lightDir = normalize(normalize(LightDir) * 35.f - FragPos);
+    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.001);
+    
+    
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-    for(int x = -1; x <= 1; ++x)
+    for(int x = -1; x <= 2; ++x)
     {
         for(int y = -1; y <= 1; ++y)
         {
@@ -60,9 +63,9 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 LightDir)
     shadow /= 12.0;
     
     // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
-   if(projCoords.z > 1.0)
+    if(projCoords.z > 1.0)
         shadow = 0.0f;
-        
+
     return shadow;
 }
 
@@ -79,7 +82,7 @@ void CalcTorusNormal(out vec3 Normal,vec3 Frag, vec2 Rotation){
     normal.x = (cos(Rotation.x * RAD) * n1.x) - (sin(Rotation.x * RAD) * n1.z);
     normal.z = (sin(Rotation.x * RAD) * n1.x) + (cos(Rotation.x * RAD) * n1.z);
 
-    Normal = normal;
+    Normal = normalize(normal);
 }
 
 void CalcPointLight(out vec3 result, vec3 LightPos, vec3 Terms, vec3 TorusCol, vec3 Normal){
@@ -156,19 +159,103 @@ void main()
         CalcPointLight(Result, LightPos, Terms, TorusCol, Normal);
         SumResult += Result;
     }
-
-    for(int i = 0; i < Num_DirectionalLights * 3; i+=3){
-        vec3 LightDir = normalize(vec3(DirectionalLight_Values[i], DirectionalLight_Values[i + 1], DirectionalLight_Values[i + 2]));
-	    float shadow = ShadowCalculation(FragPosLightSpace, normalize(Normal), LightDir);
+    
+    //frag is in shador for any of the directional lights then set colour and return;
+    for(int i = 0;i < Num_DirectionalLights; i++){
+        vec3 LightDir = normalize(vec3(DirectionalLight_Values[i * 3], DirectionalLight_Values[i * 3 + 1], DirectionalLight_Values[i * 3 + 2]));
+        float shadow = ShadowCalculation(FragPosLightSpace[i],normalize(Normal), LightDir, shadowMaps[i]);
 
         vec3 Result;
-        CalcDirectionalLight(Result, LightDir, TorusCol, Normal, shadow );
-        SumResult += Result;
+
+        if(shadow == 1.0f){
+            CalcDirectionalLight(Result, LightDir, TorusCol, Normal, shadow);
+            Result *= Num_DirectionalLights;
+            Result = Result / (Result + vec3(1.0));
+            FragColor = vec4(Result, 1.0f);
+            return;
+        }
+        
+    }
+
+    for(int i = 0; i < Num_DirectionalLights; i++){
+        vec3 Result;
+        vec3 LightDir = normalize(vec3(DirectionalLight_Values[i * 3], DirectionalLight_Values[i * 3 + 1], DirectionalLight_Values[i * 3 + 2]));
+        float shadow = ShadowCalculation(FragPosLightSpace[i],normalize(Normal), LightDir, shadowMaps[i]);
+
+        
+        if(shadow == 0.f){
+            CalcDirectionalLight(Result, LightDir, TorusCol, Normal, shadow);
+            SumResult += Result;
+            continue;
+        }
+
+        CalcDirectionalLight(Result, LightDir, TorusCol, Normal, shadow);
+        Result *= Num_DirectionalLights;
+        Result = Result / (Result + vec3(1.0));
+        FragColor = vec4(Result, 1.0f);
+        return;
     }
 
     SumResult = SumResult / (SumResult + vec3(1.0));
-  	
+
     FragColor = vec4(SumResult, 1.0);
+
+    /*
+    for(int i = 0; i < Num_DirectionalLights * 3; i+=3){
+        vec3 Result;
+        vec3 LightDir = normalize(vec3(DirectionalLight_Values[i], DirectionalLight_Values[i + 1], DirectionalLight_Values[i + 2]));
+        for (int j = 0; j < Num_DirectionalLights; j++){
+            float shadow = ShadowCalculation(FragPosLightSpace[j],normalize(Normal), LightDirs[j], shadowMaps[j]);
+            shadows[j] = shadow;
+
+            if(shadows[j] == 1.0f){
+                CalcDirectionalLight(Result, LightDirs[j], TorusCol, Normal, shadows[j]);
+                all_zero = false;
+                m = false;
+                break;
+            }
+            /*
+            if(shadows[j] > 0.f){
+                CalcDirectionalLight(Result, LightDir, TorusCol, Normal, shadows[j]);
+                all_zero = false;
+                break;
+            }
+            
+        
+            if(shadows[j] != 0.0f) {
+                all_zero = false;
+            }
+
+        }
+
+       
+        if (all_zero){ 
+            CalcDirectionalLight(Result, LightDir, TorusCol, Normal, 0.0f); 
+            m = false;
+            //break;
+        }
+        
+
+     
+        
+        if(m){
+            for (int j = 0; j < Num_DirectionalLights; j++){
+                if (shadows[j] > 0.f){
+                    CalcDirectionalLight(Result, LightDirs[j], TorusCol, Normal, shadows[j]);
+                     break;
+                    
+                }
+            }
+        }
+       
+        SumResult += Result;
+    }
+    
+    SumResult = SumResult / (SumResult + vec3(1.0));
+ 	
+    FragColor = vec4(SumResult, 1.0);
+    */
+   
   // FragColor = vec4(Rotation.x / 255);
     //FragColor = vec4(Normal, 1.0f);
    // FragColor = vec4(Num_DirectionalLights);

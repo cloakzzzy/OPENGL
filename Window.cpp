@@ -92,7 +92,7 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
     
 }
 
-void Engine::Window::MainLoop(function<void()> Content, Camera& cam) {
+void Engine::Window::MainLoop(function<void()> Content, Entity::Camera& cam) {
     while (IsRunning) {
         
         last = now;
@@ -189,7 +189,7 @@ void Engine::Window::MainLoop(function<void()> Content, Camera& cam) {
 
         double fps = 1.0 / DeltaTime;
 
-        std::cout << "\rFrame time: " << (DeltaTime * 1000.0) << " ms  |  FPS: " << fps << "       " << std::flush;
+       // std::cout << "\rFrame time: " << (DeltaTime * 1000.0) << " ms  |  FPS: " << fps << "       " << std::flush;
 
         SDL_GL_SwapWindow(WindowObject);
 

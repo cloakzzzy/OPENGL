@@ -1,8 +1,8 @@
 #include "OpenGLBuffer.hpp"
 #include <iostream>
 
-void OpenGLBuffer::_CreateBuffer(unsigned int BufferType ,bool IsInstanceBuffer, 
-	unsigned int SizeInBytes, std::vector<std::pair<unsigned char, unsigned int>> BufferStructure) {
+void OpenGLBuffer::_CreateBuffer(uint32_t BufferType ,bool IsInstanceBuffer, 
+	uint32_t SizeInBytes, std::vector<std::pair<unsigned char, uint32_t>> BufferStructure) {
 	this->BufferType = BufferType;
 
 	glGenBuffers(1, &BufferID);
@@ -15,7 +15,7 @@ void OpenGLBuffer::_CreateBuffer(unsigned int BufferType ,bool IsInstanceBuffer,
 		VertexSize += Element.first;
 	}
 
-	for (unsigned int ElementNum = 0; ElementNum < BufferStructure.size(); ElementNum++) {
+	for (uint32_t ElementNum = 0; ElementNum < BufferStructure.size(); ElementNum++) {
 		switch (BufferStructure[ElementNum].first) {
 		case(OpenGLType::Float):
 			glEnableVertexAttribArray(BufferStructure[ElementNum].second);

@@ -2,7 +2,10 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_mouse.h>
 #include <glew.h>
-#include "Camera.hpp"
+#include "libs/glm/glm.hpp"
+#include "libs/glm/gtc/matrix_transform.hpp"
+#include "libs/glm/gtc/type_ptr.hpp"
+#include <string>
 
 namespace Engine {
 	class Engine_;
@@ -13,6 +16,7 @@ namespace Engine {
 		class Primitives;
 		class PointLight;
 		class DirectionalLight;
+		class Camera;
 	}
 }
 
@@ -44,7 +48,7 @@ private:
 
 public:
 	SDL_Event WindowEvents;
-	void MainLoop(function<void()> Content, Camera& cam);
+	void MainLoop(std::function<void()> Content, Entity::Camera& cam);
 
 	~Window();
 };

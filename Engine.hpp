@@ -1,4 +1,6 @@
 #pragma once
+#include "Colours.hpp"
+#include "Camera.hpp"
 #include "Torus.hpp"
 #include "Primitives.hpp"
 #include "EngineClass.hpp"

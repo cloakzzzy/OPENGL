@@ -8,6 +8,7 @@
 #include "Primitives.hpp"
 #include "Lights.hpp"
 #include <bit>
+#include "Colours.hpp"
 
 //#include "stb_image.hpp"
 
@@ -88,7 +89,6 @@ void Engine::Entity::Sphere::GenerateModel(int acc) {
 
 void Engine::Entity::Sphere::CreateBuffers() {
 
-
 	GPU_ElementBuffer.CreateBuffer(IndicesData.size() * sizeof(float));
 	GPU_ElementBuffer.SetData(IndicesData);
 
@@ -138,14 +138,11 @@ void Engine::Entity::Sphere::CreateBuffers() {
 }
 
 void Engine::Entity::Sphere::Initialize() {
-
 	GenerateModel(30);
 	CreateBuffers();
 	PrimitiveShader.SetFiles("sphere.vert", "sphere.frag");
 	DepthShader.SetFiles("depthshader_sphere.vert", "depthshader.frag");
-
 	PrimitiveShader.Use();
-
 }
 Engine::Entity::Sphere::Sphere(float pos_x, float pos_y, float pos_z, float radius, uint8_t red, uint8_t green, uint8_t blue) {
 	float color = std::bit_cast<float>(((uint32_t)red) | ((uint32_t)green << 8) | ((uint32_t)blue << 16) | (0 << 24));
@@ -168,7 +165,5 @@ Engine::Entity::Sphere::Sphere(float pos_x, float pos_y, float pos_z, float radi
 	
 }
 
-void Engine::Entity::Sphere::Delete() {
-	Entity_::DataBuffer_Delete<Sphere>(ID, Index);
-}
+void Engine::Entity::Sphere::Delete() {Entity_::DataBuffer_Delete<Sphere>(ID, Index);}
 

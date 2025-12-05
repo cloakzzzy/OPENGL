@@ -28,11 +28,11 @@ void Engine::Entity::PointLight::CreateBuffers() {
    glBindBuffer(GL_UNIFORM_BUFFER, UBO);
    glBufferData(GL_UNIFORM_BUFFER, MAX_UBO_SIZE, nullptr, GL_DYNAMIC_DRAW);
 
-   unsigned int blockIndex = glGetUniformBlockIndex(Entity::Torus::TorusShader.ID, "LightData");
+   uint32_t blockIndex = glGetUniformBlockIndex(Entity::Torus::TorusShader.ID, "LightData");
    glUniformBlockBinding(Entity::Torus::TorusShader.ID, blockIndex, 0);     
    glBindBufferBase(GL_UNIFORM_BUFFER, 0, UBO);     
 
-   unsigned int blockIndex2 = glGetUniformBlockIndex(Entity::Sphere::SphereShader.ID, "LightData");
+   uint32_t blockIndex2 = glGetUniformBlockIndex(Entity::Sphere::SphereShader.ID, "LightData");
    glUniformBlockBinding(Entity::Sphere::SphereShader.ID, blockIndex, 0);    
    glBindBufferBase(GL_UNIFORM_BUFFER, 0, UBO);    
    */
@@ -50,6 +50,11 @@ void Engine::Entity::PointLight::Initialize() {
 }
 
 void Engine::Entity::PointLight::UpdateBuffer() {
+    
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, Entity::Entity_::GlobalUniforms_SSBO);
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 16 + 2 * sizeof(glm::mat4) + sizeof(unsigned int), sizeof(unsigned int), &Entity::Lights::Num_PointLights);
+
+
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, SSBO);
     glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, DataBuffer.size() * sizeof(float), &DataBuffer.front());
 }

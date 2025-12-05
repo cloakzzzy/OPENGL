@@ -43,7 +43,7 @@ void Crosshair(vector<float>& vertices) {
     Gen_Quad(vertices, -0.005, 0.015, s, s);
 }
 
-unsigned int Frames = 0;
+uint32_t Frames = 0;
 Camera cam(SCR_WIDTH, SCR_HEIGHT, 90, float(SCR_WIDTH) / float(SCR_HEIGHT), 0.1, 100);
 Window win;
 const unsigned char* buttons;
@@ -113,7 +113,7 @@ int main()
     VAO1.LinkVBO(sphere_vbo, 6, 0, 3, 0);
 
 
-    unsigned int sphere_instanceVBO;
+    uint32_t sphere_instanceVBO;
 
     glGenBuffers(1, &sphere_instanceVBO);
     glBindBuffer(GL_ARRAY_BUFFER, sphere_instanceVBO);
@@ -192,7 +192,7 @@ int main()
 
 
     float ang = 0.f;
-    const unsigned int h = 50;
+    const uint32_t h = 50;
 
 
 
