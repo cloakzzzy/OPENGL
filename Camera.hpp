@@ -24,6 +24,8 @@ private:
     float nea;
     float fa;
 
+    Camera(float windowwidth, float windowheight, float Fov, float Aspect, float Near, float Far);
+
 public:
     float fov = 45.0f;
     float aspect;
@@ -32,7 +34,6 @@ public:
     glm::vec3 position = glm::vec3(3.0f, 3.0f, 3.0f);
     glm::vec2 yawdir = glm::vec2(0.0f, -1.0);
 
-    Camera(float windowwidth, float windowheight, float Fov, float Aspect, float Near, float Far);
 
     void Mouse_SetLookAt(float xposIn, float yposIn, float sensitivity);
 
@@ -49,4 +50,9 @@ public:
         glm::mat4 projection = glm::perspective(glm::radians(fov), aspect, nea, fa);
         return projection;
     }
+
+    static Camera CreateCamera(float windowwidth, float windowheight, float Fov, float Aspect, float Near, float Far) {
+        return Camera(windowwidth, windowheight, Fov, Aspect, Near, Far);
+    }
+
 };

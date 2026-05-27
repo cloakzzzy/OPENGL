@@ -15,8 +15,9 @@ namespace Engine {
 class Engine::Engine_ {
 	friend class Entity::Torus;
 	friend class Window;
-	inline static unsigned int u_VAO;
+	
 public:
+	inline static unsigned int u_VAO;
 	static void Initialize();
 	static void Render(Entity::Camera& cam);
 	static Window CreateWindow(std::string WindowTitle, unsigned int ScreenWidth, unsigned int ScreenHeight, float Red,

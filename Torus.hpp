@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Shader.hpp"
+#include "OpenGLShader.hpp"
 #include "OpenGLBuffers.hpp"
 #include "EntityTemplates.hpp"
 
@@ -35,8 +35,8 @@ private:
 	inline static std::vector<unsigned int> IndicesData;
 	inline static std::vector<float> VertexData;
 
-	inline static Shader PrimitiveShader;
-	inline static Shader DepthShader;
+	inline static OpenGL_Shader Shader;
+	inline static OpenGL_Shader DepthShader;
 	
 	inline constexpr static unsigned int EntitySize = 8;
 

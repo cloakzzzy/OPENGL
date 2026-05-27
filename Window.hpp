@@ -6,6 +6,8 @@
 #include "libs/glm/gtc/matrix_transform.hpp"
 #include "libs/glm/gtc/type_ptr.hpp"
 #include <string>
+#include "OpenGLBuffers.hpp"
+#include "OpenGLShader.hpp"
 
 namespace Engine {
 	class Engine_;
@@ -27,10 +29,24 @@ private:
 	double now;
 	double last;
 	double freq;
-	double DeltaTime = 0.0;
 
 	float VirtualX;
 	float VirtualY;
+
+	inline static OpenGL_VertexBuffer vb;
+	inline static OpenGL_ElementBuffer ib;
+	//inline static unsigned int vb;
+	inline static GLuint vao;
+
+
+	inline static std::vector<float> v{
+		0.5, 0.5f, 0.f,
+		0.2f, 0.2f, 0.0f,
+		-0.3f, 0.3f, 0.0f
+	};
+
+	
+	inline static OpenGL_Shader s;
 
 	double monoa = 0;
 	bool toggle = true;
@@ -47,7 +63,10 @@ private:
 	bool IsRunning = true;
 
 public:
+	double DeltaTime = 0.0;
 	SDL_Event WindowEvents;
+	inline static std::vector<float> vertices;
+	inline static std::vector<unsigned int> indices;
 	void MainLoop(std::function<void()> Content, Entity::Camera& cam);
 
 	~Window();

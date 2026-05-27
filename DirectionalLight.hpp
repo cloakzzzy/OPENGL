@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "EntityTemplates.hpp"
-#include "Shader.hpp"
+#include "OpenGLShader.hpp"
 #include "Camera.hpp"
 #include "libs/glm/glm.hpp"
 #include "libs/glm/gtc/matrix_transform.hpp"
@@ -33,7 +33,6 @@ class Engine::Entity::DirectionalLight {
 	inline constexpr static unsigned int EntitySize = 3;
 	inline static constexpr float near_plane = 0.05f, far_plane = 100.f;
 
-	inline static std::vector<glm::mat4*> LightSpaceMatrices;
 	inline static std::vector<unsigned int> DepthMaps;
 
 	inline static std::vector<DirectionalLight*> D_Objects;
@@ -55,14 +54,17 @@ public:
 
 	unsigned int DepthMapFBO;
 	unsigned int DepthMap;
-	Shader DimpleDepthShader;
-	Shader DebugDepthQuad;
+	OpenGL_Shader SimpleDepthShader;
+	OpenGL_Shader DebugDepthQuad;
 
 	glm::mat4 lightSpaceMatrix;
 
 	unsigned int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
+
+	bool ShadowMappingEnabled = true;
 	
 	DirectionalLight(float dir_x, float dir_y, float dir_z);
+
 
 	static void Initialize();
 
@@ -72,6 +74,8 @@ public:
 
 	void CreateShadowMap();
 
+	static void ResolveAll(Entity::Camera& RenderCamera);
+
 public:
 
 	EntityAttribute<DirectionalLight> dir_x{ 0, this };
@@ -79,6 +83,10 @@ public:
 	EntityAttribute<DirectionalLight> dir_z{ 2, this };
 
 	static void UpdateBuffer();
+
+	void DisableShadowMapping();
+
+	void EnableShadowMapping();
 
 	void Delete();
 };

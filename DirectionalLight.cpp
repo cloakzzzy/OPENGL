@@ -2,6 +2,8 @@
 #include "EntityTemplates.hpp"
 #include "Primitives.hpp"
 #include "Lights.hpp"
+#include "PointLight.hpp"
+
 
 Engine::Entity::DirectionalLight::DirectionalLight(float dir_x, float dir_y, float dir_z) {
    
@@ -56,7 +58,7 @@ void Engine::Entity::DirectionalLight::CreateShadowMap() {
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	Engine::Entity::DirectionalLight::DepthMaps.push_back(DepthMap);
+	Entity::DirectionalLight::DepthMaps.push_back(DepthMap);
 
 }
 
@@ -67,10 +69,9 @@ void Engine::Entity::DirectionalLight::PerFrame(Entity::Camera& RenderCamera) {
 
 	Entity::Entity_::SetGlobalCameraData(LightPos, LightProjection, LightView);
 
-
 	lightSpaceMatrix = LightProjection * LightView;
-	DirectionalLight::LightSpaceMatrices.push_back(&lightSpaceMatrix);
-	
+
+
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 	glBindFramebuffer(GL_FRAMEBUFFER, DepthMapFBO);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -89,3 +90,37 @@ void Engine::Entity::DirectionalLight::UpdateBuffer() {
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, SSBO);
     glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, DataBuffer.size() * sizeof(float), &DataBuffer.front());
 }
+
+void Engine::Entity::DirectionalLight::DisableShadowMapping() {
+	D_Objects.erase(std::remove(D_Objects.begin(), D_Objects.end(), this), D_Objects.end());
+	ShadowMappingEnabled = false;
+}
+
+void Engine::Entity::DirectionalLight::EnableShadowMapping() {
+	if (ShadowMappingEnabled) return;
+	D_Objects.push_back(this);
+}
+
+/*
+void Engine::Entity::DirectionalLight::ResolveAll(Camera &RenderCamera) {
+	for (auto directional_light : Entity::DirectionalLight::D_Objects) {
+		directional_light->PerFrame(RenderCamera);
+
+
+		Entity::PointLight::UpdateBuffer();
+		Entity::DirectionalLight::UpdateBuffer();
+
+
+		Entity::Primitives::FloorDepthShader.Use();
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
+		Entity::Primitives::Render_UsingDepthShader<Entity::Torus>();
+		Entity::Primitives::Render_UsingDepthShader<Entity::Sphere>();
+
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+}
+*/

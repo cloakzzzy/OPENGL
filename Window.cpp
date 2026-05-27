@@ -42,7 +42,7 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
 
     glewInit();
     glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
+    //glDepthMask(GL_TRUE);
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_CULL_FACE);
     
@@ -92,7 +92,101 @@ Engine::Window::Window(std::string WindowTitle, unsigned int ScreenWidth, unsign
     
 }
 
+void GenerateModel(std::vector<float>& VertexData, std::vector<unsigned int>& IndicesData, int acc, int layers) {
+    std::vector<float> vert;
+    float cx = 0.0f;
+    float cy = 0.0f;
+    float cz = 0.0f;
+    float r = 1.0f;
+    uint32_t j = 0;
+    //int layers = int(ceil(float(acc) / 2));
+
+    float th = 360.0f / float(acc);
+    for (int i = 0; i < layers; i++) {
+        vector<float> a = Ngonyz(cx, cy, cz, cx, cy + r, cz, th, i);
+        float rada = abs(cz - a[2]);
+        for (int j = 0; j < acc; j++) {
+            vector<float> pa = Ngonxz(cx, a[1], cz, cx, a[1], cz + rada, th, j);
+            vert.push_back(pa[0]); vert.push_back(pa[1]); vert.push_back(pa[2]);
+        }
+    }
+
+    vert.push_back(cx);
+    vert.push_back(cy - r);
+    vert.push_back(cz);
+
+
+    for (int32_t i = 0; i < vert.size(); i += 3) {
+        VertexData.push_back(vert[i + 2]); // 3
+        VertexData.push_back(vert[i + 1]); //2 
+        VertexData.push_back(vert[i]); // 1
+
+        float layer = floor((i / 3) / acc);
+        float v = (i / 3) % (int)acc;
+
+       // VertexData.push_back(v / acc);
+       // VertexData.push_back(layer / layers);
+
+        //std::cout << v / acc << " " << layer / layers << '\n';
+    }
+
+    int size = vert.size() / 3;
+
+    for (int i = 0; i < size - 1; i++) {
+        if (i > (size - acc * 1) - 1 and (i % acc != 0)) {
+
+            if (i + 1 != size - 1) {
+
+                IndicesData.push_back(size - 1);
+                IndicesData.push_back(i + 1);
+                IndicesData.push_back(i);
+
+            }
+
+        }
+        else {
+
+            IndicesData.push_back(i); // 1
+            IndicesData.push_back(i + acc); // 3
+            IndicesData.push_back(i + 1); // 2
+
+
+            IndicesData.push_back(i + 1);
+            IndicesData.push_back(i + acc);
+
+            if ((i + acc + 1) != size) {
+                IndicesData.push_back(i + acc + 1);
+            }
+            else {
+                IndicesData.push_back(size - 1);
+            }
+        }
+    }
+
+}
+
 void Engine::Window::MainLoop(function<void()> Content, Entity::Camera& cam) {
+
+   
+   
+
+    GenerateModel(vertices, indices, 50, 180);
+
+    s.SetFiles("ellipsoid.vert", "ellipsoid.frag");
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+   
+
+
+    vb.CreateBuffer(vertices.size() * sizeof(float), std::vector<std::pair<unsigned char, unsigned int>>{
+        {OpenGLType::Vec3, 0},
+    });
+    vb.SetData(vertices);
+
+    ib.CreateBuffer(indices.size() * sizeof(unsigned int));
+    ib.SetData(indices);
+
+
     while (IsRunning) {
         
         last = now;
@@ -189,6 +283,7 @@ void Engine::Window::MainLoop(function<void()> Content, Entity::Camera& cam) {
 
         double fps = 1.0 / DeltaTime;
 
+        
        // std::cout << "\rFrame time: " << (DeltaTime * 1000.0) << " ms  |  FPS: " << fps << "       " << std::flush;
 
         SDL_GL_SwapWindow(WindowObject);

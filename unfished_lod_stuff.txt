@@ -1,0 +1,600 @@
+// sphere.hpp
+#pragma once
+#include <vector>
+#include "Flatshapes.hpp"
+#include "Shader.hpp"
+#include <glew.h>
+#include "Camera.hpp"
+#include "libs/glm/glm.hpp"
+#include "libs/glm/gtc/matrix_transform.hpp"
+#include "libs/glm/gtc/type_ptr.hpp"
+#include "EngineClass.hpp"
+#include "OpenGLBuffers.hpp"
+#include "EntityTemplates.hpp"
+#include "Utils.hpp"
+
+namespace Engine {
+	struct Colour;
+	struct Colours;
+	namespace Entity {
+		class Primitives;
+		class PointLight;
+		class Torus;
+		class Sphere;
+		class Entity_;
+	}
+}
+
+class Engine::Entity::Sphere {
+	friend class Entity::Primitives;
+	friend class Engine_;
+	friend class Window;
+	friend class Torus;
+	friend class Entity_;
+	friend class Entity::EntityAttribute<Sphere>;
+	friend class Entity::EntityAttribute_Packed<Sphere>;
+	friend class Entity::PointLight;
+
+	inline constexpr static unsigned int EntitySize = 5;
+	inline static const std::vector<std::pair<long double, unsigned int>> LOD_DistanceAccuracies = { {10.0, 100},{20.0, 50} };
+
+	inline static std::vector<float> DataBuffer;
+	inline static std::vector<std::vector <float>> LOD_DataBuffers;
+
+	inline static std::vector<unsigned int> ObjectIDs;
+	
+	inline static std::vector<std::vector<float>> VertexData;
+	inline static std::vector<std::vector<unsigned int>> IndicesData;
+
+
+	unsigned int ID;
+	unsigned int Index = 0;
+
+	inline static std::vector<OpenGL_InstanceBuffer> GPU_InstanceBuffers;
+	inline static std::vector<OpenGL_VertexBuffer> GPU_VertexBuffers;
+	inline static std::vector<OpenGL_ElementBuffer> GPU_ElementBuffers;
+
+			
+	inline static Shader Shader;
+	inline static Shader DepthShader;
+	
+
+public:
+	EntityAttribute<Sphere> pos_x{0,this};
+	EntityAttribute<Sphere> pos_y{1, this };
+	EntityAttribute<Sphere> pos_z{2, this };
+	EntityAttribute<Sphere> radius{3, this };
+	EntityAttribute_Packed<Sphere> red{4, 0, this};
+	EntityAttribute_Packed<Sphere> green{4, 8, this };
+	EntityAttribute_Packed<Sphere> blue{4, 16, this };
+
+	void Delete();
+
+private:
+	static void GenerateModel(int acc, std::vector<float> &VertexData, std::vector<unsigned int> &IndicesData);
+	static void CreateBuffers();
+	unsigned int Colour;
+	
+	Sphere(float pos_x, float pos_y, float pos_z, float radius, unsigned char red, unsigned char green, unsigned char blue);
+
+	static void Initialize();
+	
+};
+
+//sphere.cpp
+
+#include <vector>
+#include <glew.h>
+#include "Sphere.hpp"
+#include "Flatshapes.hpp"
+#include "EngineClass.hpp"
+#include "Camera.hpp"
+#include "EntityTemplates.hpp"
+#include "Primitives.hpp"
+#include "Lights.hpp"
+#include <bit>
+#include "Colours.hpp"
+
+//#include "stb_image.hpp"
+
+void Engine::Entity::Sphere::GenerateModel(int acc, std::vector<float> &VertexData, std::vector<unsigned int> &IndicesData) {
+	std::vector<float> vert;
+	float cx = 0.0f;
+	float cy = 0.0f;
+	float cz = 0.0f;
+	float r = 1.0f;
+	uint32_t j = 0;
+	int layers = int(ceil(float(acc) / 2));
+
+	float th = 360.0f / float(acc);
+	for (int i = 0; i < layers; i++) {
+		vector<float> a = Ngonyz(cx, cy, cz, cx, cy + r, cz, th, i);
+		float rada = abs(cz - a[2]);
+		for (int j = 0; j < acc; j++) {
+			vector<float> pa = Ngonxz(cx, a[1], cz, cx, a[1], cz + rada, th, j);
+			vert.push_back(pa[0]); vert.push_back(pa[1]); vert.push_back(pa[2]);
+		}
+	}
+
+	vert.push_back(cx);
+	vert.push_back(cy - r);
+	vert.push_back(cz);
+
+
+	for (int32_t i = 0; i < vert.size(); i += 3) {
+		VertexData.push_back(vert[i + 2]); // 3
+		VertexData.push_back(vert[i + 1]); //2 
+		VertexData.push_back(vert[i]); // 1
+
+		float layer = floor((i / 3) / acc);
+		float v = (i / 3) % (int)acc;
+		
+		VertexData.push_back(v / acc);
+		VertexData.push_back(layer / layers);
+
+		//std::cout << v / acc << " " << layer / layers << '\n';
+	}
+	
+	int size = vert.size() / 3;
+
+	for (int i = 0; i < size - 1; i++) {
+		if (i > (size - acc * 1) - 1 and (i % acc != 0)) {
+
+			if (i + 1 != size - 1) {
+				
+				IndicesData.push_back(size - 1);
+				IndicesData.push_back(i + 1);
+				IndicesData.push_back(i); 
+				
+				
+				
+			}
+
+		}
+		else {
+			
+			IndicesData.push_back(i); // 1
+			IndicesData.push_back(i + acc); // 3
+			IndicesData.push_back(i + 1); // 2
+			
+			
+			IndicesData.push_back(i + 1);
+			IndicesData.push_back(i + acc);
+
+			if ((i + acc + 1) != size) {
+				IndicesData.push_back(i + acc + 1);
+			}
+			else {
+				IndicesData.push_back(size - 1);
+			}
+		}
+	}
+
+}
+
+void Engine::Entity::Sphere::Initialize() {
+
+	for (auto pair : LOD_DistanceAccuracies) {
+		std::vector<float> vertices;
+		std::vector<unsigned int> indices;
+		GenerateModel(pair.second, vertices, indices);
+		VertexData.push_back(vertices);
+		IndicesData.push_back(indices);
+	}
+
+	//GenerateModel(30, VertexData);
+	CreateBuffers();
+	Shader.SetFiles("sphere.vert", "sphere.frag");
+	DepthShader.SetFiles("depthshader_sphere.vert", "depthshader.frag");
+	Shader.Use();
+}
+
+void Engine::Entity::Sphere::CreateBuffers() {
+
+	
+	for (auto i : IndicesData) {
+		OpenGL_ElementBuffer eb;
+		eb.CreateBuffer(IndicesData.size() * sizeof(float));
+		eb.SetData(i);
+		GPU_ElementBuffers.push_back(eb);
+	}
+
+	for (auto i : VertexData) {
+		OpenGL_VertexBuffer vb;
+		vb.CreateBuffer(i.size() * sizeof(float), std::vector<std::pair<unsigned char, uint32_t>>{
+			{OpenGLType::Vec3, 0},
+			{ OpenGLType::Vec2, 13 }
+		
+		});
+		vb.SetData(i);
+		GPU_VertexBuffers.push_back(vb);
+	}
+
+	//Creates vector of instance buffers, n times
+	for (auto _ : LOD_DistanceAccuracies) {
+		OpenGL_InstanceBuffer ib;
+		ib.CreateBuffer(400 * EntitySize * sizeof(float), std::vector<std::pair<unsigned char, uint32_t>>{
+			{OpenGLType::Vec3, 1},
+			{ OpenGLType::Float, 2 },
+			{ OpenGLType::Float, 3 }
+		});
+		GPU_InstanceBuffers.push_back(ib);
+	}
+	LOD_DataBuffers.resize(LOD_DistanceAccuracies.size());
+
+	// load and create a texture B
+   // -------------------------
+	/*
+	uint32_t texture1
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// load image, create texture and generate mipmaps
+	int width, height, nrChannels;
+	// The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
+	unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+	*/
+	
+
+}
+
+Engine::Entity::Sphere::Sphere(float pos_x, float pos_y, float pos_z, float radius, uint8_t red, uint8_t green, uint8_t blue) {
+	Entity_::Generate_ID<Sphere>(ID, Index);
+
+	this->pos_x = pos_x;
+	this->pos_y = pos_y;
+	this->pos_z = pos_z;
+
+	this->radius = radius;
+
+	this->red = red;
+	this->green = green;
+	this->blue = blue;
+	
+}
+
+void Engine::Entity::Sphere::Delete() {
+	Entity_::DataBuffer_Delete<Sphere>(ID, Index);
+}
+
+//EngineClass.cpp
+
+#include "Torus.hpp"
+#include "Sphere.hpp"
+#include "EngineClass.hpp"
+#include "Camera.hpp"
+#include "Window.hpp"
+#include "Primitives.hpp"
+#include "PointLight.hpp"
+#include "DirectionalLight.hpp"
+#include "Lights.hpp"
+
+unsigned int quadVAO = 0;
+unsigned int quadVBO;
+unsigned int passes = 0;
+
+float near_plane = 0.05f, far_plane = 100.f;
+
+//glm::vec3 lightDir(-0.707f);t
+
+void Engine::Engine_::Initialize() {
+	Window::Initialize();
+}
+
+void Engine::Engine_::Render(Entity::Camera& RenderCamera) 
+{
+
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	
+	glBindVertexArray(Engine_::u_VAO);
+
+	for (auto directional_light : Entity::DirectionalLight::D_Objects) {
+		directional_light->PerFrame(RenderCamera);
+
+
+		Entity::PointLight::UpdateBuffer();
+		Entity::DirectionalLight::UpdateBuffer();
+
+
+		Entity::Primitives::FloorDepthShader.Use();
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
+		Entity::Primitives::Render_UsingDepthShader<Entity::Torus>();
+		//Entity::Primitives::Render_UsingDepthShader<Entity::Sphere>();
+
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	// END RENDER FROM LIGHT PERSPECTIVE
+
+	glViewport(0, 0, 800, 600);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	{
+		Entity::Primitives::debugDepthQuad.Use();
+		Entity::Primitives::debugDepthQuad.SetFloat(Entity::Primitives::debugDepthQuad.GetUniformLocation("near_plane"), near_plane);
+		Entity::Primitives::debugDepthQuad.SetFloat(Entity::Primitives::debugDepthQuad.GetUniformLocation("far_plane"), far_plane);
+	}
+
+
+	// render scene as normal 
+
+	Entity::Entity_::SetGlobalCameraData(RenderCamera.position, RenderCamera.GetProjection(), RenderCamera.GetView());
+
+
+	Entity::PointLight::UpdateBuffer();
+	Entity::DirectionalLight::UpdateBuffer();
+
+	Entity::Primitives::FloorShader.Use();
+
+	
+	for (int i = 0; i < Entity::DirectionalLight::D_Objects.size(); i++) {
+		GLint uloc_lsp = Entity::Primitives::FloorShader.GetUniformLocation("lightSpaceMatrix[" + std::to_string(i) + "]");
+		Entity::Primitives::FloorShader.SetMat4(uloc_lsp, glm::value_ptr(*(Entity::DirectionalLight::LightSpaceMatrices[i])));
+
+		GLint uloc_smpID = Entity::Primitives::FloorShader.GetUniformLocation("shadowMaps[" + std::to_string(i) + "]");
+		Entity::Primitives::FloorShader.SetInt(uloc_smpID, i);
+
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, Entity::DirectionalLight::DepthMaps[i]);
+	}
+
+
+
+	Entity::Primitives::Render<Entity::Torus>();
+
+	Entity::Primitives::FloorShader.Use();
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	
+	Entity::Primitives::Render_LOD<Entity::Sphere>(RenderCamera);
+
+	
+	/*
+	{
+		Entity::Primitives::debugDepthQuad.Use();
+		if (quadVAO == 0)
+		{
+			float quadVertices[] = {
+				// positions        // texture Coords
+				-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+				-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+				 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+				 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+			};
+			// setup plane VAO
+			glGenVertexArrays(1, &quadVAO);
+			glGenBuffers(1, &quadVBO);
+			glBindVertexArray(quadVAO);
+			glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+		}
+		glBindVertexArray(quadVAO);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glBindVertexArray(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+	}
+	*/
+}
+
+Engine::Window Engine::Engine_::CreateWindow(std::string WindowTitle, unsigned int ScreenWidth, unsigned int ScreenHeight, 
+	float Red, float Green, float Blue) {
+	return Window(WindowTitle, ScreenWidth, ScreenHeight, Red, Green, Blue);
+}
+
+//Primitives.hpp
+
+#pragma once
+#include <vector>
+#include "Shader.hpp"
+#include "libs/glm/glm.hpp"
+#include "libs/glm/gtc/matrix_transform.hpp"
+#include "libs/glm/gtc/type_ptr.hpp"
+#include "DirectionalLight.hpp"
+#include <math.h>
+
+namespace Engine {
+	class Engine_;
+	struct Colours;
+	struct Colour;
+	namespace Entity {
+		class Torus;
+		class Sphere;
+		class Primitives;
+		class PointLight;
+		class Camera;
+		class DirectionalLight;
+	}
+	class Window;
+}
+
+class Engine::Entity::Primitives {
+
+	friend class Window;
+	friend class Engine_;
+	friend class Torus;
+	friend class PointLight;
+	friend class Sphere;
+
+	inline static unsigned int FloorVBO;
+	inline static unsigned int depthMapFBO;
+	inline static unsigned int depthMap;
+	inline static Shader simpleDepthShader;
+	inline static Shader debugDepthQuad;
+	inline static Shader FloorDepthShader;
+
+	//const static unsigned int SHADOW_WIDTH = 600, SHADOW_HEIGHT = 600;
+
+
+	inline static Shader FloorShader;
+
+	inline static unsigned int UBO;
+
+	inline static unsigned int uloc_view;
+	inline static unsigned int uloc_projection;
+	inline static unsigned int uloc_cam_pos;
+	inline static unsigned int uloc_col1;
+	inline static unsigned int uloc_col2;
+
+	inline static std::vector<float> FloorVertices{
+		10000.0f, 0.f, 10000.f,
+		-10000.0f, 0.f, -10000.f,
+		-10000.0f, 0.f, 10000.f,
+		
+		10000.0f, 0.f, -10000.f,
+		-10000.0f, 0.f, -10000.f,
+		
+		10000.0f, 0.f, 10000.f,
+	};
+
+	template<typename PrimitiveType>
+	static void Render() {
+		unsigned int NumInstances = PrimitiveType::ObjectIDs.size();
+
+		//lsps
+		//shadowmaps
+
+		PrimitiveType::Shader.Use();
+
+
+		// Bind textures to texture units
+		for (int i = 0; i < Entity::DirectionalLight::D_Objects.size(); i++) {
+			
+			GLint uloc_lsp = PrimitiveType::Shader.GetUniformLocation("lightSpaceMatrix[" + std::to_string(i) + "]");
+			PrimitiveType::Shader.SetMat4(uloc_lsp,glm::value_ptr(*(Entity::DirectionalLight::LightSpaceMatrices[i])));
+
+			GLint uloc_smpID = PrimitiveType::Shader.GetUniformLocation("shadowMaps[" + std::to_string(i) + "]");
+			PrimitiveType::Shader.SetInt(uloc_smpID, i);
+
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, Entity::DirectionalLight::DepthMaps[i]);
+		}
+
+		PrimitiveType::GPU_VertexBuffer.Bind();
+		PrimitiveType::GPU_ElementBuffer.Bind();
+
+		//puts instance data into IBO
+		PrimitiveType::GPU_InstanceBuffer.Bind();
+		PrimitiveType::GPU_InstanceBuffer.SetData(PrimitiveType::DataBuffer);
+
+		//Primitive::Shader.Use();
+
+		glDrawElementsInstanced(GL_TRIANGLES, PrimitiveType::IndicesData.size(), GL_UNSIGNED_INT, 0, NumInstances);
+	}
+
+
+	template<typename PrimitiveType>
+	static void Render_LOD(Camera &cam) {
+		unsigned int NumInstances = PrimitiveType::ObjectIDs.size();
+
+		PrimitiveType::Shader.Use();
+
+		// Bind textures to texture units
+		for (int i = 0; i < Entity::DirectionalLight::D_Objects.size(); i++) {
+
+			GLint uloc_lsp = PrimitiveType::Shader.GetUniformLocation("lightSpaceMatrix[" + std::to_string(i) + "]");
+			PrimitiveType::Shader.SetMat4(uloc_lsp, glm::value_ptr(*(Entity::DirectionalLight::LightSpaceMatrices[i])));
+
+			GLint uloc_smpID = PrimitiveType::Shader.GetUniformLocation("shadowMaps[" + std::to_string(i) + "]");
+			PrimitiveType::Shader.SetInt(uloc_smpID, i);
+
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, Entity::DirectionalLight::DepthMaps[i]);
+		}
+
+		//for one instance
+		
+		for (int i = 0; i < NumInstances; i++) {
+			float pos_x = PrimitiveType::DataBuffer[i * PrimitiveType::EntitySize + 0];
+			float pos_y = PrimitiveType::DataBuffer[i * PrimitiveType::EntitySize + 1];
+			float pos_z = PrimitiveType::DataBuffer[i * PrimitiveType::EntitySize + 2];
+
+			long double distance = glm::length(cam.position - glm::vec3(pos_x, pos_y, pos_z));
+			//std:cout << "d " << PrimitiveType::DataBuffer.size()<<" "<<distance << '\n';
+
+			for (int j = 0; j < PrimitiveType::LOD_DistanceAccuracies.size(); j++) {
+				
+				if (distance < PrimitiveType::LOD_DistanceAccuracies[j].first) {
+					//std::cout << PrimitiveType::LOD_DataBuffers.size() << '\n';
+					PrimitiveType::LOD_DataBuffers[j].insert(PrimitiveType::LOD_DataBuffers[j].end(),
+						PrimitiveType::DataBuffer.begin() + i * PrimitiveType::EntitySize,
+						PrimitiveType::DataBuffer.begin() + i * PrimitiveType::EntitySize + PrimitiveType::EntitySize + 1);
+					break;
+				}
+				
+			}
+		}
+		
+		for (int i = 0; i < PrimitiveType::LOD_DistanceAccuracies.size(); i++) {
+			PrimitiveType::GPU_VertexBuffers[i].Bind();
+			PrimitiveType::GPU_ElementBuffers[i].Bind();
+
+			//puts instance data into IBO
+			PrimitiveType::GPU_InstanceBuffers[i].Bind();
+			PrimitiveType::GPU_InstanceBuffers[i].SetData(PrimitiveType::LOD_DataBuffers[i]);
+
+			glDrawElementsInstanced(GL_TRIANGLES, PrimitiveType::IndicesData[i].size(), GL_UNSIGNED_INT, 0, PrimitiveType::LOD_DataBuffers[i].size() / PrimitiveType::EntitySize);
+		}
+
+		for (auto i : PrimitiveType::LOD_DataBuffers) {
+			i.clear();
+		}
+		
+	}
+
+	template<typename PrimitiveType>
+	static void Render_UsingDepthShader() {
+		unsigned int NumInstances = PrimitiveType::ObjectIDs.size();
+
+		PrimitiveType::DepthShader.Use();
+
+		PrimitiveType::GPU_VertexBuffer.Bind();
+		PrimitiveType::GPU_ElementBuffer.Bind();
+
+		//puts instance data into IBO
+		PrimitiveType::GPU_InstanceBuffer.Bind();
+		PrimitiveType::GPU_InstanceBuffer.SetData(PrimitiveType::DataBuffer);
+
+		//Primitive::Shader.Use();
+
+		glDrawElementsInstanced(GL_TRIANGLES, PrimitiveType::IndicesData.size(), GL_UNSIGNED_INT, 0, NumInstances);
+	}
+
+	
+
+	static void CreateFloor();
+	static void RenderFloor(Entity::Camera& cam);
+
+public:
+	static Entity::Torus CreateTorus(float pos_x, float pos_y, float pos_z, float radius, float thickness,
+		float red, float green, float blue, float rot_yaw, float rot_pitch);
+	static Entity::Torus CreateTorus(float pos_x, float pos_y, float pos_z, float radius, float thickness,
+		Colour colour, float rot_yaw, float rot_pitch);
+	static Entity::Sphere CreateSphere(float pos_x, float pos_y, float pos_z, float radius,
+		float red, float green, float blue);
+	static Entity::Sphere CreateSphere(float pos_x, float pos_y, float pos_z, float radius, Colour colour);
+
+};
+

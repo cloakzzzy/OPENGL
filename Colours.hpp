@@ -62,7 +62,7 @@ namespace Engine {
         inline static constexpr Colour Gold = Colour(255, 215, 0);
         inline static constexpr Colour GoldenRod = Colour(218, 165, 32);
         inline static constexpr Colour Gray = Colour(128, 128, 128);
-        inline static constexpr Colour Green = Colour(0, 128, 0);
+        inline static constexpr Colour Green = Colour(0, 255, 0);
         inline static constexpr Colour GreenYellow = Colour(173, 255, 47);
         inline static constexpr Colour Grey = Gray;
         inline static constexpr Colour HoneyDew = Colour(240, 255, 240);

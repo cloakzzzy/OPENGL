@@ -24,7 +24,7 @@ namespace Engine {
 	}
 }
 
-class Engine::Entity::Entity_{
+class Engine::Entity::Entity_ {
 	friend class Entity::Torus;
 	friend class Entity::Sphere;
 	friend class Entity::PointLight;
@@ -35,7 +35,7 @@ class Engine::Entity::Entity_{
 	Entity_();
 
 	inline static unsigned int GlobalUniforms_SSBO;
-	
+
 	static void SetGlobalCameraData(glm::vec3 CameraPosition, glm::mat4 CameraProjection, glm::mat4 CameraView) {
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, GlobalUniforms_SSBO);
 		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::vec3), glm::value_ptr(CameraPosition));
@@ -60,7 +60,7 @@ class Engine::Entity::Entity_{
 	template<typename T>
 	static void Generate_ID(unsigned int& ID, unsigned int& Index) {
 
-		for (int i = 0; i < T::EntitySize; i++) { T::DataBuffer.push_back(NULL);}
+		for (int i = 0; i < T::EntitySize; i++) { T::DataBuffer.push_back(NULL); }
 
 		if (T::ObjectIDs.size() == 0) { ID = 1; }
 		else { ID = T::ObjectIDs.back() + 1; }
@@ -74,7 +74,7 @@ class Engine::Entity::Entity_{
 	static void DataBuffer_Delete(unsigned int& ID, unsigned int& Index) {
 		// Required in case of any instance buffer deletions
 		if (Index >= T::ObjectIDs.size() or T::ObjectIDs[Index] != ID) { Index = BinarySearch(T::ObjectIDs, ID); }
-		
+
 		//Required if called on deleted Object
 		if (Index == 4294967295) return;
 
@@ -83,7 +83,7 @@ class Engine::Entity::Entity_{
 
 		//removes info from instance buffer, stop rendering the torus.
 		T::DataBuffer.erase(T::DataBuffer.begin() + Index * T::EntitySize, T::DataBuffer.begin() + Index * T::EntitySize + T::EntitySize);
-	
+
 		ID = NULL;
 	}
 };
@@ -198,7 +198,7 @@ public:
 	unsigned char Value;
 
 private:
-	__forceinline void Set(unsigned char Offset,unsigned char BitOffset, T* p_EntityObject, unsigned char StartingVal) {
+	__forceinline void Set(unsigned char Offset, unsigned char BitOffset, T* p_EntityObject, unsigned char StartingVal) {
 		this->p_EntityObject = p_EntityObject;
 		this->Offset = Offset;
 		this->BitOffset = BitOffset;
@@ -218,7 +218,7 @@ public:
 			Index = BinarySearch(T::ObjectIDs, ID);
 			if (Index == 4294967295) return *this;
 		}
-		
+
 		Value = NewValue;
 
 		float& f = T::DataBuffer[Index * T::EntitySize + Offset];
@@ -240,7 +240,7 @@ public:
 		}
 		Value = NewValue;
 
-		union {float f;unsigned int u;} tmp;
+		union { float f; unsigned int u; } tmp;
 
 		tmp.f = T::DataBuffer[Index * T::EntitySize + Offset];
 
@@ -362,7 +362,6 @@ public:
 	}
 
 };
-
 
 
 

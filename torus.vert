@@ -49,12 +49,11 @@ void main()
     
     vec3 v1 = t_VertexPos;
 
-    //z pitch
-    // y yaw
     
     //pitch
     t_VertexPos.x = (cos(a_Rotation.y * RAD) * v1.x) - (sin(a_Rotation.y * RAD) * v1.y);
     t_VertexPos.y = (sin(a_Rotation.y * RAD) * v1.x) + (cos(a_Rotation.y * RAD) * v1.y);
+    
     vec3 v2 = t_VertexPos;
 
     //yaw

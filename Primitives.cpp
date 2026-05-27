@@ -65,11 +65,11 @@ void Engine::Entity::Primitives::CreateFloor() {
 	debugDepthQuad.SetInt(debugDepthQuad.GetUniformLocation("depthMap"), 6);
 
 	/*
-	Entity::Torus::PrimitiveShader.Use();
-	Entity::Torus::PrimitiveShader.SetInt(Entity::Torus::PrimitiveShader.GetUniformLocation("shadowMap"), 7);
+	Entity::Torus::Shader.Use();
+	Entity::Torus::Shader.SetInt(Entity::Torus::Shader.GetUniformLocation("shadowMap"), 7);
 
-	Entity::Sphere::PrimitiveShader.Use();
-	Entity::Sphere::PrimitiveShader.SetInt(Entity::Sphere::PrimitiveShader.GetUniformLocation("shadowMap"), 8);
+	Entity::Sphere::Shader.Use();
+	Entity::Sphere::Shader.SetInt(Entity::Sphere::Shader.GetUniformLocation("shadowMap"), 8);
 	*/
 
 

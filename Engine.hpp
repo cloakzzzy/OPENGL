@@ -9,3 +9,5 @@
 #include "Lights.hpp"
 #include "PointLight.hpp"
 #include "DirectionalLight.hpp"
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_mouse.h>

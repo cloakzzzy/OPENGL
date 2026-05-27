@@ -146,13 +146,17 @@ void Engine::Entity::Torus::CreateBuffers() {
             {OpenGLType::Float, 9 },
             {OpenGLType::Vec2, 10 }}
     );
+
+
+
+
 }
 
 
 void Engine::Entity::Torus::Initialize() {
     GenerateModel(150);
     CreateBuffers();
-    PrimitiveShader.SetFiles("torus.vert", "torus.frag");
+    Shader.SetFiles("torus.vert", "torus.frag");
     DepthShader.SetFiles("depthshader_torus.vert", "depthshader.frag");
 }
 

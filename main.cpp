@@ -3,7 +3,6 @@
 #include <glew.h>  
 #include <iostream>
 #include "Engine.hpp"
-#include "Camera.hpp"
 #include <chrono>
 
 constexpr uint32_t SCR_WIDTH = 800;
@@ -18,95 +17,97 @@ int main() {
 
     Engine::Window window = Engine::Engine_::CreateWindow("Engine Window", 800, 600, 0.4, 0.4, 0.4);
 
-    Camera cam(SCR_WIDTH, SCR_HEIGHT, 90, float(SCR_WIDTH) / float(SCR_HEIGHT), 0.2, 100);
+    auto camera = Engine::Entity::Camera::CreateCamera(SCR_WIDTH, SCR_HEIGHT, 90, float(SCR_WIDTH) / float(SCR_HEIGHT), 0.2, 100);
 
     auto torus1 = Primitives::CreateTorus(
         0.0f, 5.0f, -6.0f,
         3.5f, 1.5f,
-        Engine::Colours::DarkGray,
+        Engine::Colours::Thistle,
         0.0f, 0.0f);
-    
+    /*
     auto torus2 = Primitives::CreateTorus(
         0.0f, 3.0f, 5.0f,
         2.f, 1.f,
-        Engine::Colours::LimeGreen,
+        61, 168, 168  ,
         0.0f, 0.0f);
 
     auto torus3 = Primitives::CreateTorus(
         0.0f, 3.0f, 12.0f,
         2.f, 1.f,
-        Engine::Colours::RosyBrown,
+        Engine::Colours::Navy,
         0.0f, 0.0f);
-    
+
     auto torus4 = Primitives::CreateTorus(
         -5.0f, 6.f, 3.f,
         2.f, 1.f,
-        Engine::Colours::LightSeaGreen,
+        Engine::Colours::Yellow,
         34.f, 256.f);
 
     auto sphere1 = Primitives::CreateSphere(
         0.0f, 10.0f, 0.0f,
         2.f,
-        Engine::Colours::IndianRed);
+        Engine::Colours::Cyan);
 
 
     auto sphere2 = Primitives::CreateSphere(
         0.0f, 10.0f, 5.f,
         2.f,
-        Engine::Colours::Tomato);
+        Engine::Colours::Red);
 
 
     auto sphere3 = Primitives::CreateSphere(
         0.f, 10.0f, 0.0f,
         2.f,
-        Engine::Colours::Azure);
+        Engine::Colours::Blue);
 
 
     auto sphere4 = Primitives::CreateSphere(
-        -5.f, 3.0f, -0.5f,
+        -5.f, 5, -0.5f,
         1.f,
-        Engine::Colours::Bisque);
+        Engine::Colours::Green);
 
 
     auto sphere5 = Primitives::CreateSphere(
         0.707 * 13.f, 10.0, 0.707 * 13.f,
         1.f,
-        Engine::Colours::Aqua);
+        Engine::Colours::Purple);
 
-    
+
     auto sphere6 = Primitives::CreateSphere(
-        5.f, 3.0f, -0.5f,
+        5.f, 5.0f, -0.5f,
         1.f,
-        Engine::Colours::MistyRose);
-   
+        247, 115, 7);
+
     auto sphere7 = Primitives::CreateSphere(
         0.0f, 10.f, -5.0f,
         1.0f,
         Engine::Colours::Coral);
-        
+    */
 
     auto dlight1 = Lights::Create_DirectionalLight(0.707f, 0.707f, 0.707f);
+    auto dlight2 = Lights::Create_DirectionalLight(0.707,0.f, 0.1f);
 
-    auto dlight2 = Lights::Create_DirectionalLight(0.f, 1.0f, 1.f);
 
-   
-    //auto dlight3 = Lights::Create_DirectionalLight(0.3f, 1.0f, 0.3f);
 
     window.MainLoop([&]() {
 
+        
+
+        //glEnable(GL_DEPTH_TEST);
+        glBindVertexArray(Engine::Engine_::u_VAO);
 
         torus1.rot_pitch += 0.525;
         torus1.rot_yaw += 0.55;
 
-      torus2.rot_pitch += 0.725;
-       torus2.rot_yaw += 0.5;
+       // torus2.rot_pitch += 0.725;
+       // torus2.rot_yaw += 0.5;
 
-       torus3.rot_pitch += 0.45;
+       // torus3.rot_pitch += 0.45;
 
 
-        Engine::Engine_::Render(cam);
-       
-        }, cam);
+        Engine::Engine_::Render(camera);
+
+        }, camera);
 
     return 0;
 }

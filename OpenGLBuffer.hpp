@@ -20,12 +20,12 @@ class OpenGLBuffer {
 private:
 	OpenGLBuffer() {};
 
-	unsigned int BufferID;
+	GLuint BufferID;
 	void _CreateBuffer(unsigned int BufferType, bool IsInstanceBuffer, unsigned int SizeInBytes, std::vector<std::pair<unsigned char, unsigned int>> BufferStructure);
 
 	unsigned int ElementOffset = 0;
 	unsigned int VertexSize = 0;
-	unsigned int BufferType;
+	GLuint BufferType;
 
 public:
 	inline void SetData(std::vector<float>& Data) {

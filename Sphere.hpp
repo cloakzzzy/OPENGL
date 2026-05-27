@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "Flatshapes.hpp"
-#include "Shader.hpp"
+#include "OpenGLShader.hpp"
 #include <glew.h>
 #include "Camera.hpp"
 #include "libs/glm/glm.hpp"
@@ -47,19 +47,19 @@ class Engine::Entity::Sphere {
 	inline static OpenGL_VertexBuffer GPU_VertexBuffer;
 	inline static OpenGL_ElementBuffer GPU_ElementBuffer;
 
-			
-	inline static Shader PrimitiveShader;
-	inline static Shader DepthShader;
-	
+
+	inline static OpenGL_Shader Shader;
+	inline static OpenGL_Shader DepthShader;
+
 
 public:
-	EntityAttribute<Sphere> pos_x{0,this};
-	EntityAttribute<Sphere> pos_y{1, this };
-	EntityAttribute<Sphere> pos_z{2, this };
-	EntityAttribute<Sphere> radius{3, this };
-	EntityAttribute_Packed<Sphere> red{4, 0, this};
-	EntityAttribute_Packed<Sphere> green{4, 8, this };
-	EntityAttribute_Packed<Sphere> blue{4, 16, this };
+	EntityAttribute<Sphere> pos_x{ 0,this };
+	EntityAttribute<Sphere> pos_y{ 1, this };
+	EntityAttribute<Sphere> pos_z{ 2, this };
+	EntityAttribute<Sphere> radius{ 3, this };
+	EntityAttribute_Packed<Sphere> red{ 4, 0, this };
+	EntityAttribute_Packed<Sphere> green{ 4, 8, this };
+	EntityAttribute_Packed<Sphere> blue{ 4, 16, this };
 
 	void Delete();
 
@@ -67,9 +67,13 @@ private:
 	static void GenerateModel(int acc);
 	static void CreateBuffers();
 	unsigned int Colour;
-	
+
 	Sphere(float pos_x, float pos_y, float pos_z, float radius, unsigned char red, unsigned char green, unsigned char blue);
 
+	void AddPosition(glm::vec3 position_add);
+	void MultiplyPosition(glm::vec3 position_multiply);
+	void SetPosition(glm::vec3 position);
+
 	static void Initialize();
-	
+
 };

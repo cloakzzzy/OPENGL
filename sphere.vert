@@ -46,6 +46,7 @@ void main()
     for (int i = 0;i < 3; i++){
         FragPosLightSpace[i] = lightSpaceMatrix[i] * vec4(FragPos, 1.0);
     }
+
     
     gl_Position = CameraProjection * CameraView * vec4(t_VertexPos, 1.0f);
 
